@@ -84,6 +84,7 @@
 
     <!-- TAB 1: RINGKASAN -->
     <div x-show="tab === 'ringkasan'" class="space-y-6">
+        <!-- Stats Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div class="bg-white p-5 rounded-3xl border border-[#D5E0D9] shadow-xs">
                 <span class="text-xs text-[#4E6157] block">Porsi Makanan Dibagikan</span>
@@ -101,6 +102,53 @@
                 <span class="text-xs text-[#4E6157] block">Klaim Masuk Menunggu</span>
                 <div class="font-display font-bold text-3xl text-[#B45309] mt-1">{{ $incomingPendingClaims->count() }}</div>
                 <span class="text-[11px] text-[#4E6157]">membutuhkan keputusan Anda</span>
+            </div>
+        </div>
+
+        <!-- Personal Impact Engine & ESG Scoreboard (design.md 1.F & 5.3) -->
+        <div class="bg-linear-to-br from-white to-[#F2F7F4] p-6 rounded-3xl border border-[#1E7A4C]/30 shadow-card space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#D5E0D9] pb-4">
+                <div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-[#1E7A4C] bg-emerald-100 px-2.5 py-0.5 rounded-full inline-block mb-1">
+                        Personal Impact Engine & ESG
+                    </span>
+                    <h3 class="font-display font-bold text-lg text-[#16251D]">Dampak Penyelamatan Pangan Anda</h3>
+                    <p class="text-xs text-[#4E6157]">Kontribusi nyata Anda terhadap pencegahan emisi karbon dan pelestarian sumber daya bumi.</p>
+                </div>
+                <div class="text-left sm:text-right">
+                    <span class="text-xs font-bold text-[#14573A] bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-xl inline-block">
+                        {{ $impactLevel }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="bg-white p-4 rounded-2xl border border-[#D5E0D9]">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="text-xl">🌱</span>
+                        <span class="text-xs font-semibold text-[#4E6157]">Emisi CO₂e Tercegah</span>
+                    </div>
+                    <div class="font-display font-bold text-2xl text-[#1E7A4C]">{{ $co2Avoided }} <span class="text-xs font-normal text-[#4E6157]">kg CO₂e</span></div>
+                    <p class="text-[11px] text-[#4E6157] mt-1">Estimasi 0.85 kg emisi per porsi makanan terbuang.</p>
+                </div>
+
+                <div class="bg-white p-4 rounded-2xl border border-[#D5E0D9]">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="text-xl">💧</span>
+                        <span class="text-xs font-semibold text-[#4E6157]">Air Bersih Terhemat</span>
+                    </div>
+                    <div class="font-display font-bold text-2xl text-[#2A6F97]">{{ number_format($waterSaved, 0, ',', '.') }} <span class="text-xs font-normal text-[#4E6157]">Liter</span></div>
+                    <p class="text-[11px] text-[#4E6157] mt-1">Estimasi 320L jejak air pada rantai pasok pangan.</p>
+                </div>
+
+                <div class="bg-white p-4 rounded-2xl border border-[#D5E0D9]">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="text-xl">💰</span>
+                        <span class="text-xs font-semibold text-[#4E6157]">Nilai Ekonomi Pangan</span>
+                    </div>
+                    <div class="font-display font-bold text-2xl text-[#B45309]">Rp {{ number_format($economicValue, 0, ',', '.') }}</div>
+                    <p class="text-[11px] text-[#4E6157] mt-1">Nilai makanan layak yang teralokasikan.</p>
+                </div>
             </div>
         </div>
     </div>

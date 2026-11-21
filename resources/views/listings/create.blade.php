@@ -181,6 +181,25 @@
                 </div>
             </div>
 
+            <!-- Safe Meeting Zone Recommendations (design.md 1.C) -->
+            <div class="space-y-1.5">
+                <span class="text-[11px] font-bold text-[#4E6157] block">Rekomendasi Titik Temu Aman (Untuk Menjaga Privasi Rumah Anda):</span>
+                <div class="flex items-center gap-1.5 flex-wrap">
+                    <button type="button" @click="appendSafeZone('Pos Satpam / Gerbang Masuk')" class="px-2.5 py-1 bg-gray-100 hover:bg-emerald-50 hover:text-[#1E7A4C] text-[11px] rounded-lg border border-[#D5E0D9] transition">
+                        🏢 Pos Satpam / Gerbang
+                    </button>
+                    <button type="button" @click="appendSafeZone('Minimarket Terdekat (Area Parkir)')" class="px-2.5 py-1 bg-gray-100 hover:bg-emerald-50 hover:text-[#1E7A4C] text-[11px] rounded-lg border border-[#D5E0D9] transition">
+                        🏪 Minimarket 24 Jam
+                    </button>
+                    <button type="button" @click="appendSafeZone('Halaman Masjid')" class="px-2.5 py-1 bg-gray-100 hover:bg-emerald-50 hover:text-[#1E7A4C] text-[11px] rounded-lg border border-[#D5E0D9] transition">
+                        🕌 Halaman Masjid
+                    </button>
+                    <button type="button" @click="appendSafeZone('SPBU Terdekat')" class="px-2.5 py-1 bg-gray-100 hover:bg-emerald-50 hover:text-[#1E7A4C] text-[11px] rounded-lg border border-[#D5E0D9] transition">
+                        ⛽ SPBU Terdekat
+                    </button>
+                </div>
+            </div>
+
             <!-- Coordinates hidden inputs -->
             <input type="hidden" name="latitude" :value="lat">
             <input type="hidden" name="longitude" :value="lng">
@@ -399,6 +418,14 @@ document.addEventListener('alpine:init', () => {
         useDetectedAddress() {
             if (this.detectedAddress) {
                 this.address = this.detectedAddress;
+            }
+        },
+
+        appendSafeZone(zoneName) {
+            if (this.address) {
+                this.address = `${this.address} (${zoneName})`;
+            } else {
+                this.address = `Titik Temu: ${zoneName}`;
             }
         },
 
