@@ -441,5 +441,25 @@ Gunakan daftar audit berikut sebelum setiap rilis fitur:
    - Balon konfirmasi mengambang di bawah tengah layar (`bg-[#16251D]/95 text-white`) dengan ikon centang SVG saat tautan atau alamat berhasil disalin.
 5. **Kebijakan Nol Emoji:** Seluruh antarmuka 100% menggunakan SVG vektor Tailwind terstandar.
 
+### 10.3 Tata Letak Minimalis, Estetis & Panel Geser Desktop (Desktop Collapsible Sidebar)
+1. **Desktop Collapsible Sidebar:**
+   - Sidebar dapat diciutkan (`lg:w-0 lg:overflow-hidden`) melalui tombol tuas chevron di batas kanan sidebar, memperluas peta ke 100% lebar layar untuk eksplorasi luas ala Google Maps.
+   - Tombol mengambang elegan di sudut kiri atas peta memfasilitasi pembukaan kembali panel daftar secara instan dengan jumlah item terkini.
+2. **Single-Row Continuous Filter Strip:**
+   - Seluruh filter kontrol (Layer Makanan/Galang, Radius putar 1-10km, Halal, Urgensi < 2 jam, dan Kategori) disatukan dalam satu baris pil mengambang dengan scroll halus (`scrollbar-none`), memaksimalkan ruang vertikal kanvas peta.
+3. **Map Control Floating Dock (Bottom-Right):**
+   - Dock vertikal modern yang memuat toggle Citra Satelit/Peta Jalan, GPS recenter dengan ikon target bidik lokasi, dan reset titik awal pencarian.
+4. **Indikator Lokasi Mengambang (Bottom-Left):**
+   - Pil kapsul minimalis semi-transparan (`bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full`) yang menampilkan nama pusat wilayah pencarian aktif secara elegan.
+
+### 10.4 Spesifikasi Navigasi Bar Utama (Minimalist Segmented Dock & Brand Mark)
+1. **Desain Segmented Dock Tertutup:**
+   - Menu navigasi desktop dikemas dalam satu dok kapsul mengambang (`rounded-full bg-gray-100/80 border border-gray-200/60 backdrop-blur-xs p-1 gap-0.5`).
+   - Mencegah *layout clipping* atau ketidakseimbangan visual pada tab aktif. Status aktif dirender sebagai pil putih berbayang halus (`bg-white text-[#1E7A4C] shadow-2xs font-bold`) dengan ikon SVG bertema.
+2. **Brand Vector Mark:**
+   - Menggantikan kotak inisial polos dengan *squircle badge* gradien zamrud (`rounded-2xl bg-linear-to-br from-[#1E7A4C] to-[#14573A]`) yang memuat siluet vektor geometris pin organik dan mangkuk penyelamat pangan.
+3. **Pencarian Autocomplete Bersih (Anti-Emoji):**
+   - Panel saran lokasi geocoding menggunakan lencana ikon pin SVG emerald, pemisah halus, tipografi berjenjang, dan *hover slide* tanpa emoji apa pun.
+
 ---
 *Dokumen ini merupakan spesifikasi antarmuka definitif untuk Locabite v2.0. Setiap penambahan fitur atau modifikasi tampilan wajib merujuk pada prinsip, token desain, dan aturan aksesibilitas yang telah ditetapkan di atas.*

@@ -2,40 +2,41 @@
 
 <div x-data="homeMap()" x-init="init()" class="relative flex-1 flex flex-col lg:flex-row h-[calc(100vh-4rem)] overflow-hidden">
 
-    <!-- Top Floating Filter & Search Bar on Map (Mobile & Desktop) -->
+    <!-- Top Floating Filter & Search Bar on Map (Google Maps / Apple Maps Class) -->
     <div class="absolute top-3 inset-x-3 md:inset-x-6 z-20 pointer-events-none flex flex-col gap-2 max-w-2xl mx-auto">
         <!-- Search bar with Autocomplete Dropdown -->
         <div class="pointer-events-auto relative">
-            <div class="bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_12px_32px_-6px_rgba(22,37,29,0.14),0_2px_8px_rgba(22,37,29,0.04)] border border-[#D5E0D9]/80 p-2 flex items-center gap-2 transition-all focus-within:border-[#1E7A4C]/60 focus-within:shadow-[0_16px_40px_-6px_rgba(30,122,76,0.20)]">
+            <div class="bg-white/95 backdrop-blur-2xl rounded-2xl shadow-[0_12px_36px_-6px_rgba(22,37,29,0.14),0_2px_8px_rgba(22,37,29,0.04)] border border-[#D5E0D9]/80 p-1.5 sm:p-2 flex items-center gap-2 transition-all focus-within:border-[#1E7A4C]/60 focus-within:shadow-[0_16px_40px_-6px_rgba(30,122,76,0.20)]">
                 <div class="relative flex-1">
                     <input type="text"
                            x-model="searchQuery"
                            @input.debounce.300ms="fetchSuggestions()"
                            @focus="if (suggestions.length > 0) showSuggestions = true"
                            @keydown.enter.prevent="selectFirstOrSearch()"
-                           placeholder="Cari jalan, kelurahan, kecamatan (misal: Alun-alun, Sukajadi, Tembalang)..."
+                           placeholder="Cari jalan, kelurahan, atau kecamatan (misal: Tembalang, Alun-alun)..."
                            class="w-full pl-9 pr-8 py-2 text-sm rounded-xl border border-transparent text-[#16251D] placeholder:text-[#4E6157]/60 focus:outline-none bg-gray-50/70 focus:bg-white focus:border-[#74877B] transition-all">
                     <svg class="w-4 h-4 text-[#4E6157] absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
                     <!-- Clear search button -->
-                    <button type="button" x-show="searchQuery" @click="clearSearch()" class="absolute right-2.5 top-2 text-gray-400 hover:text-gray-600 text-sm font-bold w-5 h-5 rounded-full hover:bg-gray-100 flex items-center justify-center">
-                        &times;
+                    <button type="button" x-show="searchQuery" @click="clearSearch()" class="absolute right-2.5 top-2 text-gray-400 hover:text-gray-700 w-6 h-6 rounded-full hover:bg-gray-100 flex items-center justify-center transition">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
                     </button>
                 </div>
 
                 <button @click="selectFirstOrSearch()" class="btn-primary text-xs px-3.5 py-2 shrink-0 shadow-xs active:scale-95 transition-transform">
                     Cari
                 </button>
-                <button @click="useCurrentLocation()" :disabled="locating" title="Gunakan lokasi GPS saya saat ini" class="p-2 text-[#2A6F97] hover:bg-blue-50/80 rounded-xl border border-[#74877B]/30 shrink-0 transition active:scale-95 bg-white">
-                    <svg :class="locating ? 'animate-spin text-[#1E7A4C]' : ''" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                <button @click="useCurrentLocation()" :disabled="locating" title="Gunakan lokasi GPS saya saat ini" class="p-2 text-[#1E7A4C] hover:bg-emerald-50 rounded-xl border border-[#D5E0D9] shrink-0 transition active:scale-95 bg-white">
+                    <svg :class="locating ? 'animate-spin' : ''" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v2m0 16v2m10-10h-2M4 12H2m15.071-7.071l-1.414 1.414M8.343 15.657l-1.414 1.414m12.142 0l-1.414-1.414M8.343 8.343L6.929 6.929M12 8a4 4 0 100 8 4 4 0 000-8z" />
                     </svg>
                 </button>
             </div>
 
-            <!-- Autocomplete Results Dropdown (Top-tier World-Class UI) -->
+            <!-- Autocomplete Results Dropdown -->
             <div x-show="showSuggestions && suggestions.length > 0"
                  x-transition:enter="transition ease-out duration-200"
                  x-transition:enter-start="opacity-0 translate-y-2 scale-98"
@@ -58,7 +59,6 @@
                     <div @click="selectSuggestion(s)"
                          class="group relative p-2.5 rounded-2xl hover:bg-linear-to-r hover:from-emerald-50/90 hover:via-teal-50/40 hover:to-transparent cursor-pointer transition-all duration-200 flex items-center justify-between gap-3 border border-transparent hover:border-emerald-200/60 hover:shadow-xs active:scale-[0.99]">
                         <div class="flex items-center gap-3 min-w-0">
-                            <!-- Icon Container with sleek gradient -->
                             <div class="w-10 h-10 rounded-2xl bg-linear-to-br from-emerald-100/80 to-teal-50 text-[#1E7A4C] group-hover:from-[#1E7A4C] group-hover:to-[#14573A] group-hover:text-white flex items-center justify-center shrink-0 transition-all duration-200 shadow-xs group-hover:scale-105">
                                 <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
@@ -66,7 +66,6 @@
                                 </svg>
                             </div>
 
-                            <!-- Title, Type Pill & Context Subtitle -->
                             <div class="min-w-0 flex-1">
                                 <div class="flex items-center gap-2">
                                     <h4 class="font-display font-bold text-sm text-[#16251D] group-hover:text-[#1E7A4C] truncate transition-colors" x-text="s.title"></h4>
@@ -76,7 +75,6 @@
                             </div>
                         </div>
 
-                        <!-- Subtle Animated Action Chevron -->
                         <div class="opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all duration-200 text-[#1E7A4C] shrink-0 pr-1 flex items-center gap-1">
                             <span class="text-[11px] font-bold hidden sm:inline">Pilih</span>
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -98,86 +96,94 @@
             </div>
         </div>
 
-        <!-- Filter Controls: Layer Toggle & Radius & Halal & Urgensi & Basemap -->
-        <div class="pointer-events-auto flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-            <!-- Layer Toggle: Makanan | Galang -->
-            <div class="inline-flex rounded-xl bg-white/95 backdrop-blur-md p-1 shadow-card border border-[#D5E0D9] shrink-0">
+        <!-- Sleek Single-Row Aesthetic Filter Strip (Google Maps & Apple Maps Class) -->
+        <div class="pointer-events-auto flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+            <!-- Layer Segmented Switcher: Makanan | Galang -->
+            <div class="inline-flex rounded-full bg-white/95 backdrop-blur-md p-1 shadow-sm border border-[#D5E0D9] shrink-0">
                 <button @click="layer = 'food'; loadData()"
-                        :class="layer === 'food' ? 'bg-[#1E7A4C] text-white shadow-xs font-semibold' : 'text-[#4E6157] hover:text-[#16251D]'"
-                        class="px-3 py-1 text-xs rounded-lg transition">
+                        :class="layer === 'food' ? 'bg-[#1E7A4C] text-white shadow-2xs font-bold' : 'text-[#4E6157] hover:text-[#16251D] font-medium'"
+                        class="px-3 py-1 text-xs rounded-full transition">
                     Makanan
                 </button>
                 <button @click="layer = 'campaigns'; loadData()"
-                        :class="layer === 'campaigns' ? 'bg-[#2A6F97] text-white shadow-xs font-semibold' : 'text-[#4E6157] hover:text-[#16251D]'"
-                        class="px-3 py-1 text-xs rounded-lg transition">
+                        :class="layer === 'campaigns' ? 'bg-[#2A6F97] text-white shadow-2xs font-bold' : 'text-[#4E6157] hover:text-[#16251D] font-medium'"
+                        class="px-3 py-1 text-xs rounded-full transition">
                     Galang
                 </button>
             </div>
 
-            <!-- Radius chips (visible when layer is food) -->
+            <!-- Radius Quick Filter (Cycle Pill) -->
             <template x-if="layer === 'food'">
-                <div class="flex items-center gap-1 bg-white/95 backdrop-blur-md p-1 rounded-xl shadow-card border border-[#D5E0D9] shrink-0">
-                    <template x-for="r in [1, 3, 5, 10]" :key="r">
-                        <button @click="radius = r; loadData()"
-                                :class="radius === r ? 'bg-[#1E7A4C] text-white font-semibold' : 'text-[#4E6157] hover:bg-gray-100'"
-                                class="px-2.5 py-1 text-xs rounded-lg transition"
-                                x-text="`${r} km`">
-                        </button>
-                    </template>
-                </div>
+                <button @click="cycleRadius()"
+                        class="px-3 py-1.5 text-xs font-semibold rounded-full bg-white/95 backdrop-blur-md text-[#16251D] border border-[#D5E0D9] shadow-sm hover:border-[#1E7A4C] shrink-0 transition flex items-center gap-1.5 active:scale-95"
+                        title="Klik untuk ubah radius pencarian">
+                    <svg class="w-3.5 h-3.5 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="9" stroke-width="2"/>
+                        <circle cx="12" cy="12" r="3" stroke-width="2"/>
+                    </svg>
+                    <span x-text="`Radius ${radius} km`"></span>
+                </button>
             </template>
 
             <!-- Halal filter toggle -->
             <button @click="halalOnly = !halalOnly; loadData()"
-                    :class="halalOnly ? 'bg-[#1E7A4C] text-white font-semibold border-transparent' : 'bg-white/95 text-[#4E6157] border-[#D5E0D9]'"
-                    class="px-2.5 py-1.5 text-xs rounded-xl shadow-card border shrink-0 transition flex items-center gap-1">
+                    :class="halalOnly ? 'bg-emerald-700 text-white font-bold border-transparent shadow-xs' : 'bg-white/95 text-[#4E6157] border-[#D5E0D9] shadow-sm'"
+                    class="px-3 py-1.5 text-xs rounded-full border shrink-0 transition flex items-center gap-1.5 font-medium active:scale-95">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
                 <span>Halal</span>
             </button>
 
             <!-- Urgent filter (< 2 jam) -->
             <button @click="urgentOnly = !urgentOnly; filterListings()"
-                    :class="urgentOnly ? 'bg-[#C93A2E] text-white font-semibold border-transparent' : 'bg-white/95 text-[#4E6157] border-[#D5E0D9]'"
-                    class="px-2.5 py-1.5 text-xs rounded-xl shadow-card border shrink-0 transition flex items-center gap-1.5">
+                    :class="urgentOnly ? 'bg-[#C93A2E] text-white font-bold border-transparent shadow-xs' : 'bg-white/95 text-[#4E6157] border-[#D5E0D9] shadow-sm'"
+                    class="px-3 py-1.5 text-xs rounded-full border shrink-0 transition flex items-center gap-1.5 font-medium active:scale-95">
                 <svg class="w-3.5 h-3.5 text-current shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <span>&lt; 2 Jam</span>
             </button>
 
-            <!-- Basemap toggle (OSM vs Satelit) -->
-            <button @click="toggleBasemap()"
-                    :class="basemap === 'satellite' ? 'bg-[#16251D] text-white font-semibold' : 'bg-white/95 text-[#4E6157] border-[#D5E0D9]'"
-                    class="px-2.5 py-1.5 text-xs rounded-xl shadow-card border shrink-0 transition flex items-center gap-1.5">
-                <svg class="w-3.5 h-3.5 text-current shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                </svg>
-                <span x-text="basemap === 'satellite' ? 'Satelit' : 'Peta Jalan'"></span>
-            </button>
-        </div>
+            <!-- Divider -->
+            <div class="h-5 w-px bg-gray-300/60 shrink-0 mx-0.5"></div>
 
-        <!-- Category Horizontal Filter Chips (Food mode) -->
-        <template x-if="layer === 'food'">
-            <div class="pointer-events-auto flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-                <button @click="selectedCategory = ''; filterListings()"
-                        :class="selectedCategory === '' ? 'bg-[#1E7A4C] text-white font-semibold' : 'bg-white/95 text-[#4E6157] hover:bg-gray-50 border border-[#D5E0D9]'"
-                        class="px-3 py-1 text-xs rounded-full shadow-xs shrink-0 transition">
-                    Semua Kategori
-                </button>
-                @foreach($categories as $cat)
-                    <button @click="selectedCategory = '{{ $cat->name }}'; filterListings()"
-                            :class="selectedCategory === '{{ $cat->name }}' ? 'bg-[#1E7A4C] text-white font-semibold' : 'bg-white/95 text-[#4E6157] hover:bg-gray-50 border border-[#D5E0D9]'"
-                            class="px-3 py-1 text-xs rounded-full shadow-xs shrink-0 transition">
-                        {{ $cat->name }}
+            <!-- Category Chips in the same continuous sleek scrollable strip -->
+            <template x-if="layer === 'food'">
+                <div class="flex items-center gap-1.5 shrink-0">
+                    <button @click="selectedCategory = ''; filterListings()"
+                            :class="selectedCategory === '' ? 'bg-[#1E7A4C] text-white font-bold shadow-2xs' : 'bg-white/95 text-[#4E6157] hover:bg-gray-50 border border-[#D5E0D9] shadow-sm'"
+                            class="px-3 py-1.5 text-xs rounded-full shrink-0 transition active:scale-95">
+                        Semua Kategori
                     </button>
-                @endforeach
-            </div>
-        </template>
+                    @foreach($categories as $cat)
+                        <button @click="selectedCategory = '{{ $cat->name }}'; filterListings()"
+                                :class="selectedCategory === '{{ $cat->name }}' ? 'bg-[#1E7A4C] text-white font-bold shadow-2xs' : 'bg-white/95 text-[#4E6157] hover:bg-gray-50 border border-[#D5E0D9] shadow-sm'"
+                                class="px-3 py-1.5 text-xs rounded-full shrink-0 transition active:scale-95">
+                            {{ $cat->name }}
+                        </button>
+                    @endforeach
+                </div>
+            </template>
+        </div>
     </div>
 
     <!-- SIDEBAR LIST (Desktop) / BOTTOM SHEET (Mobile) -->
-    <div :class="sheetExpanded ? 'h-[75vh]' : 'h-48 lg:h-full'"
-         class="w-full lg:w-[420px] bg-white border-t lg:border-t-0 lg:border-r border-[#D5E0D9] flex flex-col order-2 lg:order-1 transition-all duration-300 z-10 shrink-0">
+    <div :class="[
+            sheetExpanded ? 'h-[75vh]' : 'h-48 lg:h-full',
+            desktopSidebarOpen ? 'lg:w-[420px]' : 'lg:w-0 lg:overflow-hidden lg:border-r-0'
+         ]"
+         class="relative w-full bg-white border-t lg:border-t-0 lg:border-r border-[#D5E0D9] flex flex-col order-2 lg:order-1 transition-all duration-300 z-10 shrink-0">
+
+        <!-- Desktop Collapse / Expand Handle Button (Google Maps Style) -->
+        <button type="button"
+                @click="desktopSidebarOpen = !desktopSidebarOpen"
+                class="hidden lg:flex absolute -right-3.5 top-1/2 -translate-y-1/2 z-30 w-7 h-12 bg-white rounded-r-xl border border-l-0 border-[#D5E0D9] shadow-md items-center justify-center text-[#4E6157] hover:text-[#16251D] hover:bg-gray-50 transition active:scale-95"
+                :title="desktopSidebarOpen ? 'Ciutkan panel daftar' : 'Buka panel daftar'">
+            <svg :class="desktopSidebarOpen ? '' : 'rotate-180'" class="w-3.5 h-3.5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+            </svg>
+        </button>
 
         <!-- Mobile Pull Handle / Header -->
         <div class="lg:hidden p-2 flex flex-col items-center border-b border-[#D5E0D9] cursor-pointer"
@@ -190,14 +196,14 @@
         </div>
 
         <!-- Desktop Sidebar Header -->
-        <div class="hidden lg:flex items-center justify-between px-5 py-4 border-b border-[#D5E0D9]">
+        <div class="hidden lg:flex items-center justify-between px-5 py-3.5 border-b border-[#D5E0D9] bg-gray-50/60">
             <div>
-                <h1 class="font-display font-bold text-lg text-[#16251D]" x-text="layer === 'food' ? 'Makanan Tersedia' : 'Galang Makanan'"></h1>
-                <p class="text-xs text-[#4E6157]" x-text="`Pusat: ${currentLocationLabel}`"></p>
+                <h1 class="font-display font-bold text-base text-[#16251D]" x-text="layer === 'food' ? 'Penyelamat Makanan' : 'Galang Makanan'"></h1>
+                <p class="text-xs text-[#4E6157] truncate max-w-[240px]" x-text="`Pusat: ${currentLocationLabel}`"></p>
             </div>
             <div class="flex items-center gap-2">
-                <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-[#1E7A4C]/10 text-[#14573A]"
-                      x-text="`${filteredItems.length} item`"></span>
+                <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#14573A] border border-emerald-200/80"
+                      x-text="`${filteredItems.length} opsi`"></span>
             </div>
         </div>
 
@@ -526,11 +532,18 @@
                     
                     <button type="button"
                             @click="copyAddress(activePlace?.pickup_address)"
-                            class="inline-flex items-center gap-1 text-[11px] font-bold text-[#1E7A4C] hover:text-[#14573A] transition pt-1">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-                        </svg>
-                        <span>Salin Alamat Lengkap</span>
+                            class="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#1E7A4C] hover:text-[#14573A] transition pt-1">
+                        <template x-if="!copiedAddress">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                            </svg>
+                        </template>
+                        <template x-if="copiedAddress">
+                            <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                            </svg>
+                        </template>
+                        <span x-text="copiedAddress ? 'Alamat Berhasil Disalin!' : 'Salin Alamat Lengkap'"></span>
                     </button>
                 </div>
 
@@ -586,6 +599,16 @@
             </div>
         </div>
 
+        <!-- Floating Re-open Sidebar Button (When sidebar is collapsed on desktop) -->
+        <button x-show="!desktopSidebarOpen"
+                @click="desktopSidebarOpen = true"
+                class="hidden lg:flex items-center gap-2 absolute top-4 left-4 z-20 bg-white/95 backdrop-blur-md px-3.5 py-2.5 rounded-2xl shadow-card border border-[#D5E0D9] text-xs font-bold text-[#16251D] hover:border-[#1E7A4C] hover:text-[#1E7A4C] transition active:scale-95">
+            <svg class="w-4 h-4 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+            </svg>
+            <span>Buka Panel (<span x-text="filteredItems.length"></span>)</span>
+        </button>
+
         <!-- Floating Focus Banner (from Catalog hand-off - SDD FR-46) -->
         <template x-if="focusId && items.some(i => i.id == focusId)">
             <div class="absolute top-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-md z-20 pointer-events-auto bg-white/95 backdrop-blur-md p-3.5 rounded-2xl shadow-card border border-[#1E7A4C]/50 flex items-center justify-between gap-3 animate-fade-in">
@@ -612,29 +635,46 @@
             </div>
         </template>
 
-        <!-- Floating Quick Recenter & Info Indicator on Map -->
-        <div class="absolute bottom-4 left-4 z-10 pointer-events-auto bg-white/95 backdrop-blur-md px-3 py-2 rounded-2xl shadow-card border border-[#D5E0D9] flex items-center gap-2.5 text-xs text-[#16251D]">
+        <!-- Floating Location Tag (Bottom-Left) -->
+        <div class="absolute bottom-4 left-4 z-10 pointer-events-auto bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full shadow-card border border-[#D5E0D9] flex items-center gap-2 text-xs text-[#16251D]">
             <span class="w-2.5 h-2.5 rounded-full bg-[#1E7A4C] animate-ping"></span>
-            <div>
-                <p class="font-bold text-[11px] leading-tight">Klik peta di mana saja untuk pindah titik</p>
-                <p class="text-[10px] text-[#4E6157]" x-text="`Pusat: ${currentLocationLabel} (r=${radius}km)`"></p>
-            </div>
-            <button @click="resetToDefaultCenter()" title="Kembali ke titik awal" class="p-1 hover:bg-gray-100 rounded-lg text-gray-500">
-                <svg class="w-4 h-4 text-[#4E6157]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <span class="font-bold text-[11px]" x-text="currentLocationLabel"></span>
+            <span class="text-[10px] text-[#4E6157] font-medium" x-text="`• Radius ${radius}km`"></span>
+        </div>
+
+        <!-- Floating Map Control Dock (Bottom-Right - Google Maps Style) -->
+        <div class="absolute bottom-20 right-4 z-10 pointer-events-auto flex flex-col items-center gap-2">
+            <!-- Basemap Switcher (Satellite vs Street) -->
+            <button type="button"
+                    @click="toggleBasemap()"
+                    class="w-10 h-10 rounded-2xl bg-white/95 backdrop-blur-md hover:bg-white text-[#16251D] border border-[#D5E0D9] shadow-card flex items-center justify-center transition active:scale-95 group"
+                    :title="basemap === 'satellite' ? 'Ganti ke Peta Jalan' : 'Ganti ke Citra Satelit'">
+                <svg class="w-5 h-5 text-[#4E6157] group-hover:text-[#1E7A4C] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                </svg>
+            </button>
+
+            <!-- GPS Recenter Button -->
+            <button type="button"
+                    @click="useCurrentLocation()"
+                    :disabled="locating"
+                    class="w-10 h-10 rounded-2xl bg-white/95 backdrop-blur-md hover:bg-white text-[#1E7A4C] border border-[#D5E0D9] shadow-card flex items-center justify-center transition active:scale-95"
+                    title="Pusatkan ke lokasi saya (GPS)">
+                <svg :class="locating ? 'animate-spin' : ''" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v2m0 16v2m10-10h-2M4 12H2m15.071-7.071l-1.414 1.414M8.343 15.657l-1.414 1.414m12.142 0l-1.414-1.414M8.343 8.343L6.929 6.929M12 8a4 4 0 100 8 4 4 0 000-8z" />
+                </svg>
+            </button>
+
+            <!-- Reset to Default Center Button -->
+            <button type="button"
+                    @click="resetToDefaultCenter()"
+                    class="w-10 h-10 rounded-2xl bg-white/95 backdrop-blur-md hover:bg-white text-[#4E6157] hover:text-[#16251D] border border-[#D5E0D9] shadow-card flex items-center justify-center transition active:scale-95"
+                    title="Kembali ke titik awal pencarian">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                 </svg>
             </button>
         </div>
-
-        <!-- Floating GPS Action Button -->
-        <button @click="useCurrentLocation()"
-                :disabled="locating"
-                title="Pusatkan ke lokasi saya saat ini (GPS)"
-                class="absolute bottom-24 right-3 z-10 pointer-events-auto w-11 h-11 bg-white hover:bg-gray-50 text-[#1E7A4C] rounded-2xl shadow-card border border-[#D5E0D9] flex items-center justify-center transition active:scale-95">
-            <svg :class="locating ? 'animate-spin text-[#1E7A4C]' : ''" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-        </button>
 
         <!-- Aesthetic Toast Notification -->
         <div x-show="toastMessage"
@@ -685,6 +725,8 @@ document.addEventListener('alpine:init', () => {
         locating: false,
         routingLoading: false,
         sheetExpanded: false,
+        desktopSidebarOpen: true,
+        copiedAddress: false,
         items: [],
         filteredItems: [],
         selectedId: null,
@@ -876,11 +918,11 @@ document.addEventListener('alpine:init', () => {
                 const shortTime = this.getTimeShort(l.remaining_minutes);
 
                 const markerHtml = `
-                    <div style="display:flex; flex-direction:column; align-items:center; cursor:pointer;">
-                        <div style="width:28px; height:28px; border-radius:50% 50% 50% 0; transform:rotate(-45deg); background:${color}; border:2px solid white; box-shadow:0 2px 6px rgba(0,0,0,0.3); display:grid; place-items:center;">
-                            <span style="transform:rotate(45deg); color:white; font-size:11px; font-weight:bold;">${l.portions_left}</span>
+                    <div style="display:flex; flex-direction:column; align-items:center; cursor:pointer; filter:drop-shadow(0 3px 6px rgba(0,0,0,0.22)); transition:transform 0.15s ease;">
+                        <div style="width:30px; height:30px; border-radius:50% 50% 50% 0; transform:rotate(-45deg); background:${color}; border:2.5px solid white; display:grid; place-items:center;">
+                            <span style="transform:rotate(45deg); color:white; font-size:11px; font-weight:800; font-family:'Atkinson Hyperlegible',sans-serif;">${l.portions_left}</span>
                         </div>
-                        <div style="background:#16251D; color:white; font-size:10px; font-weight:bold; padding:1px 5px; border-radius:99px; margin-top:2px; box-shadow:0 1px 3px rgba(0,0,0,0.2);">
+                        <div style="background:#16251D; color:white; font-size:9.5px; font-weight:700; padding:1px 6px; border-radius:999px; margin-top:2px; letter-spacing:0.02em; border:1px solid rgba(255,255,255,0.25);">
                             ${shortTime}
                         </div>
                     </div>
@@ -1166,11 +1208,21 @@ document.addEventListener('alpine:init', () => {
             }
         },
 
+        cycleRadius() {
+            const steps = [1, 3, 5, 10];
+            const nextIdx = (steps.indexOf(this.radius) + 1) % steps.length;
+            this.radius = steps[nextIdx];
+            this.loadData();
+        },
+
         async copyAddress(address) {
             if (!address) return;
+            this.copiedAddress = true;
+            setTimeout(() => { this.copiedAddress = false; }, 2500);
+
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 await navigator.clipboard.writeText(address);
-                this.showToast("Alamat lengkap berhasil disalin!");
+                this.showToast("Alamat lengkap berhasil disalin ke papan klip!");
             } else {
                 prompt("Salin alamat berikut:", address);
             }
