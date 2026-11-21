@@ -6,28 +6,28 @@
     <div class="absolute top-3 inset-x-3 md:inset-x-6 z-20 pointer-events-none flex flex-col gap-2 max-w-2xl mx-auto">
         <!-- Search bar with Autocomplete Dropdown -->
         <div class="pointer-events-auto relative">
-            <div class="bg-white/95 backdrop-blur-md rounded-2xl shadow-card border border-[#D5E0D9] p-2 flex items-center gap-2">
+            <div class="bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_12px_32px_-6px_rgba(22,37,29,0.14),0_2px_8px_rgba(22,37,29,0.04)] border border-[#D5E0D9]/80 p-2 flex items-center gap-2 transition-all focus-within:border-[#1E7A4C]/60 focus-within:shadow-[0_16px_40px_-6px_rgba(30,122,76,0.20)]">
                 <div class="relative flex-1">
                     <input type="text"
                            x-model="searchQuery"
                            @input.debounce.300ms="fetchSuggestions()"
                            @focus="if (suggestions.length > 0) showSuggestions = true"
                            @keydown.enter.prevent="selectFirstOrSearch()"
-                           placeholder="Cari jalan, kelurahan, kecamatan (misal: Sukajadi, Tembalang)..."
-                           class="w-full pl-9 pr-8 py-2 text-sm rounded-xl border border-[#74877B] text-[#16251D] focus:outline-none focus:ring-2 focus:ring-[#2A6F97] bg-white">
-                    <svg class="w-4 h-4 text-[#4E6157] absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                           placeholder="Cari jalan, kelurahan, kecamatan (misal: Alun-alun, Sukajadi, Tembalang)..."
+                           class="w-full pl-9 pr-8 py-2 text-sm rounded-xl border border-transparent text-[#16251D] placeholder:text-[#4E6157]/60 focus:outline-none bg-gray-50/70 focus:bg-white focus:border-[#74877B] transition-all">
+                    <svg class="w-4 h-4 text-[#4E6157] absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
                     <!-- Clear search button -->
-                    <button type="button" x-show="searchQuery" @click="clearSearch()" class="absolute right-2.5 top-2.5 text-gray-400 hover:text-gray-600 text-sm font-bold">
+                    <button type="button" x-show="searchQuery" @click="clearSearch()" class="absolute right-2.5 top-2 text-gray-400 hover:text-gray-600 text-sm font-bold w-5 h-5 rounded-full hover:bg-gray-100 flex items-center justify-center">
                         &times;
                     </button>
                 </div>
 
-                <button @click="selectFirstOrSearch()" class="btn-primary text-xs px-3 py-2 shrink-0">
+                <button @click="selectFirstOrSearch()" class="btn-primary text-xs px-3.5 py-2 shrink-0 shadow-xs active:scale-95 transition-transform">
                     Cari
                 </button>
-                <button @click="useCurrentLocation()" :disabled="locating" title="Gunakan lokasi GPS saya saat ini" class="p-2 text-[#2A6F97] hover:bg-blue-50 rounded-xl border border-[#74877B]/40 shrink-0 transition">
+                <button @click="useCurrentLocation()" :disabled="locating" title="Gunakan lokasi GPS saya saat ini" class="p-2 text-[#2A6F97] hover:bg-blue-50/80 rounded-xl border border-[#74877B]/30 shrink-0 transition active:scale-95 bg-white">
                     <svg :class="locating ? 'animate-spin text-[#1E7A4C]' : ''" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -35,27 +35,63 @@
                 </button>
             </div>
 
-            <!-- Autocomplete Results Dropdown (Google Maps style) -->
+            <!-- Autocomplete Results Dropdown (Top-tier World-Class UI) -->
             <div x-show="showSuggestions && suggestions.length > 0"
-                 x-transition
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 translate-y-2 scale-98"
+                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                 x-transition:leave="transition ease-in duration-150"
+                 x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                 x-transition:leave-end="opacity-0 translate-y-2 scale-98"
                  @click.away="showSuggestions = false"
-                 class="absolute top-full left-0 right-0 mt-1.5 bg-white rounded-2xl shadow-2xl border border-[#D5E0D9] overflow-hidden z-50 divide-y divide-gray-100 max-h-72 overflow-y-auto">
-                <div class="px-3 py-1.5 bg-gray-50 text-[11px] font-bold text-[#4E6157] flex items-center justify-between">
-                    <span>Saran Lokasi</span>
-                    <span x-text="`${suggestions.length} ditemukan`"></span>
+                 class="absolute top-full left-0 right-0 mt-2 bg-white/95 backdrop-blur-2xl rounded-3xl shadow-[0_24px_54px_-8px_rgba(22,37,29,0.22),0_8px_18px_rgba(22,37,29,0.08)] border border-[#D5E0D9]/70 overflow-hidden z-50 p-2 space-y-1 max-h-[380px] overflow-y-auto">
+                
+                <div class="px-3 py-2 flex items-center justify-between border-b border-gray-100/80 mb-1">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-[#1E7A4C] animate-pulse"></span>
+                        <span class="text-[11px] font-bold text-[#16251D] tracking-wide uppercase">Saran Lokasi Terpilih</span>
+                    </div>
+                    <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-[#1E7A4C] border border-emerald-100" x-text="`${suggestions.length} opsi tersedia`"></span>
                 </div>
+
                 <template x-for="(s, idx) in suggestions" :key="s.id || idx">
                     <div @click="selectSuggestion(s)"
-                         class="p-3 hover:bg-[#F2F7F4] cursor-pointer flex items-start gap-3 transition text-left group">
-                        <div class="w-7 h-7 rounded-xl bg-gray-100 group-hover:bg-[#1E7A4C]/10 text-[#1E7A4C] flex items-center justify-center shrink-0 mt-0.5">
-                            <span class="text-sm">📍</span>
+                         class="group relative p-2.5 rounded-2xl hover:bg-linear-to-r hover:from-emerald-50/90 hover:via-teal-50/40 hover:to-transparent cursor-pointer transition-all duration-200 flex items-center justify-between gap-3 border border-transparent hover:border-emerald-200/60 hover:shadow-xs active:scale-[0.99]">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <!-- Icon Container with sleek gradient -->
+                            <div class="w-10 h-10 rounded-2xl bg-linear-to-br from-emerald-100/80 to-teal-50 text-[#1E7A4C] group-hover:from-[#1E7A4C] group-hover:to-[#14573A] group-hover:text-white flex items-center justify-center shrink-0 transition-all duration-200 shadow-xs group-hover:scale-105">
+                                <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                            </div>
+
+                            <!-- Title, Type Pill & Context Subtitle -->
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center gap-2">
+                                    <h4 class="font-display font-bold text-sm text-[#16251D] group-hover:text-[#1E7A4C] truncate transition-colors" x-text="s.title"></h4>
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-gray-100 text-[#4E6157] group-hover:bg-emerald-100 group-hover:text-[#14573A] transition-colors shrink-0" x-text="s.type_label || 'Wilayah'"></span>
+                                </div>
+                                <p class="text-xs text-[#4E6157] group-hover:text-[#16251D] truncate transition-colors mt-0.5" x-text="s.subtitle || s.display_name"></p>
+                            </div>
                         </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="font-bold text-xs text-[#16251D] group-hover:text-[#1E7A4C] truncate" x-text="s.title"></p>
-                            <p class="text-[11px] text-[#4E6157] truncate" x-text="s.subtitle || s.display_name"></p>
+
+                        <!-- Subtle Animated Action Chevron -->
+                        <div class="opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all duration-200 text-[#1E7A4C] shrink-0 pr-1 flex items-center gap-1">
+                            <span class="text-[11px] font-bold hidden sm:inline">Pilih</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
+                            </svg>
                         </div>
                     </div>
                 </template>
+
+                <div class="px-3 py-2 bg-gray-50/70 rounded-2xl border-t border-gray-100/80 mt-1 flex items-center justify-between text-[11px] text-[#4E6157]">
+                    <span class="flex items-center gap-1">
+                        <span>💡</span> Ketuk untuk terbang ke lokasi & cari makanan
+                    </span>
+                    <span class="hidden sm:inline font-mono text-[10px] bg-white px-2 py-0.5 rounded-md border border-gray-200">ESC untuk tutup</span>
+                </div>
             </div>
         </div>
 
@@ -196,60 +232,71 @@
                 <template x-for="item in filteredItems" :key="item.id">
                     <div :id="`card-${item.id}`"
                          @click="focusMarker(item)"
-                         :class="selectedId === item.id ? 'ring-2 ring-[#2A6F97] bg-blue-50/30' : 'bg-white hover:border-[#1E7A4C]'"
-                         class="p-3.5 rounded-2xl border border-[#D5E0D9] shadow-xs cursor-pointer transition flex items-center justify-between gap-3">
+                         :class="[
+                            selectedId === item.id ? 'ring-2 ring-[#2A6F97] bg-blue-50/40 shadow-card border-[#2A6F97]' : 'bg-white hover:border-[#1E7A4C]/60 hover:shadow-card hover:-translate-y-0.5 border-[#D5E0D9]',
+                            item.remaining_minutes < 60 ? 'border-red-200/80 bg-linear-to-r from-red-50/30 to-white' : ''
+                         ]"
+                         class="p-4 rounded-3xl border shadow-xs cursor-pointer transition-all duration-200 flex items-center justify-between gap-3 group">
                         <!-- Left Info -->
                         <div class="flex-1 min-w-0">
-                            <div class="flex items-center gap-1.5 mb-1 flex-wrap">
-                                <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-gray-100 text-[#4E6157]" x-text="item.category_name"></span>
+                            <div class="flex items-center gap-1.5 mb-1.5 flex-wrap">
+                                <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-gray-100 text-[#4E6157] group-hover:bg-emerald-50 group-hover:text-[#1E7A4C] transition-colors" x-text="item.category_name"></span>
+                                <template x-if="item.remaining_minutes < 60">
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-700 animate-pulse flex items-center gap-1">
+                                        <span>🔥</span> Segera Ambil
+                                    </span>
+                                </template>
                                 <template x-if="item.halal_claim">
-                                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800">Halal</span>
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">Halal</span>
                                 </template>
                                 <template x-if="item.is_verified">
                                     <span class="badge-verified text-[10px]">Terverifikasi</span>
                                 </template>
                                 <template x-if="item.is_owner">
-                                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-800">Milik Anda</span>
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">Milik Anda</span>
                                 </template>
                             </div>
 
-                            <h3 class="font-display font-bold text-sm text-[#16251D] truncate" x-text="item.title"></h3>
-                            <p class="text-xs text-[#4E6157] truncate" x-text="item.user_name"></p>
+                            <h3 class="font-display font-bold text-sm text-[#16251D] group-hover:text-[#1E7A4C] transition-colors truncate" x-text="item.title"></h3>
+                            <p class="text-xs text-[#4E6157] truncate mt-0.5" x-text="item.user_name"></p>
 
-                            <div class="flex items-center gap-3 text-xs text-[#4E6157] mt-2">
-                                <span class="font-bold text-[#1E7A4C]" x-text="`${item.portions_left} porsi`"></span>
+                            <div class="flex items-center gap-2.5 text-xs text-[#4E6157] mt-2.5">
+                                <span class="font-bold text-[#1E7A4C] bg-emerald-50 px-2 py-0.5 rounded-md" x-text="`${item.portions_left} porsi`"></span>
                                 <span>•</span>
-                                <span x-text="`${item.distance_km} km`"></span>
+                                <span class="font-medium" x-text="`${item.distance_km} km`"></span>
                                 <span>•</span>
                                 <a :href="'https://www.google.com/maps/dir/?api=1&destination=' + item.lat + ',' + item.lng"
                                    target="_blank"
                                    @click.stop
-                                   class="text-[11px] font-bold text-[#2A6F97] hover:underline inline-flex items-center gap-0.5">
-                                    🧭 Rute
+                                   class="text-[11px] font-bold text-[#2A6F97] hover:underline inline-flex items-center gap-1 bg-blue-50/80 px-2 py-0.5 rounded-md">
+                                    <span>🧭</span> Rute
                                 </a>
                             </div>
 
                             <template x-if="item.campaign_title">
-                                <div class="mt-1.5 text-[11px] text-[#2A6F97] font-medium truncate">
-                                    <span>🎯 Bagian dari galang: </span>
-                                    <strong x-text="item.campaign_title"></strong>
+                                <div class="mt-2 text-[11px] text-[#2A6F97] font-medium truncate flex items-center gap-1">
+                                    <span>🏛️</span>
+                                    <span>Bagian dari galang: <strong x-text="item.campaign_title"></strong></span>
                                 </div>
                             </template>
                         </div>
 
-                        <!-- Right: Signature Time Ring Mini -->
+                        <!-- Right: Signature Time Ring Mini with Glass Shadow -->
                         <div class="shrink-0 flex flex-col items-center">
-                            <div class="w-12 h-12">
-                                <svg class="w-full h-full -rotate-90" viewBox="0 0 36 36">
-                                    <path class="text-gray-200" stroke-width="3" stroke="currentColor" fill="none"
+                            <div class="w-14 h-14 relative p-0.5">
+                                <svg class="w-full h-full -rotate-90 drop-shadow-xs" viewBox="0 0 36 36">
+                                    <path class="text-gray-100" stroke-width="3" stroke="currentColor" fill="none"
                                           d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                                    <path :stroke="getTimeColor(item.remaining_minutes)" stroke-width="3" stroke-linecap="round" fill="none"
+                                    <path :stroke="getTimeColor(item.remaining_minutes)" stroke-width="3.2" stroke-linecap="round" fill="none"
                                           :stroke-dasharray="`${Math.min(100, Math.max(0, (item.remaining_minutes / (item.total_minutes || 240)) * 100))}, 100`"
                                           d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
                                 </svg>
+                                <span class="absolute inset-0 flex items-center justify-center font-display font-bold text-xs text-[#16251D]"
+                                      x-text="getTimeShort(item.remaining_minutes)"></span>
                             </div>
-                            <span class="text-[10px] font-bold mt-1" :style="`color: ${getTimeColor(item.remaining_minutes)}`"
-                                  x-text="getTimeShort(item.remaining_minutes)"></span>
+                            <span class="text-[9px] font-bold uppercase tracking-wider mt-0.5"
+                                  :style="`color: ${getTimeColor(item.remaining_minutes)}`"
+                                  x-text="item.remaining_minutes < 60 ? 'Kritis' : 'Sisa waktu'"></span>
                         </div>
                     </div>
                 </template>

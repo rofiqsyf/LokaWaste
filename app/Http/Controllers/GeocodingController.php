@@ -49,6 +49,16 @@ class GeocodingController extends Controller
                         $title = $parts[0] ?? $query;
                         $subtitle = count($parts) > 1 ? implode(', ', array_slice($parts, 1, 4)) : '';
 
+                        $rawType = $item['addresstype'] ?? $item['type'] ?? 'place';
+                        $typeLabel = match ($rawType) {
+                            'city', 'administrative' => 'Kota/Kabupaten',
+                            'district', 'suburb' => 'Kecamatan',
+                            'village', 'quarter', 'neighbourhood' => 'Kelurahan/Desa',
+                            'road', 'residential', 'pedestrian' => 'Jalan/Kawasan',
+                            'amenity', 'tourism', 'leisure', 'park' => 'Fasilitas/Alun-alun',
+                            default => 'Wilayah'
+                        };
+
                         $suggestions[] = [
                             'id' => $item['place_id'] ?? Str::random(8),
                             'title' => $title,
@@ -56,7 +66,8 @@ class GeocodingController extends Controller
                             'display_name' => $displayName,
                             'lat' => (float) $item['lat'],
                             'lng' => (float) $item['lon'],
-                            'type' => $item['type'] ?? 'place',
+                            'type' => $rawType,
+                            'type_label' => $typeLabel,
                         ];
                     }
                 }
@@ -82,6 +93,7 @@ class GeocodingController extends Controller
                             'lat' => (float) $d->latitude,
                             'lng' => (float) $d->longitude,
                             'type' => 'district',
+                            'type_label' => 'Kecamatan',
                         ];
                     }
                 }
