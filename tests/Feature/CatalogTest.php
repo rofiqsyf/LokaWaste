@@ -62,6 +62,10 @@ class CatalogTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Katalog Surplus Pangan');
         $response->assertSee('Ambil di Peta');
+
+        $homeRes = $this->get(route('home'));
+        $homeRes->assertStatus(200);
+        $homeRes->assertSee('Katalog Makanan');
     }
 
     public function test_listings_index_alias_works(): void
