@@ -105,20 +105,66 @@
             </div>
         </div>
 
-        <!-- 4. Titik Lokasi Pengambilan (Mini Map & Draggable Pin) -->
+        <!-- 4. Titik Lokasi Pengambilan (Interactive Map & Autocomplete Search) -->
         <div class="space-y-3 pt-2 border-t border-[#D5E0D9]">
             <div class="flex items-center justify-between">
                 <div>
                     <label class="font-bold text-xs text-[#16251D] block">Titik & Alamat Pengambilan <span class="text-red-500">*</span></label>
-                    <p class="text-[11px] text-[#4E6157]">Geser pin pada peta untuk menentukan titik temu yang tepat.</p>
+                    <p class="text-[11px] text-[#4E6157]">Klik peta atau cari alamat di bawah untuk menentukan titik temu presisi.</p>
                 </div>
-                <button type="button" @click="detectLocation()" class="text-xs font-bold text-[#2A6F97] hover:underline flex items-center gap-1">
-                    📍 Pakai lokasi saya
-                </button>
+                <div class="flex items-center gap-3">
+                    <button type="button" @click="toggleBasemap()" class="text-xs text-[#4E6157] hover:text-[#16251D] font-medium flex items-center gap-1">
+                        <span x-text="basemap === 'satellite' ? '🛰️ Satelit' : '🗺️ Peta'"></span>
+                    </button>
+                    <button type="button" @click="detectLocation()" class="text-xs font-bold text-[#2A6F97] hover:underline flex items-center gap-1">
+                        📍 Lokasi saya
+                    </button>
+                </div>
+            </div>
+
+            <!-- Location Search with Autocomplete Dropdown (Google Maps style) -->
+            <div class="relative">
+                <div class="relative">
+                    <input type="text"
+                           x-model="searchQuery"
+                           @input.debounce.300ms="fetchSuggestions()"
+                           @focus="if (suggestions.length > 0) showSuggestions = true"
+                           placeholder="Cari jalan, patokan toko, atau nama kelurahan... (misal: Tembalang, Jl. Sudirman)"
+                           class="w-full pl-8 pr-8 py-2 text-xs rounded-xl border border-[#74877B] text-[#16251D] focus:ring-2 focus:ring-[#2A6F97] bg-white">
+                    <span class="absolute left-2.5 top-2.5 text-xs text-gray-400">🔍</span>
+                    <button type="button" x-show="searchQuery" @click="searchQuery = ''; suggestions = []; showSuggestions = false;" class="absolute right-2.5 top-2 text-xs font-bold text-gray-400 hover:text-gray-600">✕</button>
+                </div>
+
+                <!-- Suggestions dropdown -->
+                <div x-show="showSuggestions && suggestions.length > 0"
+                     @click.away="showSuggestions = false"
+                     class="absolute top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-xl border border-[#D5E0D9] overflow-hidden z-30 divide-y divide-gray-100 max-h-48 overflow-y-auto">
+                    <template x-for="(s, idx) in suggestions" :key="s.id || idx">
+                        <div @click="selectSuggestion(s)" class="p-2.5 hover:bg-[#F2F7F4] cursor-pointer flex items-center gap-2 text-left">
+                            <span class="text-xs text-[#1E7A4C]">📍</span>
+                            <div class="flex-1 min-w-0">
+                                <p class="font-bold text-xs text-[#16251D] truncate" x-text="s.title"></p>
+                                <p class="text-[10px] text-[#4E6157] truncate" x-text="s.subtitle || s.display_name"></p>
+                            </div>
+                        </div>
+                    </template>
+                </div>
             </div>
 
             <!-- Mini Map for Picking Coordinates -->
-            <div id="picker-map" class="h-48 w-full rounded-2xl border border-[#D5E0D9] overflow-hidden"></div>
+            <div id="picker-map" class="h-56 w-full rounded-2xl border border-[#D5E0D9] overflow-hidden relative"></div>
+
+            <!-- Reverse Geocoding Address Suggestion Pill -->
+            <template x-if="detectedAddress">
+                <div class="p-2.5 bg-emerald-50 rounded-xl border border-emerald-200 flex items-center justify-between gap-2 text-xs">
+                    <div class="truncate text-emerald-900">
+                        📍 <strong>Titik dipilih:</strong> <span x-text="detectedAddress"></span>
+                    </div>
+                    <button type="button" @click="useDetectedAddress()" class="btn-primary text-[10px] py-1 px-2.5 shrink-0">
+                        Pakai Alamat Ini
+                    </button>
+                </div>
+            </template>
 
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div class="sm:col-span-2">
@@ -240,33 +286,120 @@ document.addEventListener('alpine:init', () => {
         lng: {{ $user->default_longitude ?? 110.43778 }},
         address: '{{ old('pickup_address', $duplicate->pickup_address ?? '') }}',
         selectedDistrict: '{{ old('district_id', $user->district_id ?? 1) }}',
+        detectedAddress: '',
+        searchQuery: '',
+        suggestions: [],
+        showSuggestions: false,
+        basemap: 'standard',
         map: null,
         marker: null,
+        osmLayer: null,
+        satLayer: null,
 
         init() {
-            this.$nextTick(() => this.initPickerMap());
+            this.$nextTick(() => {
+                this.initPickerMap();
+                this.reverseGeocode();
+            });
         },
 
         initPickerMap() {
             this.map = L.map('picker-map').setView([this.lat, this.lng], 15);
-            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+
+            this.osmLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: '&copy; OpenStreetMap'
             }).addTo(this.map);
 
-            this.marker = L.marker([this.lat, this.lng], { draggable: true }).addTo(this.map);
+            this.satLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                maxZoom: 19,
+                attribution: '&copy; Esri World Imagery'
+            });
+
+            this.marker = L.marker([this.lat, this.lng], {
+                draggable: true
+            }).addTo(this.map);
+
+            this.marker.bindTooltip("Geser atau klik peta untuk atur titik", {
+                direction: 'top',
+                offset: [0, -10]
+            });
 
             this.marker.on('dragend', () => {
                 const pos = this.marker.getLatLng();
                 this.lat = pos.lat;
                 this.lng = pos.lng;
+                this.reverseGeocode();
             });
 
             this.map.on('click', (e) => {
                 this.marker.setLatLng(e.latlng);
                 this.lat = e.latlng.lat;
                 this.lng = e.latlng.lng;
+                this.reverseGeocode();
             });
+        },
+
+        toggleBasemap() {
+            if (this.basemap === 'standard') {
+                this.map.removeLayer(this.osmLayer);
+                this.satLayer.addTo(this.map);
+                this.basemap = 'satellite';
+            } else {
+                this.map.removeLayer(this.satLayer);
+                this.osmLayer.addTo(this.map);
+                this.basemap = 'standard';
+            }
+        },
+
+        async fetchSuggestions() {
+            const q = this.searchQuery.trim();
+            if (q.length < 2) {
+                this.suggestions = [];
+                this.showSuggestions = false;
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/geocoding/search?q=${encodeURIComponent(q)}`);
+                if (res.ok) {
+                    this.suggestions = await res.json();
+                    this.showSuggestions = this.suggestions.length > 0;
+                }
+            } catch (e) {
+                // Ignore
+            }
+        },
+
+        selectSuggestion(s) {
+            this.searchQuery = s.title;
+            this.showSuggestions = false;
+            this.lat = s.lat;
+            this.lng = s.lng;
+            this.marker.setLatLng([s.lat, s.lng]);
+            this.map.flyTo([s.lat, s.lng], 16);
+            this.detectedAddress = s.display_name;
+            if (!this.address) {
+                this.address = s.display_name;
+            }
+        },
+
+        async reverseGeocode() {
+            try {
+                const res = await fetch(`/api/geocoding/reverse?lat=${this.lat}&lng=${this.lng}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    this.detectedAddress = data.short_address || data.display_name || '';
+                }
+            } catch (e) {
+                // Ignore
+            }
+        },
+
+        useDetectedAddress() {
+            if (this.detectedAddress) {
+                this.address = this.detectedAddress;
+            }
         },
 
         detectLocation() {
@@ -274,8 +407,9 @@ document.addEventListener('alpine:init', () => {
             navigator.geolocation.getCurrentPosition((pos) => {
                 this.lat = pos.coords.latitude;
                 this.lng = pos.coords.longitude;
-                this.map.setView([this.lat, this.lng], 16);
+                this.map.flyTo([this.lat, this.lng], 16);
                 this.marker.setLatLng([this.lat, this.lng]);
+                this.reverseGeocode();
             });
         },
 

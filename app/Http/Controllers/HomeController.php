@@ -20,9 +20,16 @@ class HomeController extends Controller
     public function index()
     {
         $categories = Category::all();
-        // Initial center: Tembalang, Kota Semarang (-7.05194, 110.43778)
+        $user = auth()->user();
+
+        // Default center: Tembalang, Kota Semarang (-7.05194, 110.43778)
         $initialLat = -7.05194;
         $initialLng = 110.43778;
+
+        if ($user && $user->district && $user->district->latitude && $user->district->longitude) {
+            $initialLat = (float) $user->district->latitude;
+            $initialLng = (float) $user->district->longitude;
+        }
 
         return view('home', compact('categories', 'initialLat', 'initialLng'));
     }

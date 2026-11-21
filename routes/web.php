@@ -12,6 +12,7 @@ use App\Http\Controllers\VolunteerController;
 use App\Http\Middleware\EnsureAdmin;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\GeocodingController;
 use App\Http\Controllers\WilayahController;
 
 // Public Home & Interactive Map
@@ -22,6 +23,10 @@ Route::get('/api/listings/nearby', [HomeController::class, 'nearbyListings'])->n
 Route::get('/api/campaigns/nearby', [HomeController::class, 'nearbyCampaigns'])->name('api.campaigns.nearby');
 Route::get('/api/regions/regencies', [HomeController::class, 'regencies'])->name('api.regions.regencies');
 Route::get('/api/regions/regencies/{id}/districts', [HomeController::class, 'districtsByRegency'])->name('api.regions.districts');
+
+// Geocoding & Autocomplete Search (Google Maps style)
+Route::get('/api/geocoding/search', [GeocodingController::class, 'search'])->name('api.geocoding.search');
+Route::get('/api/geocoding/reverse', [GeocodingController::class, 'reverse'])->name('api.geocoding.reverse');
 
 // EMSIFA Wilayah Indonesia API Proxy & Cache
 Route::prefix('api/wilayah')->name('api.wilayah.')->group(function () {

@@ -94,12 +94,42 @@
 
         <!-- 4. Peta Titik Penyaluran & Privasi Presisi (SDD 3.7 Rule 23 / 25) -->
         <div class="space-y-3 pt-2 border-t border-[#D5E0D9]">
-            <div>
-                <label class="font-bold text-xs text-[#16251D] block">Titik Koordinat Penyaluran <span class="text-red-500">*</span></label>
-                <p class="text-[11px] text-[#4E6157]">Geser pin pada peta untuk menentukan lokasi tujuan penerima manfaat.</p>
+            <div class="flex items-center justify-between">
+                <div>
+                    <label class="font-bold text-xs text-[#16251D] block">Titik Koordinat Penyaluran <span class="text-red-500">*</span></label>
+                    <p class="text-[11px] text-[#4E6157]">Klik peta atau cari alamat di bawah untuk menentukan lokasi presisi.</p>
+                </div>
+                <div class="text-xs font-bold text-[#2A6F97]" x-text="`(${lat.toFixed(5)}, ${lng.toFixed(5)})`"></div>
             </div>
 
-            <div id="camp-map" class="h-48 w-full rounded-2xl border border-[#D5E0D9] overflow-hidden"></div>
+            <!-- Autocomplete Search for Campaign Location -->
+            <div class="relative">
+                <input type="text"
+                       x-model="searchQuery"
+                       @input.debounce.300ms="fetchSuggestions()"
+                       @focus="if (suggestions.length > 0) showSuggestions = true"
+                       placeholder="Cari nama tempat / jalan penyaluran (misal: Jl. Bulusan, Panti Asuhan)..."
+                       class="w-full pl-8 pr-8 py-2 text-xs rounded-xl border border-[#74877B] text-[#16251D] focus:ring-2 focus:ring-[#2A6F97] bg-white">
+                <span class="absolute left-2.5 top-2.5 text-xs text-gray-400">🔍</span>
+                <button type="button" x-show="searchQuery" @click="searchQuery = ''; suggestions = []; showSuggestions = false;" class="absolute right-2.5 top-2 text-xs font-bold text-gray-400 hover:text-gray-600">✕</button>
+
+                <!-- Suggestions dropdown -->
+                <div x-show="showSuggestions && suggestions.length > 0"
+                     @click.away="showSuggestions = false"
+                     class="absolute top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-xl border border-[#D5E0D9] overflow-hidden z-30 divide-y divide-gray-100 max-h-48 overflow-y-auto">
+                    <template x-for="(s, idx) in suggestions" :key="s.id || idx">
+                        <div @click="selectSuggestion(s)" class="p-2.5 hover:bg-[#F2F7F4] cursor-pointer flex items-center gap-2 text-left">
+                            <span class="text-xs text-[#1E7A4C]">📍</span>
+                            <div class="flex-1 min-w-0">
+                                <p class="font-bold text-xs text-[#16251D] truncate" x-text="s.title"></p>
+                                <p class="text-[10px] text-[#4E6157] truncate" x-text="s.subtitle || s.display_name"></p>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <div id="camp-map" class="h-56 w-full rounded-2xl border border-[#D5E0D9] overflow-hidden relative"></div>
 
             <input type="hidden" name="latitude" :value="lat">
             <input type="hidden" name="longitude" :value="lng">
@@ -151,6 +181,9 @@ document.addEventListener('alpine:init', () => {
         beneficiaryType: 'panti_asuhan',
         lat: {{ $districts->first()->latitude ?? -7.05194 }},
         lng: {{ $districts->first()->longitude ?? 110.43778 }},
+        searchQuery: '',
+        suggestions: [],
+        showSuggestions: false,
         map: null,
         marker: null,
 
@@ -167,6 +200,11 @@ document.addEventListener('alpine:init', () => {
 
             this.marker = L.marker([this.lat, this.lng], { draggable: true }).addTo(this.map);
 
+            this.marker.bindTooltip("Geser atau klik peta untuk atur titik", {
+                direction: 'top',
+                offset: [0, -10]
+            });
+
             this.marker.on('dragend', () => {
                 const pos = this.marker.getLatLng();
                 this.lat = pos.lat;
@@ -178,6 +216,34 @@ document.addEventListener('alpine:init', () => {
                 this.lat = e.latlng.lat;
                 this.lng = e.latlng.lng;
             });
+        },
+
+        async fetchSuggestions() {
+            const q = this.searchQuery.trim();
+            if (q.length < 2) {
+                this.suggestions = [];
+                this.showSuggestions = false;
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/geocoding/search?q=${encodeURIComponent(q)}`);
+                if (res.ok) {
+                    this.suggestions = await res.json();
+                    this.showSuggestions = this.suggestions.length > 0;
+                }
+            } catch (e) {
+                // Ignore
+            }
+        },
+
+        selectSuggestion(s) {
+            this.searchQuery = s.title;
+            this.showSuggestions = false;
+            this.lat = s.lat;
+            this.lng = s.lng;
+            this.marker.setLatLng([s.lat, s.lng]);
+            this.map.flyTo([s.lat, s.lng], 15);
         }
     }));
 });
