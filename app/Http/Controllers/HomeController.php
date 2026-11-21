@@ -64,9 +64,14 @@ class HomeController extends Controller
             $totalMins = (int) round($l->windowMinutes());
             $remainingMins = max(0, (int) round(now()->diffInMinutes($l->expires_at, false)));
 
+            $pickupAddress = $l->show_exact_location
+                ? ($l->pickup_address ?: ('Kec. ' . ($l->district?->name ?? '') . ', ' . ($l->district?->regency?->name ?? '')))
+                : ('Area Kec. ' . ($l->district?->name ?? '') . ', ' . ($l->district?->regency?->name ?? '') . ' (Alamat presisi dibuka setelah klaim disetujui)');
+
             return [
                 'id' => $l->id,
                 'title' => $l->title,
+                'description' => $l->description,
                 'category_name' => $l->category?->name,
                 'category_icon' => $l->category?->icon,
                 'user_name' => $l->user?->name,
@@ -82,6 +87,9 @@ class HomeController extends Controller
                 'lat' => (float) $l->public_latitude,
                 'lng' => (float) $l->public_longitude,
                 'show_exact' => (bool) $l->show_exact_location,
+                'district_name' => $l->district?->name,
+                'regency_name' => $l->district?->regency?->name,
+                'pickup_address' => $pickupAddress,
                 'available_from' => $l->available_from->toIso8601String(),
                 'expires_at' => $l->expires_at->toIso8601String(),
                 'window_minutes' => $totalMins,
@@ -121,6 +129,8 @@ class HomeController extends Controller
                     'collected_portions' => $c->collected_portions,
                     'progress_percent' => $c->progressPercent(),
                     'district_name' => $c->district?->name,
+                    'regency_name' => $c->district?->regency?->name,
+                    'pickup_address' => 'Penyaluran: ' . $c->beneficiary_name . ', Kec. ' . ($c->district?->name ?? ''),
                     'lat' => $c->public_latitude,
                     'lng' => $c->public_longitude,
                     'precision' => $c->location_precision,

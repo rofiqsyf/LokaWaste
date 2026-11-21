@@ -320,6 +320,8 @@ draft -> pending_review -> published -> closed
 | FR-44 | Halaman status layanan wilayah: jumlah relawan aktif per kecamatan | Rendah |
 | FR-45 | **Katalog Makanan E-Commerce**: Halaman katalog publik terstruktur (`/catalog` dan `/listings`) dengan kartu produk modern, pencarian cepat, filter multi-dimensi (kategori, halal, vegetarian, jenis olahan, batas kedaluwarsa), dan pengurutan dinamis (urgensi waktu terdekat, porsi terbanyak, terdekat, terbaru) | Tinggi |
 | FR-46 | **Hand-off Katalog ke Peta Interaktif**: Mengalihkan aksi penjemputan atau pengantaran makanan dari kartu katalog langsung ke Peta Interaktif (`/?focus={id}&lat={lat}&lng={lng}`) untuk memfokuskan pin, visualisasi rute penjemputan fisik/pengantaran relawan, serta pembukaan popup informasi klaim secara terpadu | Tinggi |
+| FR-47 | **Navigasi Rute Jalan Raya di Peta (OSRM Routing on OpenStreetMap)**: Menghitung dan menggambar rute jalan raya riil (turn-by-turn road polyline) langsung di atas Leaflet map menggunakan Open Source Routing Machine (OSRM), estimasi waktu tempuh (ETA) dan jarak rute, toggle moda kendaraan (mobil/motor) vs jalan kaki, serta tautan navigasi panduan suara Google Maps | Tinggi |
+| FR-48 | **Rich Place Detail Sheet & Multi-Action Sharing**: Panel detail tempat interaktif ala Google Maps/Apple Maps yang muncul saat nama tempat atau pin diklik, menampilkan alamat lengkap, status verifikasi privasi, tombol salin alamat, fitur bagikan via Web Share API & salin tautan (dengan notifikasi toast), rute navigasi terintegrasi, dan aksi klaim langsung | Tinggi |
 
 ---
 
@@ -877,6 +879,22 @@ Semua gambar melewati pipeline: validasi mime asli (bukan ekstensi), batas 2 MB,
      b. Menyorot kartu makanan pada panel geser samping (`selectedId = focusId`).
      c. Membuka Leaflet popup marker secara otomatis dengan tombol rute Google Maps dan klaim porsi.
      d. Memunculkan banner penunjuk lokasi penjemputan aktif di bagian atas peta yang dapat ditutup.
+
+### 8.9 Navigasi Rute OpenStreetMap (OSRM) & Rich Place Detail Sheet
+1. **Dukungan Routing pada OpenStreetMap:**
+   - OpenStreetMap (OSM) menyediakan basis data jaringan jalan geospasial terbuka secara global.
+   - Dengan integrasi **Open Source Routing Machine (OSRM)** (`router.project-osrm.org`), sistem dapat mengkalkulasi rute jalan raya turn-by-turn (*driving* dan *walking*) secara gratis tanpa biaya lisensi Google Maps API.
+   - Garis rute di-render langsung di atas peta Leaflet sebagai dua lapis *polyline*: garis bayangan kontras gelap (*casing*) dan garis rute aktif berwarna hijau/biru dengan animasi penyesuaian batas pandang (*fitBounds with padding*).
+   - HUD Mengambang (*Active Route Overlay Bar*) di bagian atas peta menampilkan ETA riil dalam menit, jarak tempuh jalan raya dalam kilometer, toggle moda perjalanan (kendaraan bermotor vs jalan kaki), dan tombol "Buka Suara di Google Maps" bagi pengemudi yang menginginkan navigasi suara turn-by-turn.
+2. **Rich Place Detail Sheet & Berbagai Fitur Interaktif:**
+   - Diklik dari nama tempat manapun di daftar samping atau pin marker di peta.
+   - Menampilkan alamat pengambilan lengkap (`pickup_address`), status privasi (*Titik Presisi Terverifikasi* vs *Area Kecamatan Publik*), dan tombol "Salin Alamat" instan.
+   - Toolbar 4 Aksi Utama:
+     a. **Rute di Peta (OSM)**: Memanggil fungsi OSRM untuk menggambar rute jalan langsung ke lokasi penjemputan.
+     b. **Bagikan (Share)**: Mendukung Web Share API bawaan peramban (WhatsApp, Telegram, Twitter, dsb.) dengan fallback otomatis ke salin tautan ke *clipboard* dan notifikasi *toast* mengambang.
+     c. **Google Maps External Navigation**: Membuka aplikasi Google Maps untuk navigasi langsung di perangkat pengguna.
+     d. **Ambil Makanan**: Tombol aksi CTA langsung ke alur klaim porsi makanan.
+   - Seluruh antarmuka 100% bebas dari emoji (hanya ikon vektor SVG Tailwind profesional).
 
 ---
 

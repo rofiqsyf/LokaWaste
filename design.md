@@ -407,4 +407,39 @@ Gunakan daftar audit berikut sebelum setiap rilis fitur:
    - **Secondary Action ("Detail Makanan"):** Tautan outline halus (`text-[#4E6157] hover:text-[#16251D]`) untuk membuka halaman spesifikasi keamanan pangan (`/listings/{id}`).
 
 ---
+
+## 10. Spesifikasi Sistem Navigasi Rute OpenStreetMap (OSRM) & Rich Place Detail Sheet
+
+### 10.1 Navigasi Rute Jalan Raya di Atas Peta (OSRM Road Routing)
+1. **Engine Geospasial:** Menggunakan integrasi OpenStreetMap (OSM) dan API Open Source Routing Machine (OSRM) pada profil `driving` (kendaraan roda 2 dan 4) serta `walking` (pejalan kaki).
+2. **Visual Polylines di Leaflet:**
+   - **Outer Casing:** Polylines gelap tebal (`weight: 8`, warna `#0F3B24`, opasitas 35%) untuk memastikan rute tampak kontras di atas peta jalan maupun satelit.
+   - **Active Polyline:** Garis utama (`weight: 5`, opasitas 95%) berwarna hijau `#1E7A4C` untuk berkendara, atau biru `#2A6F97` bergaris putus-putus (`dashArray: '8, 8'`) untuk jalan kaki.
+   - **Framing Otomatis:** Memanggil `map.fitBounds(bounds, { padding: [80, 80] })` agar seluruh rute dari titik awal hingga tujuan terlihat utuh.
+3. **Active Route Floating HUD (Top Overlay):**
+   - Bar mengambang kaca akrilik di atas peta (`bg-white/95 backdrop-blur-2xl rounded-3xl border border-emerald-500/40`).
+   - Indikator pulsa aktif, nama destinasi, metrik besar ETA menit dan jarak jalan riil (bukan jarak burung lurus).
+   - Tombol toggle instan *Kendaraan* vs *Jalan Kaki*.
+   - Aksi terintegrasi "Buka Suara di Google Maps" untuk panduan suara GPS dan tombol "Tutup Rute".
+
+### 10.2 Rich Place Detail Sheet (Google Maps / Apple Maps Class)
+1. **Pemicu:** Muncul secara reaktif ketika nama tempat di klik pada kartu daftar atau ketika pin marker di peta disentuh.
+2. **Struktur Panel:**
+   - Ponsel: *Bottom sheet* meluncur dari bawah dengan tuas tarik geser (*swipe handle*).
+   - Desktop: *Floating modal card* di kiri bawah peta (`sm:w-[420px] max-h-[640px]`).
+3. **Elemen Informasi & Aksi:**
+   - Lencana status: Kategori, Halal, Terverifikasi, dan Pil Urgensi Sisa Waktu.
+   - Judul listing & profil avatar inisial donatur.
+   - **Kotak Alamat Pengambilan Lengkap:** Menampilkan alamat fisik lengkap, label status presisi, dan tombol interaktif "Salin Alamat Lengkap".
+   - Catatan keamanan pangan & deskripsi donor.
+   - **Toolbar 4 Tombol Aksi:**
+     - **Rute di Peta:** Memanggil kalkulasi OSRM dan menggambar rute jalan langsung di peta.
+     - **Bagikan:** Memanggil Web Share API atau menyalin tautan unik (`/?focus={id}&lat={lat}&lng={lng}`) ke *clipboard*.
+     - **Google Maps:** Tautan navigasi turn-by-turn eksternal.
+     - **Ambil Makanan:** CTA primer menuju form klaim makanan.
+4. **Sistem Notifikasi Toast:**
+   - Balon konfirmasi mengambang di bawah tengah layar (`bg-[#16251D]/95 text-white`) dengan ikon centang SVG saat tautan atau alamat berhasil disalin.
+5. **Kebijakan Nol Emoji:** Seluruh antarmuka 100% menggunakan SVG vektor Tailwind terstandar.
+
+---
 *Dokumen ini merupakan spesifikasi antarmuka definitif untuk Locabite v2.0. Setiap penambahan fitur atau modifikasi tampilan wajib merujuk pada prinsip, token desain, dan aturan aksesibilitas yang telah ditetapkan di atas.*

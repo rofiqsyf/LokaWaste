@@ -241,7 +241,7 @@
             <template x-if="!loading && layer === 'food'">
                 <template x-for="item in filteredItems" :key="item.id">
                     <div :id="`card-${item.id}`"
-                         @click="focusMarker(item)"
+                         @click="openPlaceDetail(item)"
                          :class="[
                             selectedId === item.id ? 'ring-2 ring-[#2A6F97] bg-blue-50/40 shadow-card border-[#2A6F97]' : 'bg-white hover:border-[#1E7A4C]/70 hover:shadow-card hover:-translate-y-0.5 border-[#D5E0D9]',
                             item.remaining_minutes < 60 ? 'border-red-200 bg-linear-to-r from-red-50/20 via-white to-white' : ''
@@ -289,16 +289,18 @@
                             </div>
                         </div>
 
-                        <!-- Title & Provider -->
+                        <!-- Title & Provider (Clickable to open rich place sheet) -->
                         <div>
-                            <h3 class="font-display font-bold text-sm text-[#16251D] group-hover:text-[#1E7A4C] transition-colors line-clamp-2 leading-snug" x-text="item.title"></h3>
+                            <h3 class="font-display font-bold text-sm text-[#16251D] group-hover:text-[#1E7A4C] transition-colors line-clamp-2 leading-snug cursor-pointer"
+                                @click.stop="openPlaceDetail(item)"
+                                x-text="item.title"></h3>
                             <div class="flex items-center gap-1.5 text-xs text-[#4E6157] mt-1">
                                 <svg class="w-3.5 h-3.5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                                 <span class="truncate" x-text="item.user_name"></span>
                             </div>
                         </div>
 
-                        <!-- Meta Row: Portions, Distance, and Direct Route Button -->
+                        <!-- Meta Row: Portions, Distance, and Action Buttons -->
                         <div class="flex items-center justify-between pt-2 border-t border-gray-100 text-xs">
                             <div class="flex items-center gap-2">
                                 <span class="font-bold text-xs bg-emerald-100/70 text-[#14573A] px-2.5 py-0.5 rounded-lg border border-emerald-200/60" x-text="`${item.portions_left} porsi`"></span>
@@ -308,13 +310,25 @@
                                 </span>
                             </div>
 
-                            <a :href="'https://www.google.com/maps/dir/?api=1&destination=' + item.lat + ',' + item.lng"
-                               target="_blank"
-                               @click.stop
-                               class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold text-[#2A6F97] bg-blue-50 hover:bg-blue-100 border border-blue-200 transition active:scale-95">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                                <span>Rute</span>
-                            </a>
+                            <div class="flex items-center gap-1.5">
+                                <!-- Direct In-Map Road Route Button -->
+                                <button type="button"
+                                        @click.stop="drawRoute(item, 'driving')"
+                                        title="Tampilkan rute jalan di peta"
+                                        class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold text-[#1E7A4C] bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 transition active:scale-95 shadow-2xs">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                                    <span>Rute</span>
+                                </button>
+
+                                <!-- Rich Place Detail Button -->
+                                <button type="button"
+                                        @click.stop="openPlaceDetail(item)"
+                                        title="Buka info tempat & alamat lengkap"
+                                        class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold text-[#2A6F97] bg-blue-50 hover:bg-blue-100 border border-blue-200/80 transition active:scale-95 shadow-2xs">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    <span>Info</span>
+                                </button>
+                            </div>
                         </div>
 
                         <!-- Associated Campaign Strip (if any) -->
@@ -359,6 +373,218 @@
     <!-- MAP CONTAINER -->
     <div class="flex-1 order-1 lg:order-2 h-full w-full relative z-0">
         <div id="locabite-map" class="h-full w-full"></div>
+
+        <!-- Floating Active Route HUD (Navigation like Google Maps) -->
+        <div x-show="routeInfo"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 -translate-y-4 scale-95"
+             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+             x-transition:leave-end="opacity-0 -translate-y-4 scale-95"
+             class="absolute top-20 sm:top-24 inset-x-3 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-[460px] z-30 pointer-events-auto bg-white/95 backdrop-blur-2xl rounded-3xl shadow-[0_20px_50px_-10px_rgba(22,37,29,0.25),0_4px_12px_rgba(22,37,29,0.08)] border border-emerald-500/40 p-4 space-y-3">
+            
+            <div class="flex items-start justify-between gap-3">
+                <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-1.5 text-[10px] font-bold text-emerald-800 uppercase tracking-wider mb-0.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                        <span>Rute Navigasi Aktif (OSRM)</span>
+                    </div>
+                    <h3 class="font-display font-bold text-sm text-[#16251D] truncate" x-text="routeTarget?.title || 'Tujuan Terpilih'"></h3>
+                </div>
+
+                <button @click="clearRoute()"
+                        class="w-7 h-7 rounded-xl bg-gray-100 hover:bg-gray-200 text-[#4E6157] hover:text-[#16251D] flex items-center justify-center shrink-0 transition"
+                        title="Tutup Rute">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Route Metrics & Mode Selector -->
+            <div class="flex items-center justify-between bg-emerald-50/60 rounded-2xl p-2.5 border border-emerald-100">
+                <div class="flex items-baseline gap-1.5">
+                    <span class="font-display font-black text-2xl text-[#14573A]" x-text="routeInfo?.durationMin"></span>
+                    <span class="text-xs font-bold text-[#4E6157]">menit</span>
+                    <span class="text-xs text-gray-400 mx-1">•</span>
+                    <span class="font-bold text-xs text-[#1E7A4C]" x-text="`${routeInfo?.distanceKm} km`"></span>
+                </div>
+
+                <!-- Mode pills: Driving vs Walking -->
+                <div class="inline-flex rounded-xl bg-white p-1 border border-emerald-200/70 shadow-2xs">
+                    <button @click="switchRouteMode('driving')"
+                            :class="routeMode === 'driving' ? 'bg-[#1E7A4C] text-white shadow-2xs' : 'text-[#4E6157] hover:text-[#16251D]'"
+                            class="px-2.5 py-1 text-xs font-bold rounded-lg transition flex items-center gap-1"
+                            title="Moda Kendaraan (Mobil/Motor)">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h8m-9 4h10M5 16h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v7a2 2 0 002 2zm2 0v2m10-2v2"/>
+                        </svg>
+                        <span>Kendaraan</span>
+                    </button>
+                    <button @click="switchRouteMode('walking')"
+                            :class="routeMode === 'walking' ? 'bg-[#2A6F97] text-white shadow-2xs' : 'text-[#4E6157] hover:text-[#16251D]'"
+                            class="px-2.5 py-1 text-xs font-bold rounded-lg transition flex items-center gap-1"
+                            title="Moda Jalan Kaki">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7a2 2 0 11-4 0 2 2 0 014 0zM9 14l2-4 3 2 1 4m-4-2v6m-2 0h4"/>
+                        </svg>
+                        <span>Jalan Kaki</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Route Actions Bar -->
+            <div class="flex items-center gap-2 pt-1">
+                <a :href="'https://www.google.com/maps/dir/?api=1&origin=' + userLat + ',' + userLng + '&destination=' + (routeTarget?.lat || '') + ',' + (routeTarget?.lng || '') + '&travelmode=' + (routeMode === 'walking' ? 'walking' : 'driving')"
+                   target="_blank"
+                   class="flex-1 btn-primary py-2 text-xs flex items-center justify-center gap-1.5 shadow-xs">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                    </svg>
+                    <span>Buka Suara di Google Maps</span>
+                </a>
+                <button @click="openPlaceDetail(routeTarget)"
+                        class="px-3 py-2 rounded-xl text-xs font-bold text-[#16251D] bg-gray-100 hover:bg-gray-200 transition">
+                    Lihat Alamat
+                </button>
+            </div>
+        </div>
+
+        <!-- Rich Place Detail Modal / Sheet (Google Maps & Apple Maps Class UX) -->
+        <div x-show="activePlace"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 translate-y-8 sm:translate-y-0 sm:scale-95"
+             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+             x-transition:leave-end="opacity-0 translate-y-8 sm:translate-y-0 sm:scale-95"
+             class="fixed sm:absolute inset-x-0 bottom-0 sm:bottom-6 sm:left-6 sm:inset-x-auto sm:w-[420px] max-h-[85vh] sm:max-h-[640px] z-40 bg-white/98 backdrop-blur-2xl rounded-t-3xl sm:rounded-3xl shadow-[0_25px_60px_-12px_rgba(22,37,29,0.35),0_6px_20px_rgba(22,37,29,0.12)] border border-[#D5E0D9] overflow-hidden flex flex-col pointer-events-auto">
+            
+            <!-- Mobile pull handle -->
+            <div class="sm:hidden pt-2 pb-1 flex justify-center">
+                <div class="w-10 h-1 rounded-full bg-gray-300"></div>
+            </div>
+
+            <!-- Header with Badges & Close -->
+            <div class="p-4 sm:p-5 border-b border-gray-100 flex items-start justify-between gap-3 bg-linear-to-b from-gray-50/80 to-transparent">
+                <div class="flex items-center gap-1.5 flex-wrap min-w-0">
+                    <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-md bg-emerald-50 text-[#14573A] border border-emerald-200/80" x-text="activePlace?.category_name || 'Makanan'"></span>
+                    <template x-if="activePlace?.halal_claim">
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200/80">Halal</span>
+                    </template>
+                    <template x-if="activePlace?.is_verified">
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-[#2A6F97] border border-blue-200/80 flex items-center gap-1">
+                            <svg class="w-3 h-3 text-[#2A6F97]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                            Terverifikasi
+                        </span>
+                    </template>
+                    <template x-if="activePlace?.remaining_minutes">
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200 flex items-center gap-1">
+                            <svg class="w-3 h-3 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <span x-text="`Sisa ${getTimeShort(activePlace?.remaining_minutes)}`"></span>
+                        </span>
+                    </template>
+                </div>
+
+                <button @click="closePlaceDetail()"
+                        class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-[#4E6157] hover:text-[#16251D] flex items-center justify-center shrink-0 transition"
+                        title="Tutup Panel Tempat">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Scrollable Content Body -->
+            <div class="p-4 sm:p-5 overflow-y-auto space-y-4 flex-1">
+                <!-- Title & Provider -->
+                <div>
+                    <h2 class="font-display font-black text-lg text-[#16251D] leading-snug" x-text="activePlace?.title"></h2>
+                    <div class="flex items-center gap-2 mt-1.5 text-xs text-[#4E6157]">
+                        <div class="w-5 h-5 rounded-full bg-[#1E7A4C]/10 text-[#1E7A4C] flex items-center justify-center shrink-0 font-bold text-[10px]" x-text="(activePlace?.user_name || 'U').substring(0, 1).toUpperCase()"></div>
+                        <span class="font-medium text-[#16251D]" x-text="activePlace?.user_name"></span>
+                        <span class="text-gray-300">•</span>
+                        <span x-text="`${activePlace?.portions_left} porsi tersedia`"></span>
+                    </div>
+                </div>
+
+                <!-- Full Address Card with Copy Action -->
+                <div class="bg-gray-50/90 rounded-2xl p-3.5 border border-gray-100 space-y-2">
+                    <div class="flex items-center justify-between text-xs text-[#4E6157]">
+                        <span class="font-bold flex items-center gap-1.5 text-[#16251D]">
+                            <svg class="w-4 h-4 text-[#1E7A4C] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            Alamat Pengambilan
+                        </span>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-white border border-gray-200 text-[#4E6157]"
+                              x-text="activePlace?.show_exact ? 'Titik Presisi' : 'Area Kecamatan'"></span>
+                    </div>
+                    <p class="text-xs text-[#16251D] font-medium leading-relaxed select-all" x-text="activePlace?.pickup_address"></p>
+                    
+                    <button type="button"
+                            @click="copyAddress(activePlace?.pickup_address)"
+                            class="inline-flex items-center gap-1 text-[11px] font-bold text-[#1E7A4C] hover:text-[#14573A] transition pt-1">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                        </svg>
+                        <span>Salin Alamat Lengkap</span>
+                    </button>
+                </div>
+
+                <!-- Description (if any) -->
+                <template x-if="activePlace?.description">
+                    <div class="text-xs text-[#4E6157] bg-white rounded-xl p-3 border border-gray-100">
+                        <span class="font-bold text-[#16251D] block mb-1">Catatan Makanan:</span>
+                        <p class="leading-relaxed" x-text="activePlace?.description"></p>
+                    </div>
+                </template>
+
+                <!-- Grid Feature Action Buttons (Google Maps Class) -->
+                <div class="grid grid-cols-2 gap-2 pt-1">
+                    <!-- 1. Road Routing Polyline in Leaflet OSM -->
+                    <button type="button"
+                            @click="drawRoute(activePlace, 'driving')"
+                            class="p-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition active:scale-95">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                        </svg>
+                        <span>Rute di Peta</span>
+                    </button>
+
+                    <!-- 2. Share Feature (Web Share API & Copy) -->
+                    <button type="button"
+                            @click="sharePlace(activePlace)"
+                            class="p-2.5 rounded-2xl bg-gray-100 hover:bg-gray-200 text-[#16251D] font-bold text-xs flex items-center justify-center gap-1.5 transition active:scale-95">
+                        <svg class="w-4 h-4 text-[#1E7A4C] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+                        </svg>
+                        <span>Bagikan</span>
+                    </button>
+
+                    <!-- 3. External Google Maps Navigation -->
+                    <a :href="'https://www.google.com/maps/dir/?api=1&origin=' + userLat + ',' + userLng + '&destination=' + activePlace?.lat + ',' + activePlace?.lng"
+                       target="_blank"
+                       class="p-2.5 rounded-2xl bg-blue-50 hover:bg-blue-100 text-[#2A6F97] font-bold text-xs flex items-center justify-center gap-1.5 border border-blue-200/80 transition active:scale-95">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                        </svg>
+                        <span>Google Maps</span>
+                    </a>
+
+                    <!-- 4. Direct Claim / Detail Link -->
+                    <a :href="activePlace?.detail_url"
+                       class="p-2.5 rounded-2xl bg-[#16251D] hover:bg-black text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition active:scale-95">
+                        <span>Ambil Makanan</span>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
 
         <!-- Floating Focus Banner (from Catalog hand-off - SDD FR-46) -->
         <template x-if="focusId && items.some(i => i.id == focusId)">
@@ -409,6 +635,21 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
         </button>
+
+        <!-- Aesthetic Toast Notification -->
+        <div x-show="toastMessage"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 translate-y-3 scale-95"
+             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+             x-transition:leave-end="opacity-0 translate-y-3 scale-95"
+             class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none bg-[#16251D]/95 text-white px-4 py-2.5 rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs font-bold border border-white/10 backdrop-blur-md">
+            <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span x-text="toastMessage"></span>
+        </div>
     </div>
 
 </div>
@@ -422,6 +663,7 @@ document.addEventListener('alpine:init', () => {
         satLayer: null,
         basemap: 'standard', // 'standard' or 'satellite'
         markersLayer: null,
+        routeLayer: null,
         userMarker: null,
         userRadiusCircle: null,
         initialLat: {{ $initialLat }},
@@ -441,10 +683,17 @@ document.addEventListener('alpine:init', () => {
         showSuggestions: false,
         loading: false,
         locating: false,
+        routingLoading: false,
         sheetExpanded: false,
         items: [],
         filteredItems: [],
         selectedId: null,
+        activePlace: null,
+        routeInfo: null,
+        routeTarget: null,
+        routeMode: 'driving', // 'driving' or 'walking'
+        toastMessage: null,
+        toastTimer: null,
         pollTimer: null,
 
         init() {
@@ -482,6 +731,7 @@ document.addEventListener('alpine:init', () => {
             });
 
             this.markersLayer = L.layerGroup().addTo(this.map);
+            this.routeLayer = L.layerGroup().addTo(this.map);
 
             // Render Center User Pin & Radius Circle
             this.updateUserMarker();
@@ -645,23 +895,26 @@ document.addEventListener('alpine:init', () => {
 
                 const m = L.marker([l.lat, l.lng], { icon: icon });
 
-                // Popup with directions button to Google Maps
+                // Popup with rich direct actions
                 const popupContent = `
-                    <div style="font-family:'Atkinson Hyperlegible',sans-serif; min-width:190px;">
-                        <h4 style="font-weight:bold; font-size:13px; margin:0 0 4px 0; color:#16251D;">${l.title}</h4>
+                    <div style="font-family:'Atkinson Hyperlegible',sans-serif; min-width:210px; padding:2px;">
+                        <div style="font-size:10px; font-weight:bold; color:#1E7A4C; text-transform:uppercase; margin-bottom:2px;">${l.category_name || 'Makanan'}</div>
+                        <h4 style="font-weight:bold; font-size:13px; margin:0 0 4px 0; color:#16251D; line-height:1.3;">${l.title}</h4>
                         <div style="font-size:11px; color:#4E6157; margin-bottom:6px;">
                             ${l.portions_left} porsi • ${l.distance_km} km
                         </div>
                         <div style="font-size:11px; font-weight:bold; color:${color}; margin-bottom:8px;">
                             Sisa waktu: ${shortTime}
                         </div>
-                        <div style="display:flex; gap:6px; align-items:center;">
-                            <a href="${l.detail_url}" style="display:inline-block; background:#1E7A4C; color:white; padding:4px 10px; border-radius:8px; font-size:11px; text-decoration:none; font-weight:bold;">
-                                Detail
-                            </a>
-                            <a href="https://www.google.com/maps/dir/?api=1&destination=${l.lat},${l.lng}" target="_blank" style="display:inline-flex; align-items:center; gap:4px; background:#2A6F97; color:white; padding:4px 10px; border-radius:8px; font-size:11px; text-decoration:none; font-weight:bold;">
-                                <svg style="width:12px; height:12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                                Rute
+                        <div style="display:flex; gap:4px; align-items:center; flex-wrap:wrap;">
+                            <button type="button" onclick="window.__locabiteDrawRoute(${l.id})" style="background:#1E7A4C; color:white; border:none; padding:4px 8px; border-radius:8px; font-size:10px; font-weight:bold; cursor:pointer;">
+                                Rute Peta
+                            </button>
+                            <button type="button" onclick="window.__locabiteOpenDetail(${l.id})" style="background:#2A6F97; color:white; border:none; padding:4px 8px; border-radius:8px; font-size:10px; font-weight:bold; cursor:pointer;">
+                                Alamat & Info
+                            </button>
+                            <a href="${l.detail_url}" style="background:#16251D; color:white; padding:4px 8px; border-radius:8px; font-size:10px; text-decoration:none; font-weight:bold;">
+                                Ambil
                             </a>
                         </div>
                     </div>
@@ -670,20 +923,29 @@ document.addEventListener('alpine:init', () => {
 
                 m.on('click', () => {
                     this.selectedId = l.id;
-                    const card = document.getElementById(`card-${l.id}`);
-                    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    this.openPlaceDetail(l);
                 });
 
                 this.markersById[l.id] = m;
                 this.markersLayer.addLayer(m);
             });
 
+            // Global bridge for popup buttons
+            window.__locabiteDrawRoute = (id) => {
+                const item = this.items.find(x => x.id === id);
+                if (item) this.drawRoute(item, 'driving');
+            };
+            window.__locabiteOpenDetail = (id) => {
+                const item = this.items.find(x => x.id === id);
+                if (item) this.openPlaceDetail(item);
+            };
+
             // Hand-off focus trigger from catalog
             if (this.focusId) {
                 const target = listings.find(l => l.id == this.focusId);
                 if (target) {
                     setTimeout(() => {
-                        this.focusMarker(target);
+                        this.openPlaceDetail(target);
                     }, 350);
                 }
             }
@@ -742,6 +1004,184 @@ document.addEventListener('alpine:init', () => {
             if (card) {
                 card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
+        },
+
+        openPlaceDetail(item) {
+            if (!item) return;
+            this.activePlace = item;
+            this.selectedId = item.id;
+            this.focusMarker(item);
+        },
+
+        closePlaceDetail() {
+            this.activePlace = null;
+        },
+
+        async drawRoute(item, mode = 'driving') {
+            if (!item || !item.lat || !item.lng) return;
+
+            this.routeMode = mode;
+            this.routeTarget = item;
+            this.routingLoading = true;
+
+            const startLng = Number(this.userLng);
+            const startLat = Number(this.userLat);
+            const endLng = Number(item.lng);
+            const endLat = Number(item.lat);
+
+            if (this.routeLayer) {
+                this.routeLayer.clearLayers();
+            }
+
+            try {
+                // Query OpenStreetMap OSRM routing engine API
+                const osrmProfile = mode === 'walking' ? 'walking' : 'driving';
+                const osrmUrl = `https://router.project-osrm.org/route/v1/${osrmProfile}/${startLng},${startLat};${endLng},${endLat}?overview=full&geometries=geojson`;
+
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 6000);
+
+                const res = await fetch(osrmUrl, { signal: controller.signal });
+                clearTimeout(timeoutId);
+
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
+                        const r = data.routes[0];
+                        // OSRM coordinates are [lng, lat], convert to Leaflet [lat, lng]
+                        const coords = r.geometry.coordinates.map(pt => [pt[1], pt[0]]);
+
+                        const distanceKm = (r.distance / 1000).toFixed(1);
+                        const durationMin = Math.max(1, Math.round(r.duration / 60));
+
+                        this.routeInfo = {
+                            distanceKm: distanceKm,
+                            durationMin: durationMin,
+                            mode: mode
+                        };
+
+                        // Draw outer casing shadow line for high contrast
+                        const casing = L.polyline(coords, {
+                            color: '#0F3B24',
+                            weight: 8,
+                            opacity: 0.35,
+                            lineCap: 'round',
+                            lineJoin: 'round'
+                        });
+
+                        // Draw inner road line
+                        const roadLine = L.polyline(coords, {
+                            color: mode === 'walking' ? '#2A6F97' : '#1E7A4C',
+                            weight: 5,
+                            opacity: 0.95,
+                            lineCap: 'round',
+                            lineJoin: 'round',
+                            dashArray: mode === 'walking' ? '8, 8' : null
+                        });
+
+                        this.routeLayer.addLayer(casing);
+                        this.routeLayer.addLayer(roadLine);
+
+                        // Fit bounds to show entire route with padding
+                        this.map.fitBounds(roadLine.getBounds(), {
+                            padding: [80, 80],
+                            maxZoom: 16
+                        });
+
+                        this.showToast(`Rute jalan ${mode === 'walking' ? 'jalan kaki' : 'berkendara'} (${distanceKm} km, ~${durationMin} mnt) siap!`);
+                        return;
+                    }
+                }
+                throw new Error("OSRM server returned empty routes");
+            } catch (err) {
+                // Graceful fallback: draw direct connection line with calculated estimation
+                console.warn("OSRM routing offline or timed out, using geodetic interpolation fallback:", err);
+                const coords = [[startLat, startLng], [endLat, endLng]];
+
+                // Haversine estimation
+                const distKm = Number(item.distance_km) || 2.5;
+                const speed = mode === 'walking' ? 4.5 : 30; // km/h
+                const durationMin = Math.max(1, Math.round((distKm / speed) * 60));
+
+                this.routeInfo = {
+                    distanceKm: distKm.toFixed(1),
+                    durationMin: durationMin,
+                    mode: mode
+                };
+
+                const fallbackLine = L.polyline(coords, {
+                    color: mode === 'walking' ? '#2A6F97' : '#1E7A4C',
+                    weight: 4,
+                    dashArray: '6, 8',
+                    opacity: 0.85
+                });
+                this.routeLayer.addLayer(fallbackLine);
+                this.map.fitBounds(fallbackLine.getBounds(), { padding: [80, 80] });
+                this.showToast(`Rute garis langsung (~${distKm.toFixed(1)} km) ditampilkan.`);
+            } finally {
+                this.routingLoading = false;
+            }
+        },
+
+        switchRouteMode(newMode) {
+            if (this.routeTarget) {
+                this.drawRoute(this.routeTarget, newMode);
+            }
+        },
+
+        clearRoute() {
+            if (this.routeLayer) {
+                this.routeLayer.clearLayers();
+            }
+            this.routeInfo = null;
+            this.routeTarget = null;
+            this.showToast("Rute jalan ditutup.");
+        },
+
+        async sharePlace(item) {
+            if (!item) return;
+            const shareUrl = `${window.location.origin}/?focus=${item.id}&lat=${item.lat}&lng=${item.lng}`;
+            const shareData = {
+                title: `${item.title} — Locabite`,
+                text: `Ambil makanan berlebih "${item.title}" (${item.portions_left} porsi) di ${item.pickup_address}. Mari selamatkan pangan!`,
+                url: shareUrl
+            };
+
+            if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+                try {
+                    await navigator.share(shareData);
+                    this.showToast("Berhasil membagikan makanan!");
+                    return;
+                } catch (e) {
+                    if (e.name === 'AbortError') return; // User closed share dialog
+                }
+            }
+
+            // Clipboard fallback
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(shareUrl);
+                this.showToast("Tautan lokasi berhasil disalin ke papan klip!");
+            } else {
+                prompt("Salin tautan makanan berikut:", shareUrl);
+            }
+        },
+
+        async copyAddress(address) {
+            if (!address) return;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(address);
+                this.showToast("Alamat lengkap berhasil disalin!");
+            } else {
+                prompt("Salin alamat berikut:", address);
+            }
+        },
+
+        showToast(msg) {
+            this.toastMessage = msg;
+            if (this.toastTimer) clearTimeout(this.toastTimer);
+            this.toastTimer = setTimeout(() => {
+                this.toastMessage = null;
+            }, 3200);
         },
 
         useCurrentLocation() {
