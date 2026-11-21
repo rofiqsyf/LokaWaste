@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{{ $title ?? 'Locabite — Cegah Food Waste, Salurkan Makanan Berlebih' }}</title>
+
+    <!-- Google Fonts for Bricolage Grotesque & Atkinson Hyperlegible -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&display=swap" rel="stylesheet">
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <!-- Leaflet CDN fallback/direct for instant reliability -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    @stack('styles')
+</head>
+<body class="bg-[#F2F6F3] text-[#16251D] min-h-screen flex flex-col font-sans antialiased pb-20 md:pb-0">
+
+    <!-- Accessibility Skip Link -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#1E7A4C] focus:text-white focus:rounded-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#2A6F97]">
+        Ke konten utama
+    </a>
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-white border-b border-[#D5E0D9] sticky top-0 z-30 shadow-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Brand -->
+                <div class="flex items-center gap-6">
+                    <a href="{{ route('home') }}" class="flex items-center gap-2 group">
+                        <div class="w-9 h-9 rounded-xl bg-[#1E7A4C] flex items-center justify-center text-white font-display font-bold text-lg shadow-sm group-hover:bg-[#14573A] transition">
+                            L
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-display font-bold text-xl tracking-tight text-[#16251D] group-hover:text-[#1E7A4C] transition">Locabite</span>
+                            <span class="text-[10px] text-[#4E6157] font-medium -mt-1 hidden sm:inline">Penyelamat Pangan</span>
+                        </div>
+                    </a>
+
+                    <!-- Nav Links -->
+                    <nav class="hidden md:flex items-center gap-1 font-medium text-sm">
+                        <a href="{{ route('home') }}" class="px-3 py-2 rounded-lg {{ request()->routeIs('home') ? 'bg-[#F2F6F3] text-[#1E7A4C] font-semibold' : 'text-[#4E6157] hover:text-[#16251D] hover:bg-gray-50' }}">
+                            Peta & Makanan
+                        </a>
+                        <a href="{{ route('campaigns.index') }}" class="px-3 py-2 rounded-lg {{ request()->routeIs('campaigns.*') ? 'bg-[#F2F6F3] text-[#1E7A4C] font-semibold' : 'text-[#4E6157] hover:text-[#16251D] hover:bg-gray-50' }}">
+                            Galang Makanan
+                        </a>
+                        <a href="{{ route('volunteer.apply') }}" class="px-3 py-2 rounded-lg {{ request()->routeIs('volunteer.*') ? 'bg-[#F2F6F3] text-[#1E7A4C] font-semibold' : 'text-[#4E6157] hover:text-[#16251D] hover:bg-gray-50' }}">
+                            Jadi Relawan
+                        </a>
+                    </nav>
+                </div>
+
+                <!-- Right Actions -->
+                <div class="flex items-center gap-3">
+                    @auth
+                        <!-- Share Food Primary Button (Desktop) -->
+                        <a href="{{ route('listings.create') }}" class="btn-primary text-sm hidden sm:inline-flex gap-1.5">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                            Bagikan makanan
+                        </a>
+
+                        <!-- Dashboard / Activity -->
+                        <a href="{{ route('dashboard') }}" class="px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('dashboard') ? 'bg-[#F2F6F3] text-[#1E7A4C]' : 'text-[#4E6157] hover:text-[#16251D]' }}">
+                            Dashboard
+                        </a>
+
+                        @if(Auth::user()->isAdmin())
+                            <a href="{{ route('admin.dashboard') }}" class="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-[#7A4A00]/10 text-[#7A4A00] hover:bg-[#7A4A00]/20 border border-[#B45309]/30 transition">
+                                Panel Admin
+                            </a>
+                        @endif
+
+                        <!-- Logout -->
+                        <form method="POST" action="{{ route('logout') }}" class="inline">
+                            @csrf
+                            <button type="submit" class="text-xs text-[#4E6157] hover:text-[#C93A2E] px-2 py-1.5 rounded transition">
+                                Keluar
+                            </button>
+                        </form>
+                    @else
+                        <a href="{{ route('login') }}" class="text-sm font-semibold text-[#4E6157] hover:text-[#16251D] px-3 py-2 rounded-lg">
+                            Masuk
+                        </a>
+                        <a href="{{ route('register') }}" class="btn-primary text-sm">
+                            Daftar
+                        </a>
+                    @endauth
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Flash Alerts / Toasts (WCAG accessible) -->
+    <div aria-live="polite" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-3">
+        @if (session('success'))
+            <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
+                 class="mb-3 p-3.5 bg-[#1E7A4C]/10 border border-[#1E7A4C] text-[#14573A] rounded-xl flex items-center justify-between text-sm shadow-xs">
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-[#1E7A4C] shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    <span>{{ session('success') }}</span>
+                </div>
+                <button @click="show = false" class="text-[#14573A] hover:text-black font-bold text-lg">&times;</button>
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div x-data="{ show: true }" x-show="show"
+                 class="mb-3 p-3.5 bg-[#C93A2E]/10 border border-[#C93A2E] text-[#C93A2E] rounded-xl flex items-center justify-between text-sm shadow-xs">
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-[#C93A2E] shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                    <span>{{ session('error') }}</span>
+                </div>
+                <button @click="show = false" class="text-[#C93A2E] hover:text-black font-bold text-lg">&times;</button>
+            </div>
+        @endif
+
+        @if (session('warning'))
+            <div x-data="{ show: true }" x-show="show"
+                 class="mb-3 p-3.5 bg-[#FBEFC9] border border-[#B45309] text-[#7A4A00] rounded-xl flex items-center justify-between text-sm shadow-xs">
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-[#B45309] shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                    <span>{{ session('warning') }}</span>
+                </div>
+                <button @click="show = false" class="text-[#7A4A00] hover:text-black font-bold text-lg">&times;</button>
+            </div>
+        @endif
+
+        @if (session('info'))
+            <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)"
+                 class="mb-3 p-3.5 bg-[#2A6F97]/10 border border-[#2A6F97] text-[#2A6F97] rounded-xl flex items-center justify-between text-sm shadow-xs">
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-[#2A6F97] shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                    </svg>
+                    <span>{{ session('info') }}</span>
+                </div>
+                <button @click="show = false" class="text-[#2A6F97] hover:text-black font-bold text-lg">&times;</button>
+            </div>
+        @endif
+    </div>
+
+    <!-- Main Content -->
+    <main id="main-content" class="flex-1">
+        {{ $slot }}
+    </main>
+
+    <!-- Mobile Bottom Navigation Bar (SDD 4.1 & design.md 8) -->
+    <nav class="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-[#D5E0D9] z-40 flex items-center justify-around h-16 px-2 shadow-lg">
+        <!-- Peta -->
+        <a href="{{ route('home') }}" class="flex flex-col items-center justify-center flex-1 py-1 {{ request()->routeIs('home') ? 'text-[#1E7A4C]' : 'text-[#4E6157]' }}">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+            </svg>
+            <span class="text-[11px] font-medium mt-0.5">Peta</span>
+        </a>
+
+        <!-- Galang -->
+        <a href="{{ route('campaigns.index') }}" class="flex flex-col items-center justify-center flex-1 py-1 {{ request()->routeIs('campaigns.*') ? 'text-[#1E7A4C]' : 'text-[#4E6157]' }}">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+            <span class="text-[11px] font-medium mt-0.5">Galang</span>
+        </a>
+
+        <!-- Center Action: Bagikan makanan -->
+        <a href="{{ route('listings.create') }}" class="flex flex-col items-center justify-center -mt-5">
+            <div class="w-12 h-12 rounded-full bg-[#1E7A4C] text-white flex items-center justify-center shadow-md active:bg-[#14573A]">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+                </svg>
+            </div>
+            <span class="text-[10px] font-bold text-[#1E7A4C] mt-1">Bagikan</span>
+        </a>
+
+        <!-- Aktivitas / Dashboard -->
+        <a href="{{ route('dashboard') }}" class="flex flex-col items-center justify-center flex-1 py-1 {{ request()->routeIs('dashboard') ? 'text-[#1E7A4C]' : 'text-[#4E6157]' }}">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+            <span class="text-[11px] font-medium mt-0.5">Aktivitas</span>
+        </a>
+
+        <!-- Akun / Masuk -->
+        @auth
+            <a href="{{ route('volunteer.areas') }}" class="flex flex-col items-center justify-center flex-1 py-1 {{ request()->routeIs('volunteer.*') ? 'text-[#1E7A4C]' : 'text-[#4E6157]' }}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <span class="text-[11px] font-medium mt-0.5">Relawan</span>
+            </a>
+        @else
+            <a href="{{ route('login') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[#4E6157]">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                </svg>
+                <span class="text-[11px] font-medium mt-0.5">Masuk</span>
+            </a>
+        @endauth
+    </nav>
+
+    @stack('scripts')
+</body>
+</html>

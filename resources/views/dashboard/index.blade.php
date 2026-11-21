@@ -1,0 +1,343 @@
+<x-layouts.app title="Dashboard — Locabite">
+
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6" x-data="{ tab: '{{ $tab }}' }">
+
+    <!-- User Welcome & Actions -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-[#D5E0D9] shadow-card">
+        <div>
+            <div class="flex items-center gap-2">
+                <h1 class="font-display font-bold text-2xl text-[#16251D]">Halo, {{ $user->name }}</h1>
+                @if($user->isVolunteer())
+                    <x-volunteer-badge label="Relawan Wilayah" />
+                @endif
+                @if($user->is_verified)
+                    <span class="badge-verified text-xs">Terverifikasi</span>
+                @endif
+            </div>
+            <p class="text-xs text-[#4E6157] mt-1">Satu akun untuk membagikan dan mengambil makanan berlebih.</p>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <a href="{{ route('listings.create') }}" class="btn-primary text-xs">
+                + Bagikan makanan
+            </a>
+            <a href="{{ route('home') }}" class="btn-secondary text-xs">
+                Cari makanan
+            </a>
+        </div>
+    </div>
+
+    <!-- Invitation Card to become Volunteer (for non-volunteers) -->
+    @if(!$user->isVolunteer())
+        <div x-data="{ dismissed: localStorage.getItem('locabite_vol_invite_dismissed') === '1' }"
+             x-show="!dismissed"
+             class="p-5 rounded-3xl bg-linear-to-r from-emerald-50 to-teal-50 border border-[#1E7A4C]/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="flex items-start gap-3">
+                <span class="text-2xl">🤝</span>
+                <div>
+                    <h3 class="font-display font-bold text-sm text-[#14573A]">Ingin membantu lebih jauh di wilayahmu?</h3>
+                    <p class="text-xs text-[#4E6157] mt-0.5">Daftarkan diri sebagai relawan kecamatan untuk mengelola dan menyalurkan surplus makanan ke panti asuhan dan warga rentan.</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+                <a href="{{ route('volunteer.apply') }}" class="btn-primary text-xs py-2 px-3">
+                    Ajukan diri sebagai Relawan
+                </a>
+                <button type="button" @click="dismissed = true; localStorage.setItem('locabite_vol_invite_dismissed', '1')" class="text-xs text-[#4E6157] hover:text-[#16251D] px-2 py-1">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    @endif
+
+    <!-- TABS NAVIGATION -->
+    <div class="flex items-center gap-2 border-b border-[#D5E0D9] overflow-x-auto scrollbar-none pb-px">
+        <button @click="tab = 'ringkasan'"
+                :class="tab === 'ringkasan' ? 'border-[#1E7A4C] text-[#1E7A4C] font-bold' : 'border-transparent text-[#4E6157] hover:text-[#16251D]'"
+                class="px-4 py-2.5 text-sm border-b-2 transition shrink-0">
+            Ringkasan
+        </button>
+        <button @click="tab = 'bagikan'"
+                :class="tab === 'bagikan' ? 'border-[#1E7A4C] text-[#1E7A4C] font-bold' : 'border-transparent text-[#4E6157] hover:text-[#16251D]'"
+                class="px-4 py-2.5 text-sm border-b-2 transition shrink-0 flex items-center gap-1.5">
+            <span>Yang saya bagikan</span>
+            @if($incomingPendingClaims->isNotEmpty())
+                <span class="w-5 h-5 rounded-full bg-[#B45309] text-white text-[11px] font-bold flex items-center justify-center">
+                    {{ $incomingPendingClaims->count() }}
+                </span>
+            @endif
+        </button>
+        <button @click="tab = 'ambil'"
+                :class="tab === 'ambil' ? 'border-[#1E7A4C] text-[#1E7A4C] font-bold' : 'border-transparent text-[#4E6157] hover:text-[#16251D]'"
+                class="px-4 py-2.5 text-sm border-b-2 transition shrink-0">
+            Yang saya ambil
+        </button>
+        @if($user->isVolunteer())
+            <button @click="tab = 'galang'"
+                    :class="tab === 'galang' ? 'border-[#1E7A4C] text-[#1E7A4C] font-bold' : 'border-transparent text-[#4E6157] hover:text-[#16251D]'"
+                    class="px-4 py-2.5 text-sm border-b-2 transition shrink-0 flex items-center gap-1.5">
+                <span>Galang saya</span>
+                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-blue-100 text-[#2A6F97]">Relawan</span>
+            </button>
+        @endif
+    </div>
+
+    <!-- TAB 1: RINGKASAN -->
+    <div x-show="tab === 'ringkasan'" class="space-y-6">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="bg-white p-5 rounded-3xl border border-[#D5E0D9] shadow-xs">
+                <span class="text-xs text-[#4E6157] block">Porsi Makanan Dibagikan</span>
+                <div class="font-display font-bold text-3xl text-[#1E7A4C] mt-1">{{ $portionsShared }}</div>
+                <span class="text-[11px] text-[#4E6157]">dari {{ $myListings->count() }} postingan</span>
+            </div>
+
+            <div class="bg-white p-5 rounded-3xl border border-[#D5E0D9] shadow-xs">
+                <span class="text-xs text-[#4E6157] block">Porsi Makanan Diambil</span>
+                <div class="font-display font-bold text-3xl text-[#2A6F97] mt-1">{{ $portionsTaken }}</div>
+                <span class="text-[11px] text-[#4E6157]">berhasil diselamatkan</span>
+            </div>
+
+            <div class="bg-white p-5 rounded-3xl border border-[#D5E0D9] shadow-xs">
+                <span class="text-xs text-[#4E6157] block">Klaim Masuk Menunggu</span>
+                <div class="font-display font-bold text-3xl text-[#B45309] mt-1">{{ $incomingPendingClaims->count() }}</div>
+                <span class="text-[11px] text-[#4E6157]">membutuhkan keputusan Anda</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 2: YANG SAYA BAGIKAN -->
+    <div x-show="tab === 'bagikan'" class="space-y-6">
+        <!-- Incoming Claims Section on Top (Time Sensitive!) -->
+        @if($incomingPendingClaims->isNotEmpty())
+            <div class="bg-amber-50/70 p-5 rounded-3xl border border-amber-200 space-y-3">
+                <h2 class="font-display font-bold text-sm text-[#7A4A00] flex items-center gap-2">
+                    ⏳ Klaim Masuk Menunggu Persetujuan Anda
+                </h2>
+
+                <div class="space-y-2">
+                    @foreach($incomingPendingClaims as $claim)
+                        <div class="p-3.5 bg-white rounded-2xl border border-[#D5E0D9] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-xs">
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <strong class="text-sm text-[#16251D]">{{ $claim->user->name }}</strong>
+                                    <span class="text-[#4E6157]">pada</span>
+                                    <strong class="text-[#1E7A4C]">{{ $claim->listing->title }}</strong>
+                                </div>
+                                <p class="text-[#4E6157] mt-0.5">
+                                    Meminta <strong class="text-[#1E7A4C]">{{ $claim->portions_requested }} porsi</strong> (sisa listing: {{ $claim->listing->portions_left }} porsi)
+                                </p>
+                            </div>
+
+                            <div class="flex items-center gap-2">
+                                <form method="POST" action="{{ route('claims.approve', $claim->id) }}" class="flex items-center gap-1">
+                                    @csrf
+                                    <input type="number" name="portions" value="{{ min($claim->portions_requested, $claim->listing->portions_left) }}"
+                                           min="1" max="{{ min($claim->portions_requested, $claim->listing->portions_left) }}"
+                                           class="w-16 px-2 py-1 text-xs border rounded">
+                                    <button type="submit" class="btn-primary text-xs px-3 py-1">Setujui</button>
+                                </form>
+                                <form method="POST" action="{{ route('claims.reject', $claim->id) }}">
+                                    @csrf
+                                    <button type="submit" class="btn-danger text-xs px-2.5 py-1">Tolak</button>
+                                </form>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+
+        <!-- My Listings Table -->
+        <div class="bg-white rounded-3xl border border-[#D5E0D9] shadow-xs overflow-hidden">
+            <div class="p-5 border-b border-[#D5E0D9] flex items-center justify-between">
+                <h2 class="font-display font-bold text-base text-[#16251D]">Daftar Makanan yang Saya Bagikan</h2>
+                <a href="{{ route('listings.create') }}" class="btn-primary text-xs py-1.5 px-3">
+                    + Bagikan Baru
+                </a>
+            </div>
+
+            @if($myListings->isEmpty())
+                <div class="p-10 text-center">
+                    <p class="text-xs text-[#4E6157]">Belum ada makanan yang Anda bagikan.</p>
+                    <a href="{{ route('listings.create') }}" class="btn-primary text-xs mt-3 inline-flex">Buat Listing Pertama dalam 30 Detik</a>
+                </div>
+            @else
+                <div class="divide-y divide-[#D5E0D9]">
+                    @foreach($myListings as $listing)
+                        <div class="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                <x-time-ring :listing="$listing" />
+                                <div>
+                                    <div class="flex items-center gap-2 mb-0.5">
+                                        <h3 class="font-display font-bold text-sm text-[#16251D]">{{ $listing->title }}</h3>
+                                        <x-status-badge :status="$listing->status" />
+                                    </div>
+                                    <p class="text-xs text-[#4E6157]">
+                                        Tersisa <strong class="text-[#1E7A4C]">{{ $listing->portions_left }}</strong> dari {{ $listing->portions_total }} porsi •
+                                        {{ $listing->claims->count() }} klaim diajukan
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-2 self-end sm:self-auto">
+                                <a href="{{ route('listings.show', $listing->id) }}" class="btn-secondary text-xs px-3 py-1.5">
+                                    Kelola & Detail
+                                </a>
+                                <a href="{{ route('listings.duplicate', $listing->id) }}" class="text-xs text-[#1E7A4C] hover:underline px-2 py-1">
+                                    Bagikan lagi
+                                </a>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+    </div>
+
+    <!-- TAB 3: YANG SAYA AMBIL -->
+    <div x-show="tab === 'ambil'" class="space-y-6">
+        <h2 class="font-display font-bold text-base text-[#16251D]">Riwayat Pengambilan Makanan</h2>
+
+        @if($myClaims->isEmpty())
+            <div class="bg-white p-10 rounded-3xl border border-[#D5E0D9] text-center">
+                <p class="text-xs text-[#4E6157]">Anda belum pernah mengajukan klaim makanan.</p>
+                <a href="{{ route('home') }}" class="btn-secondary text-xs mt-3 inline-flex">Cari Makanan di Peta</a>
+            </div>
+        @else
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                @foreach($myClaims as $claim)
+                    <div class="bg-white p-5 rounded-3xl border border-[#D5E0D9] shadow-xs space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-[#4E6157]">{{ $claim->created_at->format('d M Y, H:i') }}</span>
+                            <x-status-badge :status="$claim->status" />
+                        </div>
+
+                        <div>
+                            <h3 class="font-display font-bold text-base text-[#16251D]">{{ $claim->listing->title }}</h3>
+                            <p class="text-xs text-[#4E6157] mt-0.5">Pemberi: {{ $claim->listing->user->organization_name ?? $claim->listing->user->name }}</p>
+                            <p class="text-xs text-[#1E7A4C] font-semibold mt-1">
+                                Porsi: {{ $claim->portions_approved ?? $claim->portions_requested }} porsi
+                            </p>
+                        </div>
+
+                        @if($claim->status === 'approved')
+                            <!-- Big Pickup Code Box -->
+                            <div class="p-4 bg-emerald-50 rounded-2xl border-2 border-[#1E7A4C] text-center">
+                                <span class="text-[11px] text-[#14573A] font-bold block">Tunjukkan kode ini saat mengambil makanan:</span>
+                                <div class="font-mono font-bold text-3xl tracking-widest text-[#14573A] my-1">
+                                    {{ $claim->pickup_code }}
+                                </div>
+                                <span class="text-xs text-[#4E6157] block">{{ $claim->listing->pickup_address }}</span>
+                            </div>
+                        @endif
+
+                        <div class="flex items-center justify-between pt-2 border-t border-[#D5E0D9]">
+                            <a href="{{ route('listings.show', $claim->listing_id) }}" class="text-xs font-bold text-[#1E7A4C] hover:underline">
+                                Lihat Listing &rarr;
+                            </a>
+
+                            @if($claim->status === 'picked_up' && !$claim->review)
+                                <!-- Review button -->
+                                <button type="button" onclick="document.getElementById('review-modal-{{ $claim->id }}').showModal()" class="btn-secondary text-xs px-3 py-1">
+                                    Beri Ulasan
+                                </button>
+                            @elseif($claim->review)
+                                <span class="text-xs text-amber-600 font-bold">★ {{ $claim->review->rating }} / 5</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- REVIEW DIALOG -->
+                    <dialog id="review-modal-{{ $claim->id }}" class="rounded-3xl p-6 max-w-sm w-full backdrop:bg-black/40 border border-[#D5E0D9] shadow-sheet">
+                        <form method="POST" action="{{ route('claims.review', $claim->id) }}" class="space-y-4">
+                            @csrf
+                            <h3 class="font-display font-bold text-base text-[#16251D]">Beri Ulasan Makanan</h3>
+                            <div>
+                                <label class="text-xs font-semibold block mb-1">Rating (1-5)</label>
+                                <select name="rating" class="input-field text-xs" required>
+                                    <option value="5">⭐⭐⭐⭐⭐ Sangat Baik & Bersih</option>
+                                    <option value="4">⭐⭐⭐⭐ Baik</option>
+                                    <option value="3">⭐⭐⭐ Cukup</option>
+                                    <option value="2">⭐⭐ Kurang</option>
+                                    <option value="1">⭐ Buruk</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold block mb-1">Komentar Singkat</label>
+                                <textarea name="comment" rows="2" class="input-field text-xs" placeholder="Ceritakan pengalaman serah terima Anda..."></textarea>
+                            </div>
+                            <div class="flex justify-end gap-2 pt-2">
+                                <button type="button" onclick="document.getElementById('review-modal-{{ $claim->id }}').close()" class="px-3 py-1.5 text-xs font-semibold text-[#4E6157]">Batal</button>
+                                <button type="submit" class="btn-primary text-xs px-3 py-1.5">Kirim Ulasan</button>
+                            </div>
+                        </form>
+                    </dialog>
+                @endforeach
+            </div>
+        @endif
+    </div>
+
+    <!-- TAB 4: GALANG SAYA (Volunteers only) -->
+    @if($user->isVolunteer())
+        <div x-show="tab === 'galang'" class="space-y-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="font-display font-bold text-base text-[#16251D]">Galang Makanan yang Anda Kelola</h2>
+                    <p class="text-xs text-[#4E6157]">Inisiatif pangan untuk panti asuhan, ponpes, dan tunawisma di kecamatan binaan Anda.</p>
+                </div>
+                <a href="{{ route('volunteer.campaigns.create') }}" class="btn-primary text-xs">
+                    + Buat Galang Baru
+                </a>
+            </div>
+
+            @if($myCampaigns->isEmpty())
+                <div class="bg-white p-10 rounded-3xl border border-[#D5E0D9] text-center">
+                    <p class="text-xs text-[#4E6157]">Anda belum memiliki artikel galang makanan.</p>
+                    <a href="{{ route('volunteer.campaigns.create') }}" class="btn-primary text-xs mt-3 inline-flex">Buat Galang Pertama</a>
+                </div>
+            @else
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    @foreach($myCampaigns as $camp)
+                        <div class="bg-white p-5 rounded-3xl border border-[#D5E0D9] shadow-xs space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-blue-100 text-[#2A6F97]">
+                                    Kec. {{ $camp->district->name }}
+                                </span>
+                                <x-status-badge :status="$camp->status" />
+                            </div>
+
+                            <h3 class="font-display font-bold text-base text-[#16251D]">{{ $camp->title }}</h3>
+                            <p class="text-xs text-[#4E6157]">Tujuan: {{ $camp->beneficiary_name }}</p>
+
+                            <!-- Progress -->
+                            <div class="w-full bg-gray-100 rounded-full h-2">
+                                <div class="bg-[#1E7A4C] h-2 rounded-full" style="width: {{ $camp->progressPercent() }}%"></div>
+                            </div>
+                            <span class="text-xs text-[#4E6157] block">
+                                {{ $camp->collected_portions }} dari {{ $camp->target_portions }} porsi terkumpul ({{ $camp->progressPercent() }}%)
+                            </span>
+
+                            <div class="flex items-center justify-between pt-2 border-t border-[#D5E0D9]">
+                                <a href="{{ route('campaigns.show', $camp->slug) }}" class="text-xs font-bold text-[#2A6F97] hover:underline">
+                                    Buka Halaman Publik &rarr;
+                                </a>
+
+                                @if($camp->status === 'draft')
+                                    <form method="POST" action="{{ route('volunteer.campaigns.submit', $camp->id) }}">
+                                        @csrf
+                                        <button type="submit" class="btn-primary text-xs px-3 py-1">
+                                            Ajukan Tinjauan
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+    @endif
+
+</div>
+
+</x-layouts.app>
