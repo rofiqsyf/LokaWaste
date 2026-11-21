@@ -12,6 +12,8 @@ use App\Http\Controllers\VolunteerController;
 use App\Http\Middleware\EnsureAdmin;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\WilayahController;
+
 // Public Home & Interactive Map
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -20,6 +22,13 @@ Route::get('/api/listings/nearby', [HomeController::class, 'nearbyListings'])->n
 Route::get('/api/campaigns/nearby', [HomeController::class, 'nearbyCampaigns'])->name('api.campaigns.nearby');
 Route::get('/api/regions/regencies', [HomeController::class, 'regencies'])->name('api.regions.regencies');
 Route::get('/api/regions/regencies/{id}/districts', [HomeController::class, 'districtsByRegency'])->name('api.regions.districts');
+
+// EMSIFA Wilayah Indonesia API Proxy & Cache
+Route::prefix('api/wilayah')->name('api.wilayah.')->group(function () {
+    Route::get('/provinces', [WilayahController::class, 'provinces'])->name('provinces');
+    Route::get('/regencies/{provinceId}', [WilayahController::class, 'regencies'])->name('regencies');
+    Route::get('/districts/{regencyId}', [WilayahController::class, 'districts'])->name('districts');
+});
 
 // Public Listing Detail
 Route::get('/listings/{listing}', [ListingController::class, 'show'])->name('listings.show');
