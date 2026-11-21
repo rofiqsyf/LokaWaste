@@ -43,16 +43,18 @@ export default (expiresAt, serverNow, totalMinutes, tzLabel) => ({
     },
 
     get short() {
-        if (this.expired) return '0';
-        const h = Math.floor(this.minutes / 60);
-        const m = this.minutes % 60;
-        return h >= 1 ? (m ? `${h}j${m}` : `${h}j`) : `${m}m`;
+        if (this.expired) return 'Habis';
+        const mins = Math.max(0, Math.round(Number(this.minutes) || 0));
+        const h = Math.floor(mins / 60);
+        const m = mins % 60;
+        return h >= 1 ? (m ? `${h}j ${m}m` : `${h}j`) : `${m}m`;
     },
 
     get label() {
         if (this.expired) return 'Waktu ambil sudah berakhir';
-        const h = Math.floor(this.minutes / 60);
-        const m = this.minutes % 60;
+        const mins = Math.max(0, Math.round(Number(this.minutes) || 0));
+        const h = Math.floor(mins / 60);
+        const m = mins % 60;
         return `Sisa ${h ? h + ' jam ' : ''}${m ? m + ' menit' : ''}, batas pukul ${this.deadline} ${tzLabel || 'WIB'}`.trim();
     },
 

@@ -61,8 +61,8 @@ class HomeController extends Controller
         $currentUserId = auth()->id();
 
         $data = $listings->map(function ($l) use ($currentUserId) {
-            $totalMins = $l->windowMinutes();
-            $remainingMins = max(0, now()->diffInMinutes($l->expires_at, false));
+            $totalMins = (int) round($l->windowMinutes());
+            $remainingMins = max(0, (int) round(now()->diffInMinutes($l->expires_at, false)));
 
             return [
                 'id' => $l->id,
@@ -73,14 +73,14 @@ class HomeController extends Controller
                 'is_verified' => (bool) $l->user?->is_verified,
                 'is_volunteer' => (bool) $l->user?->isVolunteer(),
                 'is_owner' => $currentUserId && $l->user_id === $currentUserId,
-                'portions_left' => $l->portions_left,
-                'portions_total' => $l->portions_total,
-                'distance_km' => $l->distance_km,
+                'portions_left' => (int) $l->portions_left,
+                'portions_total' => (int) $l->portions_total,
+                'distance_km' => round((float) $l->distance_km, 1),
                 'halal_claim' => (bool) $l->halal_claim,
                 'food_type' => $l->food_type,
                 'photo_url' => $l->photo_path ? asset('storage/' . $l->photo_path) : null,
-                'lat' => $l->public_latitude,
-                'lng' => $l->public_longitude,
+                'lat' => (float) $l->public_latitude,
+                'lng' => (float) $l->public_longitude,
                 'show_exact' => (bool) $l->show_exact_location,
                 'available_from' => $l->available_from->toIso8601String(),
                 'expires_at' => $l->expires_at->toIso8601String(),

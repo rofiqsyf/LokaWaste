@@ -243,79 +243,87 @@
                     <div :id="`card-${item.id}`"
                          @click="focusMarker(item)"
                          :class="[
-                            selectedId === item.id ? 'ring-2 ring-[#2A6F97] bg-blue-50/40 shadow-card border-[#2A6F97]' : 'bg-white hover:border-[#1E7A4C]/60 hover:shadow-card hover:-translate-y-0.5 border-[#D5E0D9]',
-                            item.remaining_minutes < 60 ? 'border-red-200/80 bg-linear-to-r from-red-50/30 to-white' : ''
+                            selectedId === item.id ? 'ring-2 ring-[#2A6F97] bg-blue-50/40 shadow-card border-[#2A6F97]' : 'bg-white hover:border-[#1E7A4C]/70 hover:shadow-card hover:-translate-y-0.5 border-[#D5E0D9]',
+                            item.remaining_minutes < 60 ? 'border-red-200 bg-linear-to-r from-red-50/20 via-white to-white' : ''
                          ]"
-                         class="p-4 rounded-3xl border shadow-xs cursor-pointer transition-all duration-200 flex items-center justify-between gap-3 group">
-                        <!-- Left Info -->
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center gap-1.5 mb-1.5 flex-wrap">
-                                <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-gray-100 text-[#4E6157] group-hover:bg-emerald-50 group-hover:text-[#1E7A4C] transition-colors" x-text="item.category_name"></span>
-                                <template x-if="item.remaining_minutes < 60">
-                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-700 animate-pulse flex items-center gap-1">
-                                        <svg class="w-3 h-3 text-red-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
-                                        </svg>
-                                        <span>Segera Ambil</span>
-                                    </span>
-                                </template>
+                         class="p-4 rounded-2xl border shadow-xs cursor-pointer transition-all duration-200 space-y-3 group">
+                        
+                        <!-- Top Header: Category Chips & Aesthetic Urgency Pill -->
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-1.5 flex-wrap min-w-0">
+                                <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-md bg-gray-100 text-[#4E6157] group-hover:bg-emerald-50 group-hover:text-[#1E7A4C] transition-colors truncate" x-text="item.category_name"></span>
                                 <template x-if="item.halal_claim">
-                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">Halal</span>
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200/80">Halal</span>
                                 </template>
                                 <template x-if="item.is_verified">
-                                    <span class="badge-verified text-[10px]">Terverifikasi</span>
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-[#2A6F97] border border-blue-200/80 flex items-center gap-1">
+                                        <svg class="w-3 h-3 text-[#2A6F97]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                        Terverifikasi
+                                    </span>
                                 </template>
                                 <template x-if="item.is_owner">
-                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">Milik Anda</span>
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200">Milik Anda</span>
                                 </template>
                             </div>
 
-                            <h3 class="font-display font-bold text-sm text-[#16251D] group-hover:text-[#1E7A4C] transition-colors truncate" x-text="item.title"></h3>
-                            <p class="text-xs text-[#4E6157] truncate mt-0.5" x-text="item.user_name"></p>
-
-                            <div class="flex items-center gap-2.5 text-xs text-[#4E6157] mt-2.5">
-                                <span class="font-bold text-[#1E7A4C] bg-emerald-50 px-2 py-0.5 rounded-md" x-text="`${item.portions_left} porsi`"></span>
-                                <span>•</span>
-                                <span class="font-medium" x-text="`${item.distance_km} km`"></span>
-                                <span>•</span>
-                                <a :href="'https://www.google.com/maps/dir/?api=1&destination=' + item.lat + ',' + item.lng"
-                                   target="_blank"
-                                   @click.stop
-                                   class="text-[11px] font-bold text-[#2A6F97] hover:underline inline-flex items-center gap-1 bg-blue-50/80 px-2 py-0.5 rounded-md">
-                                    <svg class="w-3 h-3 text-[#2A6F97] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                    </svg>
-                                    <span>Rute</span>
-                                </a>
+                            <!-- Aesthetic Urgency Pill Badge -->
+                            <div class="shrink-0">
+                                <template x-if="item.remaining_minutes < 60">
+                                    <span class="px-2.5 py-1 rounded-full bg-red-50 text-red-700 border border-red-200 text-[11px] font-bold flex items-center gap-1.5 animate-pulse shadow-2xs">
+                                        <svg class="w-3 h-3 text-red-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        <span x-text="`Sisa ${getTimeShort(item.remaining_minutes)}`"></span>
+                                    </span>
+                                </template>
+                                <template x-if="item.remaining_minutes >= 60 && item.remaining_minutes <= 180">
+                                    <span class="px-2.5 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-[11px] font-bold flex items-center gap-1.5 shadow-2xs">
+                                        <svg class="w-3 h-3 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        <span x-text="`Sisa ${getTimeShort(item.remaining_minutes)}`"></span>
+                                    </span>
+                                </template>
+                                <template x-if="item.remaining_minutes > 180">
+                                    <span class="px-2.5 py-1 rounded-full bg-emerald-50 text-[#14573A] border border-emerald-200 text-[11px] font-bold flex items-center gap-1.5 shadow-2xs">
+                                        <svg class="w-3 h-3 text-[#1E7A4C] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        <span x-text="`Sisa ${getTimeShort(item.remaining_minutes)}`"></span>
+                                    </span>
+                                </template>
                             </div>
-
-                            <template x-if="item.campaign_title">
-                                <div class="mt-2 text-[11px] text-[#2A6F97] font-medium truncate flex items-center gap-1">
-                                    <svg class="w-3 h-3 text-[#2A6F97] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                                    </svg>
-                                    <span>Bagian dari galang: <strong x-text="item.campaign_title"></strong></span>
-                                </div>
-                            </template>
                         </div>
 
-                        <!-- Right: Signature Time Ring Mini with Glass Shadow -->
-                        <div class="shrink-0 flex flex-col items-center">
-                            <div class="w-14 h-14 relative p-0.5">
-                                <svg class="w-full h-full -rotate-90 drop-shadow-xs" viewBox="0 0 36 36">
-                                    <path class="text-gray-100" stroke-width="3" stroke="currentColor" fill="none"
-                                          d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                                    <path :stroke="getTimeColor(item.remaining_minutes)" stroke-width="3.2" stroke-linecap="round" fill="none"
-                                          :stroke-dasharray="`${Math.min(100, Math.max(0, (item.remaining_minutes / (item.total_minutes || 240)) * 100))}, 100`"
-                                          d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                                </svg>
-                                <span class="absolute inset-0 flex items-center justify-center font-display font-bold text-xs text-[#16251D]"
-                                      x-text="getTimeShort(item.remaining_minutes)"></span>
+                        <!-- Title & Provider -->
+                        <div>
+                            <h3 class="font-display font-bold text-sm text-[#16251D] group-hover:text-[#1E7A4C] transition-colors line-clamp-2 leading-snug" x-text="item.title"></h3>
+                            <div class="flex items-center gap-1.5 text-xs text-[#4E6157] mt-1">
+                                <svg class="w-3.5 h-3.5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                                <span class="truncate" x-text="item.user_name"></span>
                             </div>
-                            <span class="text-[9px] font-bold uppercase tracking-wider mt-0.5"
-                                  :style="`color: ${getTimeColor(item.remaining_minutes)}`"
-                                  x-text="item.remaining_minutes < 60 ? 'Kritis' : 'Sisa waktu'"></span>
                         </div>
+
+                        <!-- Meta Row: Portions, Distance, and Direct Route Button -->
+                        <div class="flex items-center justify-between pt-2 border-t border-gray-100 text-xs">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-xs bg-emerald-100/70 text-[#14573A] px-2.5 py-0.5 rounded-lg border border-emerald-200/60" x-text="`${item.portions_left} porsi`"></span>
+                                <span class="text-[#4E6157] font-medium flex items-center gap-1">
+                                    <svg class="w-3 h-3 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                    <span x-text="`${item.distance_km} km`"></span>
+                                </span>
+                            </div>
+
+                            <a :href="'https://www.google.com/maps/dir/?api=1&destination=' + item.lat + ',' + item.lng"
+                               target="_blank"
+                               @click.stop
+                               class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold text-[#2A6F97] bg-blue-50 hover:bg-blue-100 border border-blue-200 transition active:scale-95">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                                <span>Rute</span>
+                            </a>
+                        </div>
+
+                        <!-- Associated Campaign Strip (if any) -->
+                        <template x-if="item.campaign_title">
+                            <div class="p-2 bg-blue-50/60 rounded-xl border border-blue-100 text-[11px] text-[#2A6F97] flex items-center gap-1.5">
+                                <svg class="w-3.5 h-3.5 text-[#2A6F97] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                                <span class="truncate">Galang: <strong x-text="item.campaign_title"></strong></span>
+                            </div>
+                        </template>
                     </div>
                 </template>
             </template>
@@ -814,17 +822,22 @@ document.addEventListener('alpine:init', () => {
         },
 
         getTimeColor(remainingMins) {
-            if (remainingMins <= 0) return 'var(--color-ink-soft)';
-            if (remainingMins < 60) return '#C93A2E'; // Cabai (<1h)
-            if (remainingMins <= 180) return '#B45309'; // Kunyit Tua (1-3h)
-            return '#23865A'; // Hijau Segar (>3h)
+            const mins = Math.max(0, Math.round(Number(remainingMins) || 0));
+            if (mins <= 0) return '#4E6157';
+            if (mins < 60) return '#C93A2E'; // Cabai / Kritis (<1h)
+            if (mins <= 180) return '#B45309'; // Kunyit Tua / Mendesak (1-3h)
+            return '#1E7A4C'; // Hijau Segar (>3h)
         },
 
         getTimeShort(remainingMins) {
-            if (remainingMins <= 0) return 'Habis';
-            const h = Math.floor(remainingMins / 60);
-            const m = remainingMins % 60;
-            return h >= 1 ? (m ? `${h}j${m}` : `${h}j`) : `${m}m`;
+            const mins = Math.max(0, Math.round(Number(remainingMins) || 0));
+            if (mins <= 0) return 'Habis';
+            const h = Math.floor(mins / 60);
+            const m = mins % 60;
+            if (h >= 1) {
+                return m > 0 ? `${h}j ${m}m` : `${h}j`;
+            }
+            return `${m}m`;
         }
     }));
 });

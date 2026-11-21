@@ -269,10 +269,10 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
                         @foreach($listings as $item)
                             @php
-                                $remainingMins = max(0, now()->diffInMinutes($item->expires_at, false));
-                                $hours = floor($remainingMins / 60);
+                                $remainingMins = max(0, (int) round(now()->diffInMinutes($item->expires_at, false)));
+                                $hours = intdiv($remainingMins, 60);
                                 $mins = $remainingMins % 60;
-                                $timeShort = $hours > 0 ? "{$hours}j {$mins}m" : "{$mins}m";
+                                $timeShort = $hours > 0 ? ($mins > 0 ? "{$hours}j {$mins}m" : "{$hours}j") : "{$mins}m";
                                 $isUrgent = $remainingMins < 60;
                             @endphp
 
@@ -346,7 +346,7 @@
                                         </div>
 
                                         <!-- Title -->
-                                        <h3 class="font-display font-bold text-base text-[#16251D] group-hover:text-[#1E7A4C] transition-colors line-clamp-1">
+                                        <h3 class="font-display font-bold text-base text-[#16251D] group-hover:text-[#1E7A4C] transition-colors line-clamp-2 leading-snug">
                                             {{ $item->title }}
                                         </h3>
 
