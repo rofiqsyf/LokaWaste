@@ -40,7 +40,11 @@
                             <img src="{{ asset('storage/' . $camp->cover_path) }}" alt="{{ $camp->title }}" class="w-full h-full object-cover">
                         @else
                             <div class="text-center text-[#4E6157]">
-                                <span class="text-4xl block mb-1">🏛️</span>
+                                <div class="w-12 h-12 mx-auto mb-2 rounded-2xl bg-white/80 flex items-center justify-center text-[#2A6F97] shadow-xs">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                    </svg>
+                                </div>
                                 <span class="text-xs font-semibold">{{ $camp->beneficiary_name }}</span>
                             </div>
                         @endif

@@ -51,7 +51,14 @@
                                 <form method="POST" action="{{ route('admin.users.toggle-verify', $u->id) }}">
                                     @csrf
                                     <button type="submit" class="px-2.5 py-1 rounded-xl text-xs font-bold transition {{ $u->is_verified ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-500' }}">
-                                        {{ $u->is_verified ? '✓ Terverifikasi' : 'Belum Verifikasi' }}
+                                        @if($u->is_verified)
+                                            <span class="inline-flex items-center gap-1">
+                                                <svg class="w-3.5 h-3.5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                                Terverifikasi
+                                            </span>
+                                        @else
+                                            Belum Verifikasi
+                                        @endif
                                     </button>
                                 </form>
                             </td>

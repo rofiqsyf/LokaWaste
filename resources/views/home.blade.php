@@ -87,8 +87,11 @@
                 </template>
 
                 <div class="px-3 py-2 bg-gray-50/70 rounded-2xl border-t border-gray-100/80 mt-1 flex items-center justify-between text-[11px] text-[#4E6157]">
-                    <span class="flex items-center gap-1">
-                        <span>💡</span> Ketuk untuk terbang ke lokasi & cari makanan
+                    <span class="flex items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Ketuk untuk terbang ke lokasi & cari makanan
                     </span>
                     <span class="hidden sm:inline font-mono text-[10px] bg-white px-2 py-0.5 rounded-md border border-gray-200">ESC untuk tutup</span>
                 </div>
@@ -134,15 +137,22 @@
             <!-- Urgent filter (< 2 jam) -->
             <button @click="urgentOnly = !urgentOnly; filterListings()"
                     :class="urgentOnly ? 'bg-[#C93A2E] text-white font-semibold border-transparent' : 'bg-white/95 text-[#4E6157] border-[#D5E0D9]'"
-                    class="px-2.5 py-1.5 text-xs rounded-xl shadow-card border shrink-0 transition flex items-center gap-1">
-                <span>🔥 &lt; 2 Jam</span>
+                    class="px-2.5 py-1.5 text-xs rounded-xl shadow-card border shrink-0 transition flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-current shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z" />
+                </svg>
+                <span>&lt; 2 Jam</span>
             </button>
 
             <!-- Basemap toggle (OSM vs Satelit) -->
             <button @click="toggleBasemap()"
                     :class="basemap === 'satellite' ? 'bg-[#16251D] text-white font-semibold' : 'bg-white/95 text-[#4E6157] border-[#D5E0D9]'"
                     class="px-2.5 py-1.5 text-xs rounded-xl shadow-card border shrink-0 transition flex items-center gap-1.5">
-                <span x-text="basemap === 'satellite' ? '🛰️ Satelit' : '🗺️ Peta'"></span>
+                <svg class="w-3.5 h-3.5 text-current shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                </svg>
+                <span x-text="basemap === 'satellite' ? 'Satelit' : 'Peta Jalan'"></span>
             </button>
         </div>
 
@@ -243,7 +253,10 @@
                                 <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-gray-100 text-[#4E6157] group-hover:bg-emerald-50 group-hover:text-[#1E7A4C] transition-colors" x-text="item.category_name"></span>
                                 <template x-if="item.remaining_minutes < 60">
                                     <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-700 animate-pulse flex items-center gap-1">
-                                        <span>🔥</span> Segera Ambil
+                                        <svg class="w-3 h-3 text-red-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
+                                        </svg>
+                                        <span>Segera Ambil</span>
                                     </span>
                                 </template>
                                 <template x-if="item.halal_claim">
@@ -269,13 +282,18 @@
                                    target="_blank"
                                    @click.stop
                                    class="text-[11px] font-bold text-[#2A6F97] hover:underline inline-flex items-center gap-1 bg-blue-50/80 px-2 py-0.5 rounded-md">
-                                    <span>🧭</span> Rute
+                                    <svg class="w-3 h-3 text-[#2A6F97] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                    </svg>
+                                    <span>Rute</span>
                                 </a>
                             </div>
 
                             <template x-if="item.campaign_title">
                                 <div class="mt-2 text-[11px] text-[#2A6F97] font-medium truncate flex items-center gap-1">
-                                    <span>🏛️</span>
+                                    <svg class="w-3 h-3 text-[#2A6F97] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                    </svg>
                                     <span>Bagian dari galang: <strong x-text="item.campaign_title"></strong></span>
                                 </div>
                             </template>
@@ -342,7 +360,9 @@
                 <p class="text-[10px] text-[#4E6157]" x-text="`Pusat: ${currentLocationLabel} (r=${radius}km)`"></p>
             </div>
             <button @click="resetToDefaultCenter()" title="Kembali ke titik awal" class="p-1 hover:bg-gray-100 rounded-lg text-gray-500">
-                ↺
+                <svg class="w-4 h-4 text-[#4E6157]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
             </button>
         </div>
 
@@ -602,8 +622,9 @@ document.addEventListener('alpine:init', () => {
                             <a href="${l.detail_url}" style="display:inline-block; background:#1E7A4C; color:white; padding:4px 10px; border-radius:8px; font-size:11px; text-decoration:none; font-weight:bold;">
                                 Detail
                             </a>
-                            <a href="https://www.google.com/maps/dir/?api=1&destination=${l.lat},${l.lng}" target="_blank" style="display:inline-block; background:#2A6F97; color:white; padding:4px 10px; border-radius:8px; font-size:11px; text-decoration:none; font-weight:bold;">
-                                🧭 Rute
+                            <a href="https://www.google.com/maps/dir/?api=1&destination=${l.lat},${l.lng}" target="_blank" style="display:inline-flex; align-items:center; gap:4px; background:#2A6F97; color:white; padding:4px 10px; border-radius:8px; font-size:11px; text-decoration:none; font-weight:bold;">
+                                <svg style="width:12px; height:12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                                Rute
                             </a>
                         </div>
                     </div>
@@ -626,8 +647,8 @@ document.addEventListener('alpine:init', () => {
             campaigns.forEach(c => {
                 const markerHtml = `
                     <div style="display:flex; flex-direction:column; align-items:center; cursor:pointer;">
-                        <div style="width:30px; height:30px; border-radius:8px; background:#2A6F97; border:2px solid white; box-shadow:0 2px 6px rgba(0,0,0,0.3); display:grid; place-items:center; color:white; font-size:14px;">
-                            🏛️
+                        <div style="width:30px; height:30px; border-radius:8px; background:#2A6F97; border:2px solid white; box-shadow:0 2px 6px rgba(0,0,0,0.3); display:grid; place-items:center; color:white;">
+                            <svg style="width:16px; height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                         </div>
                     </div>
                 `;
@@ -651,8 +672,9 @@ document.addEventListener('alpine:init', () => {
                             <a href="${c.url}" style="display:inline-block; background:#2A6F97; color:white; padding:4px 10px; border-radius:8px; font-size:11px; text-decoration:none; font-weight:bold;">
                                 Baca galang
                             </a>
-                            <a href="https://www.google.com/maps/dir/?api=1&destination=${c.lat},${c.lng}" target="_blank" style="display:inline-block; background:#16251D; color:white; padding:4px 10px; border-radius:8px; font-size:11px; text-decoration:none; font-weight:bold;">
-                                🧭 Rute
+                            <a href="https://www.google.com/maps/dir/?api=1&destination=${c.lat},${c.lng}" target="_blank" style="display:inline-flex; align-items:center; gap:4px; background:#16251D; color:white; padding:4px 10px; border-radius:8px; font-size:11px; text-decoration:none; font-weight:bold;">
+                                <svg style="width:12px; height:12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                                Rute
                             </a>
                         </div>
                     </div>

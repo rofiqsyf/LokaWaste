@@ -109,9 +109,17 @@
                        @input.debounce.300ms="fetchSuggestions()"
                        @focus="if (suggestions.length > 0) showSuggestions = true"
                        placeholder="Cari nama tempat / jalan penyaluran (misal: Jl. Bulusan, Panti Asuhan)..."
-                       class="w-full pl-8 pr-8 py-2 text-xs rounded-xl border border-[#74877B] text-[#16251D] focus:ring-2 focus:ring-[#2A6F97] bg-white">
-                <span class="absolute left-2.5 top-2.5 text-xs text-gray-400">🔍</span>
-                <button type="button" x-show="searchQuery" @click="searchQuery = ''; suggestions = []; showSuggestions = false;" class="absolute right-2.5 top-2 text-xs font-bold text-gray-400 hover:text-gray-600">✕</button>
+                       class="w-full pl-9 pr-9 py-2 text-xs rounded-xl border border-[#74877B] text-[#16251D] focus:ring-2 focus:ring-[#2A6F97] bg-white">
+                <span class="absolute left-3 top-2.5 text-gray-400 pointer-events-none">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </span>
+                <button type="button" x-show="searchQuery" @click="searchQuery = ''; suggestions = []; showSuggestions = false;" class="absolute right-2.5 top-2.5 text-gray-400 hover:text-gray-600">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
 
                 <!-- Suggestions dropdown (Top-tier World-Class UI) -->
                 <div x-show="showSuggestions && suggestions.length > 0"

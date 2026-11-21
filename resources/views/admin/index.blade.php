@@ -59,7 +59,11 @@
         <div class="bg-white rounded-3xl border border-[#D5E0D9] shadow-card overflow-hidden flex flex-col">
             <div class="p-5 border-b border-[#D5E0D9] flex items-center justify-between bg-amber-50/50">
                 <div class="flex items-center gap-2">
-                    <span class="text-lg">⏳</span>
+                    <div class="w-7 h-7 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
                     <h2 class="font-display font-bold text-base text-[#7A4A00]">Antrean Pengajuan Relawan</h2>
                 </div>
                 <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-amber-200 text-amber-900">
@@ -114,7 +118,11 @@
         <div class="bg-white rounded-3xl border border-[#D5E0D9] shadow-card overflow-hidden flex flex-col">
             <div class="p-5 border-b border-[#D5E0D9] flex items-center justify-between bg-blue-50/50">
                 <div class="flex items-center gap-2">
-                    <span class="text-lg">🏛️</span>
+                    <div class="w-7 h-7 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center shrink-0">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
+                    </div>
                     <h2 class="font-display font-bold text-base text-[#2A6F97]">Antrean Moderasi Galang Makanan</h2>
                 </div>
                 <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-200 text-blue-900">

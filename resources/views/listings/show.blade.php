@@ -29,8 +29,10 @@
                      class="w-full h-full object-cover">
             @else
                 <div class="text-center p-6 text-[#4E6157]">
-                    <div class="w-16 h-16 mx-auto mb-2 rounded-2xl bg-white/80 flex items-center justify-center text-3xl shadow-xs">
-                        🍲
+                    <div class="w-16 h-16 mx-auto mb-2 rounded-2xl bg-white/80 flex items-center justify-center text-[#1E7A4C] shadow-xs">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                        </svg>
                     </div>
                     <span class="text-xs font-semibold">{{ $listing->category->name }}</span>
                 </div>
@@ -88,13 +90,20 @@
             <!-- Campaign Priority Notice (if applicable) -->
             @if($listing->campaign_id && $listing->campaign)
                 <div class="p-4 rounded-2xl bg-blue-50 border border-[#2A6F97]/30 flex items-start gap-3">
-                    <span class="text-xl">🏛️</span>
+                    <div class="w-8 h-8 rounded-xl bg-blue-100 text-[#2A6F97] flex items-center justify-center shrink-0">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
+                    </div>
                     <div class="text-xs text-[#2A6F97] space-y-1">
                         <p class="font-bold text-sm">Ditujukan untuk Galang Makanan:</p>
                         <p class="font-semibold">{{ $listing->campaign->title }} ({{ $listing->campaign->beneficiary_name }})</p>
                         @if($listing->campaign_priority_until && $listing->campaign_priority_until->isFuture())
-                            <p class="text-[#7A4A00] font-bold">
-                                ⏳ Diprioritaskan untuk relawan galang hingga pukul {{ $listing->campaign_priority_until->setTimezone($listing->timezone())->format('H:i') }} {{ $listing->tzLabel() }}.
+                            <p class="text-[#7A4A00] font-bold flex items-center gap-1.5 mt-1">
+                                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Diprioritaskan untuk relawan galang hingga pukul {{ $listing->campaign_priority_until->setTimezone($listing->timezone())->format('H:i') }} {{ $listing->tzLabel() }}.
                             </p>
                         @endif
                     </div>

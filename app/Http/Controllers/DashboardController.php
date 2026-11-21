@@ -27,11 +27,11 @@ class DashboardController extends Controller
         // Level Penyelamat Pangan
         $impactLevel = 'Penyelamat Pangan Pemula';
         if ($totalPortions >= 50) {
-            $impactLevel = 'Pahlawan Pangan Emas 🏆';
+            $impactLevel = 'Pahlawan Pangan Emas';
         } elseif ($totalPortions >= 20) {
-            $impactLevel = 'Penyelamat Pangan Perak 🥈';
+            $impactLevel = 'Penyelamat Pangan Perak';
         } elseif ($totalPortions >= 5) {
-            $impactLevel = 'Penyelamat Pangan Perunggu 🥉';
+            $impactLevel = 'Penyelamat Pangan Perunggu';
         }
 
         // Incoming pending claims on my listings (placed at top of "Yang saya bagikan")
