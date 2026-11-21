@@ -318,6 +318,8 @@ draft -> pending_review -> published -> closed
 | FR-42 | Tombol "Bagikan lagi" untuk menyalin listing sebelumnya | Sedang |
 | FR-43 | Admin dapat mengalihkan galang yang `paused` ke relawan lain | Sedang |
 | FR-44 | Halaman status layanan wilayah: jumlah relawan aktif per kecamatan | Rendah |
+| FR-45 | **Katalog Makanan E-Commerce**: Halaman katalog publik terstruktur (`/catalog` dan `/listings`) dengan kartu produk modern, pencarian cepat, filter multi-dimensi (kategori, halal, vegetarian, jenis olahan, batas kedaluwarsa), dan pengurutan dinamis (urgensi waktu terdekat, porsi terbanyak, terdekat, terbaru) | Tinggi |
+| FR-46 | **Hand-off Katalog ke Peta Interaktif**: Mengalihkan aksi penjemputan atau pengantaran makanan dari kartu katalog langsung ke Peta Interaktif (`/?focus={id}&lat={lat}&lng={lng}`) untuk memfokuskan pin, visualisasi rute penjemputan fisik/pengantaran relawan, serta pembukaan popup informasi klaim secara terpadu | Tinggi |
 
 ---
 
@@ -598,8 +600,9 @@ public function publicPoint(float $lat, float $lng): array
 ### 7.1 Rute Web
 | Method | URI | Aksi | Akses |
 |---|---|---|---|
-| GET | `/` | Beranda dan peta publik | Tamu |
-| GET | `/listings`, `/listings/{listing}` | Daftar dan detail listing | Tamu |
+| GET | `/` | Beranda dan peta publik (dukung `?focus={id}&lat={lat}&lng={lng}` untuk hand-off penjemputan) | Tamu |
+| GET | `/catalog`, `/listings` | Katalog makanan bergaya e-commerce (pencarian, filter multi-dimensi, sorting urgensi, hand-off ke peta) | Tamu |
+| GET | `/listings/{listing}` | Detail lengkap listing, riwayat porsi, keamanan pangan, dan navigasi titik temu | Tamu |
 | GET/POST | `/my/listings` | Daftar / buat listing saya | Pengguna |
 | GET/PUT | `/my/listings/{id}` | Ubah listing | Pemilik |
 | POST | `/my/listings/{id}/cancel` | Batalkan listing | Pemilik |
@@ -860,6 +863,20 @@ Notifikasi dikumpulkan dalam ringkasan per jam (bukan satu notifikasi per listin
 
 ### 8.7 Pengunggahan Gambar
 Semua gambar melewati pipeline: validasi mime asli (bukan ekstensi), batas 2 MB, **decode lalu encode ulang ke WebP** (membuang EXIF dan GPS), ubah ukuran maksimal 1280 px, simpan dengan nama acak di storage non-eksekusi.
+
+### 8.8 Komponen Katalog Makanan E-Commerce dan Hand-off ke Peta Interaktif
+1. **Filosofi Integrasi Pangan:** Berbeda dari e-commerce komersial yang mengandalkan keranjang belanja dan checkout pembayaran, Locabite berfokus pada penyelamatan surplus makanan (*food waste rescue*) di mana setiap item memiliki jendela kelayakan waktu singkat (*perishable time window*) dan harus dijemput langsung di titik fisik.
+2. **Katalog Terstruktur (`ListingController::catalog`):**
+   - Menampilkan seluruh listing aktif (`visibleToMap()`) dalam antarmuka e-commerce berstandar industri dengan kartu produk responsif (1-4 kolom).
+   - Pengurutan default berbasis urgensi kedaluwarsa (`expires_at ASC`) untuk memprioritaskan makanan yang paling mendekati batas kedaluwarsa, dengan opsi sortir alternatif (terdekat, terbaru, porsi terbanyak).
+   - Filter komprehensif: Kategori, Halal, Vegetarian, Jenis Olahan (`cooked`, `packaged`, `raw`), Tingkat Urgensi Waktu (< 1 jam, < 2 jam), dan Wilayah/Kecamatan.
+3. **Mekanisme Hand-off Pengambilan/Pengantaran ke Peta:**
+   - Tombol utama kartu **"Ambil di Peta"** memicu pengalihan URL dengan query parameter: `/?focus={listing_id}&lat={public_latitude}&lng={public_longitude}`.
+   - Peta Interaktif (`home.blade.php`) secara otomatis:
+     a. Mengarahkan koordinat pusat dan zoom level ke titik penjemputan (`map.flyTo([lat, lng], 16)`).
+     b. Menyorot kartu makanan pada panel geser samping (`selectedId = focusId`).
+     c. Membuka Leaflet popup marker secara otomatis dengan tombol rute Google Maps dan klaim porsi.
+     d. Memunculkan banner penunjuk lokasi penjemputan aktif di bagian atas peta yang dapat ditutup.
 
 ---
 

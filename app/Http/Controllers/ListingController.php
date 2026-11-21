@@ -21,6 +21,133 @@ class ListingController extends Controller
         protected ImageUploadService $imageService
     ) {}
 
+    /**
+     * E-Commerce Food Catalog (SDD FR-45, FR-46, SDD 8.8)
+     */
+    public function catalog(Request $request)
+    {
+        $query = FoodListing::query()
+            ->visibleToMap()
+            ->with(['category', 'user', 'district.regency.province', 'campaign']);
+
+        // Search query (keyword in title, description, or provider)
+        if ($request->filled('q')) {
+            $keyword = trim($request->input('q'));
+            $query->where(function ($q) use ($keyword) {
+                $q->where('title', 'like', "%{$keyword}%")
+                  ->orWhere('description', 'like', "%{$keyword}%")
+                  ->orWhereHas('user', fn($u) => $u->where('name', 'like', "%{$keyword}%")->orWhere('organization_name', 'like', "%{$keyword}%"))
+                  ->orWhereHas('district', fn($d) => $d->where('name', 'like', "%{$keyword}%"));
+            });
+        }
+
+        // Category filter
+        if ($request->filled('category')) {
+            $cat = $request->input('category');
+            $query->whereHas('category', function ($q) use ($cat) {
+                $q->where('slug', $cat)->orWhere('id', $cat);
+            });
+        }
+
+        // Halal filter
+        if ($request->boolean('halal')) {
+            $query->where('halal_claim', true);
+        }
+
+        // Vegetarian filter
+        if ($request->boolean('vegetarian')) {
+            $query->where('is_vegetarian', true);
+        }
+
+        // Food type filter (cooked, packaged, raw)
+        if ($request->filled('food_type') && in_array($request->input('food_type'), ['cooked', 'packaged', 'raw'])) {
+            $query->where('food_type', $request->input('food_type'));
+        }
+
+        // Urgency filter: 'critical' (< 1 hour), 'urgent' (< 2 hours)
+        if ($request->input('urgency') === 'critical') {
+            $query->where('expires_at', '<=', now()->addHour());
+        } elseif ($request->input('urgency') === 'urgent') {
+            $query->where('expires_at', '<=', now()->addHours(2));
+        }
+
+        // District filter
+        if ($request->filled('district_id')) {
+            $query->where('district_id', $request->input('district_id'));
+        }
+
+        // Coordinates for distance calculations if user provided
+        $userLat = $request->filled('lat') ? (float) $request->input('lat') : null;
+        $userLng = $request->filled('lng') ? (float) $request->input('lng') : null;
+
+        // Radius filter if user coordinates and radius provided
+        if ($userLat && $userLng && $request->filled('radius')) {
+            $radius = (int) $request->input('radius');
+            $latDelta = $radius / 111.0;
+            $lngDelta = $radius / (111.0 * max(cos(deg2rad($userLat)), 0.01));
+            $query->whereBetween('public_latitude', [$userLat - $latDelta, $userLat + $latDelta])
+                  ->whereBetween('public_longitude', [$userLng - $lngDelta, $userLng + $lngDelta]);
+        }
+
+        // Sort order
+        $sort = $request->input('sort', 'expiring_soon');
+        if ($sort === 'newest') {
+            $query->orderBy('created_at', 'desc');
+        } elseif ($sort === 'portions_high') {
+            $query->orderBy('portions_left', 'desc');
+        } elseif ($sort === 'nearest' && $userLat && $userLng) {
+            $distanceFormula = "(6371 * acos(LEAST(1.0, GREATEST(-1.0,
+                cos(radians(?)) * cos(radians(public_latitude)) *
+                cos(radians(public_longitude) - radians(?)) +
+                sin(radians(?)) * sin(radians(public_latitude))
+            ))))";
+            $query->selectRaw("food_listings.*, {$distanceFormula} AS distance_km", [$userLat, $userLng, $userLat])
+                  ->orderBy('distance_km', 'asc');
+        } else {
+            // Default: Food Rescue Urgency Principle (makanan yang segera kedaluwarsa diprioritaskan)
+            $query->orderBy('expires_at', 'asc');
+        }
+
+        // Paginate results with query strings preserved
+        $listings = $query->paginate(12)->withQueryString();
+
+        // Calculate distance on collection if user coordinates provided and distance_km not yet calculated
+        if ($userLat && $userLng) {
+            $listings->getCollection()->transform(function ($l) use ($userLat, $userLng) {
+                if (!isset($l->distance_km)) {
+                    $dLat = deg2rad($l->public_latitude - $userLat);
+                    $dLng = deg2rad($l->public_longitude - $userLng);
+                    $a = sin($dLat / 2) * sin($dLat / 2) +
+                         cos(deg2rad($userLat)) * cos(deg2rad($l->public_latitude)) *
+                         sin($dLng / 2) * sin($dLng / 2);
+                    $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+                    $l->distance_km = round(6371 * $c, 1);
+                }
+                return $l;
+            });
+        }
+
+        // Categories with active listings count
+        $categories = Category::withCount(['listings' => fn($q) => $q->visibleToMap()])->get();
+
+        // Aggregates for header stats
+        $totalActiveListings = FoodListing::visibleToMap()->count();
+        $totalPortionsAvailable = FoodListing::visibleToMap()->sum('portions_left');
+
+        $districts = District::with('regency')->orderBy('name')->get();
+
+        return view('catalog.index', compact(
+            'listings',
+            'categories',
+            'totalActiveListings',
+            'totalPortionsAvailable',
+            'districts',
+            'userLat',
+            'userLng',
+            'sort'
+        ));
+    }
+
     public function create()
     {
         $categories = Category::all();

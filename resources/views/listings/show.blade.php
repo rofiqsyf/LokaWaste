@@ -202,6 +202,19 @@
 
                 <!-- Mini Leaflet Map -->
                 <div id="listing-mini-map" class="h-48 w-full rounded-2xl overflow-hidden border border-[#D5E0D9]"></div>
+
+                <!-- Navigation link to full interactive map hand-off (SDD FR-46) -->
+                <div class="flex items-center justify-between pt-1">
+                    <span class="text-xs text-[#4E6157]">Navigasi titik jemput:</span>
+                    <a href="{{ route('home', ['focus' => $listing->id, 'lat' => $listing->public_latitude, 'lng' => $listing->public_longitude]) }}"
+                       class="btn-secondary text-xs py-1.5 px-3.5 inline-flex items-center gap-1.5 shadow-xs hover:border-[#1E7A4C] hover:text-[#1E7A4C]">
+                        <svg class="w-3.5 h-3.5 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        Buka di Peta Interaktif
+                    </a>
+                </div>
             </div>
 
             <!-- ACTION SECTION -->

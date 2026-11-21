@@ -45,7 +45,10 @@
                     <!-- Nav Links -->
                     <nav class="hidden md:flex items-center gap-1 font-medium text-sm">
                         <a href="{{ route('home') }}" class="px-3 py-2 rounded-lg {{ request()->routeIs('home') ? 'bg-[#F2F6F3] text-[#1E7A4C] font-semibold' : 'text-[#4E6157] hover:text-[#16251D] hover:bg-gray-50' }}">
-                            Peta & Makanan
+                            Peta Interaktif
+                        </a>
+                        <a href="{{ route('catalog.index') }}" class="px-3 py-2 rounded-lg {{ request()->routeIs('catalog.*') || request()->routeIs('listings.index') ? 'bg-[#F2F6F3] text-[#1E7A4C] font-semibold' : 'text-[#4E6157] hover:text-[#16251D] hover:bg-gray-50' }}">
+                            Katalog Makanan
                         </a>
                         <a href="{{ route('campaigns.index') }}" class="px-3 py-2 rounded-lg {{ request()->routeIs('campaigns.*') ? 'bg-[#F2F6F3] text-[#1E7A4C] font-semibold' : 'text-[#4E6157] hover:text-[#16251D] hover:bg-gray-50' }}">
                             Galang Makanan
@@ -165,15 +168,15 @@
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
             </svg>
-            <span class="text-[11px] font-medium mt-0.5">Peta</span>
+            <span class="text-[10px] font-medium mt-0.5">Peta</span>
         </a>
 
-        <!-- Galang -->
-        <a href="{{ route('campaigns.index') }}" class="flex flex-col items-center justify-center flex-1 py-1 {{ request()->routeIs('campaigns.*') ? 'text-[#1E7A4C]' : 'text-[#4E6157]' }}">
+        <!-- Katalog -->
+        <a href="{{ route('catalog.index') }}" class="flex flex-col items-center justify-center flex-1 py-1 {{ request()->routeIs('catalog.*') || request()->routeIs('listings.index') ? 'text-[#1E7A4C]' : 'text-[#4E6157]' }}">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
             </svg>
-            <span class="text-[11px] font-medium mt-0.5">Galang</span>
+            <span class="text-[10px] font-medium mt-0.5">Katalog</span>
         </a>
 
         <!-- Center Action: Bagikan makanan -->
@@ -186,23 +189,21 @@
             <span class="text-[10px] font-bold text-[#1E7A4C] mt-1">Bagikan</span>
         </a>
 
+        <!-- Galang -->
+        <a href="{{ route('campaigns.index') }}" class="flex flex-col items-center justify-center flex-1 py-1 {{ request()->routeIs('campaigns.*') ? 'text-[#1E7A4C]' : 'text-[#4E6157]' }}">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+            <span class="text-[10px] font-medium mt-0.5">Galang</span>
+        </a>
+
         <!-- Aktivitas / Dashboard -->
         <a href="{{ route('dashboard') }}" class="flex flex-col items-center justify-center flex-1 py-1 {{ request()->routeIs('dashboard') ? 'text-[#1E7A4C]' : 'text-[#4E6157]' }}">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
             </svg>
-            <span class="text-[11px] font-medium mt-0.5">Aktivitas</span>
+            <span class="text-[10px] font-medium mt-0.5">Aktivitas</span>
         </a>
-
-        <!-- Akun / Masuk -->
-        @auth
-            <a href="{{ route('volunteer.areas') }}" class="flex flex-col items-center justify-center flex-1 py-1 {{ request()->routeIs('volunteer.*') ? 'text-[#1E7A4C]' : 'text-[#4E6157]' }}">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-                <span class="text-[11px] font-medium mt-0.5">Relawan</span>
-            </a>
-        @else
             <a href="{{ route('login') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[#4E6157]">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />

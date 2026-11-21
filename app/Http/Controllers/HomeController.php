@@ -17,7 +17,7 @@ class HomeController extends Controller
         protected NearbyListingService $nearbyService
     ) {}
 
-    public function index()
+    public function index(Request $request)
     {
         $categories = Category::all();
         $user = auth()->user();
@@ -26,12 +26,18 @@ class HomeController extends Controller
         $initialLat = -7.05194;
         $initialLng = 110.43778;
 
-        if ($user && $user->district && $user->district->latitude && $user->district->longitude) {
+        // If lat/lng passed from catalog hand-off (SDD FR-46, SDD 8.8)
+        if ($request->filled('lat') && $request->filled('lng')) {
+            $initialLat = (float) $request->input('lat');
+            $initialLng = (float) $request->input('lng');
+        } elseif ($user && $user->district && $user->district->latitude && $user->district->longitude) {
             $initialLat = (float) $user->district->latitude;
             $initialLng = (float) $user->district->longitude;
         }
 
-        return view('home', compact('categories', 'initialLat', 'initialLng'));
+        $focusId = $request->input('focus');
+
+        return view('home', compact('categories', 'initialLat', 'initialLng', 'focusId'));
     }
 
     /**

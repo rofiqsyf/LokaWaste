@@ -352,6 +352,32 @@
     <div class="flex-1 order-1 lg:order-2 h-full w-full relative z-0">
         <div id="locabite-map" class="h-full w-full"></div>
 
+        <!-- Floating Focus Banner (from Catalog hand-off - SDD FR-46) -->
+        <template x-if="focusId && items.some(i => i.id == focusId)">
+            <div class="absolute top-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-md z-20 pointer-events-auto bg-white/95 backdrop-blur-md p-3.5 rounded-2xl shadow-card border border-[#1E7A4C]/50 flex items-center justify-between gap-3 animate-fade-in">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="w-8 h-8 rounded-xl bg-emerald-100 text-[#1E7A4C] flex items-center justify-center shrink-0">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-[11px] font-bold text-[#16251D] flex items-center gap-1.5">
+                            <span>Titik Penjemputan Makanan Aktif</span>
+                            <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-emerald-100 text-[#14573A]">Hand-off Peta</span>
+                        </p>
+                        <p class="text-[10px] text-[#4E6157] truncate font-medium" x-text="items.find(i => i.id == focusId)?.title"></p>
+                    </div>
+                </div>
+                <button @click="focusId = null" class="text-[#4E6157] hover:text-[#16251D] p-1 rounded-lg shrink-0" title="Tutup pemberitahuan">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+        </template>
+
         <!-- Floating Quick Recenter & Info Indicator on Map -->
         <div class="absolute bottom-4 left-4 z-10 pointer-events-auto bg-white/95 backdrop-blur-md px-3 py-2 rounded-2xl shadow-card border border-[#D5E0D9] flex items-center gap-2.5 text-xs text-[#16251D]">
             <span class="w-2.5 h-2.5 rounded-full bg-[#1E7A4C] animate-ping"></span>
@@ -394,6 +420,8 @@ document.addEventListener('alpine:init', () => {
         initialLng: {{ $initialLng }},
         userLat: {{ $initialLat }},
         userLng: {{ $initialLng }},
+        focusId: @json($focusId ? (int)$focusId : null),
+        markersById: {},
         currentLocationLabel: 'Pusat Area',
         radius: 5,
         layer: 'food', // 'food' or 'campaigns'
@@ -583,6 +611,7 @@ document.addEventListener('alpine:init', () => {
 
         renderFoodMarkers(listings) {
             this.markersLayer.clearLayers();
+            this.markersById = {};
 
             listings.forEach(l => {
                 const color = this.getTimeColor(l.remaining_minutes);
@@ -637,8 +666,19 @@ document.addEventListener('alpine:init', () => {
                     if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 });
 
+                this.markersById[l.id] = m;
                 this.markersLayer.addLayer(m);
             });
+
+            // Hand-off focus trigger from catalog
+            if (this.focusId) {
+                const target = listings.find(l => l.id == this.focusId);
+                if (target) {
+                    setTimeout(() => {
+                        this.focusMarker(target);
+                    }, 350);
+                }
+            }
         },
 
         renderCampaignMarkers(campaigns) {
@@ -686,7 +726,14 @@ document.addEventListener('alpine:init', () => {
 
         focusMarker(item) {
             this.selectedId = item.id;
-            this.map.panTo([item.lat, item.lng], { animate: true });
+            this.map.flyTo([item.lat, item.lng], 16, { animate: true, duration: 1.2 });
+            if (this.markersById && this.markersById[item.id]) {
+                this.markersById[item.id].openPopup();
+            }
+            const card = document.getElementById(`card-${item.id}`);
+            if (card) {
+                card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
         },
 
         useCurrentLocation() {

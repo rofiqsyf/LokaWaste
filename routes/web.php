@@ -35,6 +35,10 @@ Route::prefix('api/wilayah')->name('api.wilayah.')->group(function () {
     Route::get('/districts/{regencyId}', [WilayahController::class, 'districts'])->name('districts');
 });
 
+// Public E-Commerce Food Catalog (SDD FR-45, FR-46, SDD 8.8)
+Route::get('/catalog', [ListingController::class, 'catalog'])->name('catalog.index');
+Route::get('/listings', [ListingController::class, 'catalog'])->name('listings.index');
+
 // Public Listing Detail
 Route::get('/listings/{listing}', [ListingController::class, 'show'])->name('listings.show');
 

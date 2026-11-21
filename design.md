@@ -375,6 +375,36 @@ Gunakan daftar audit berikut sebelum setiap rilis fitur:
 - [ ] Pengguna tidak dapat mengklaim makanannya sendiri dan menerima pesan peringatan yang mendidik.
 - [ ] Seluruh elemen interaktif dapat dijangkau dan dioperasikan menggunakan tombol `Tab`, `Shift+Tab`, `Space`, dan `Enter`.
 - [ ] Halaman tetap responsif dan fungsional pada resolusi layar 360px (ponsel kecil), 768px (tablet), hingga 1920px (desktop ultrawide).
+- [ ] Kartu katalog e-commerce memiliki tombol aksi "Ambil di Peta" yang mengalihkan pengguna ke koordinat penjemputan dengan hand-off state yang mulus.
+- [ ] Tidak ada satupun emoji visual yang digunakan di seluruh antarmuka web, seluruhnya digantikan oleh SVG iconography presisi tinggi.
+
+---
+
+## 9. Spesifikasi Antarmuka Katalog Makanan E-Commerce & Hand-off ke Peta
+
+### 9.1 Layout & Grid Token
+- **Container:** Max-width 7xl (`1280px`), padding horizontal responsif (`px-4 sm:px-6 lg:px-8`).
+- **Catalog Grid:**
+  - Ponsel (< 640px): 1 kolom kartu vertikal penuh (`grid-cols-1`).
+  - Tablet (640px - 1024px): 2 kolom kartu produk (`sm:grid-cols-2`).
+  - Desktop (1024px - 1280px): 3 kolom kartu produk (`lg:grid-cols-3`).
+  - Desktop Lebar (> 1280px): 4 kolom kartu produk (`xl:grid-cols-4`).
+- **Sidebar Filter:** Kolom kiri sticky 64 (w-64) pada desktop, dan drawer panel tersembunyi pada layar ponsel (`x-show="mobileFilterOpen"`).
+
+### 9.2 Anatomi Kartu Produk E-Commerce (Food Rescue Card)
+1. **Media Box (Aspect 4:3 / 16:9):**
+   - Foto resolusi tinggi dengan radius sudut atas `rounded-t-3xl`.
+   - Fallback visual: Gradasi latar belakang bertema kategori dengan ilustrasi outline SVG makanan elegan (tanpa emoji).
+   - **Floating Time Urgency Ring:** Menempel di sudut kanan atas dengan latar akrilik `bg-white/95 backdrop-blur-md` dan micro-ring SVG penanda sisa waktu.
+   - **Category & Portion Badges:** Sudut kiri atas memuat lencana kategori dan jumlah sorsi tersisa.
+2. **Metadata Body:**
+   - Nama donor/organisasi dengan status verifikasi (ikon centang perisai terverifikasi).
+   - Judul makanan: Bricolage Grotesque Bold 16px, line clamp 1.
+   - Jarak & Kecamatan: Misal `Kec. Tembalang • 1.2 km`.
+   - Diet & Syariah Chips: Lencana `Halal` dan `Vegetarian` berukuran micro-pill.
+3. **Action Footer (Hand-off ke Peta):**
+   - **Primary Action ("Ambil di Peta"):** Tombol hijau kontras tinggi (`bg-[#1E7A4C] hover:bg-[#14573A] text-white`) dengan ikon pin navigasi SVG. Mengarahkan langsung ke URL `/?focus={id}&lat={lat}&lng={lng}`.
+   - **Secondary Action ("Detail Makanan"):** Tautan outline halus (`text-[#4E6157] hover:text-[#16251D]`) untuk membuka halaman spesifikasi keamanan pangan (`/listings/{id}`).
 
 ---
 *Dokumen ini merupakan spesifikasi antarmuka definitif untuk Locabite v2.0. Setiap penambahan fitur atau modifikasi tampilan wajib merujuk pada prinsip, token desain, dan aturan aksesibilitas yang telah ditetapkan di atas.*
