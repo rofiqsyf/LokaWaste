@@ -1,4 +1,4 @@
-# design.md — Spesifikasi Sistem Desain & UI/UX Locabite v2.0
+# design.md — Spesifikasi Sistem Desain & UI/UX LokaWaste v2.0
 **Enterprise-Grade Design System & Interaction Engineering**
 
 > **Standar Dokumen:** Tier-1 Big Tech Standard (Airbnb / Stripe / DoorDash Caliber)  
@@ -9,11 +9,11 @@
 
 ---
 
-## 0. Manifesto Desain: Mengapa Locabite Tidak Seperti Desain AI Biasa
+## 0. Manifesto Desain: Mengapa LokaWaste Tidak Seperti Desain AI Biasa
 
 Sebagian besar antarmuka yang dihasilkan oleh AI generik memiliki cacat mendasar: kartu melayang tanpa kedalaman fungsional (*card soup*), gradien ungu/sian dekoratif tanpa arti, tombol pil tanpa status fisik yang jelas, dan ketiadaan status transisi (skeletons, partial error, offline degrade, keyboard focus rings).
 
-Locabite v2.0 dibangun dengan standar rekayasa perangkat lunak perusahaan kelas dunia:
+LokaWaste v2.0 dibangun dengan standar rekayasa perangkat lunak perusahaan kelas dunia:
 1. **Waktu Adalah Mata Uang Utama (*Time-First Architecture*):** Makanan berlebih memiliki batas kedaluwarsa hitungan jam. Setiap elemen UI dirancang untuk menyampaikan sisa waktu kelayakan ambil dalam **kurang dari 2 detik** melalui komponen khas *Time-Ring HUD*.
 2. **Satu Akun, Siklus Hidup Penuh (*Single Account, Dual Agency*):** Tidak ada dikotomi "Akun Donatur vs Akun Pemohon". Pengguna yang sama bisa membagikan 5 porsi katering berlebih siang ini, dan mengklaim roti layak santap malam ini.
 3. **Privasi Bertingkat Deterministik (*Dual Privacy Shield*):** Publik hanya melihat radius perkiraan (150–400m *jitter* acak). Alamat presisi, nomor pintu, dan koordinat navigasi terkunci rapat sampai klaim disetujui secara transaksional.
@@ -26,7 +26,7 @@ Locabite v2.0 dibangun dengan standar rekayasa perangkat lunak perusahaan kelas 
 
 Dibandingkan platform internasional (*Too Good To Go, Olio, Food Rescue US*) maupun aplikasi lokal yang ada di pasar:
 
-| Parameter | Too Good To Go (Eropa/US) | Olio (Inggris) | Platform Komersial Diskon | **Locabite (Sistem Ini)** |
+| Parameter | Too Good To Go (Eropa/US) | Olio (Inggris) | Platform Komersial Diskon | **LokaWaste (Sistem Ini)** |
 |---|---|---|---|---|
 | **Model Distribusi** | Beli "Mystery Bag" berbayar | Chat manual peer-to-peer | Jual rugi makanan sisa (Diskon) | **100% Penyelamatan Pangan Berlebih & Donasi Terverifikasi** |
 | **Navigasi Spasial** | Pin toko standar statis | Daftar forum teks tanpa peta interaktif presisi | Peta merchant komersial | **Peta Spasial Real-Time (GIS) + Multi-Basemap (Satelit Esri / OSM) + Click-to-Pin** |
@@ -37,7 +37,7 @@ Dibandingkan platform internasional (*Too Good To Go, Olio, Food Rescue US*) mau
 | **Pencarian Wilayah** | Standar kota | GPS sederhana | Standar radius | **EMSIFA Hierarchical Engine (38 Provinsi, 514 Kota, 7.200+ Kecamatan Se-Indonesia)** |
 | **Dampak Terukur (ESG)** | Perkiraan kasar | Penghitung porsi | Total diskon rupiah | **Personal Impact Engine (Metrik Emisi CO₂e Tercegah, Jejak Air Liter, dan Nilai Pangan)** |
 
-### Rincian 6 Inovasi Kunci Locabite:
+### Rincian 6 Inovasi Kunci LokaWaste:
 
 #### A. Radar Darurat Pangan (*Flash Food Rescue Radar*)
 Ketika makanan siap santap mendekati batas kedaluwarsa krisis (< 2 jam), listing otomatis berubah status visual menjadi **Urgent Fire** dengan denyut cincin merah (*crimson pulse*). Pengguna dalam radius 1–3 km mendapatkan sorotan prioritas di atas peta untuk memastikan tidak ada makanan layak yang berakhir di TPA.
@@ -114,7 +114,7 @@ Palet warna tidak dipilih secara dekoratif acak, melainkan berakar pada elemen p
 | `--color-line-strong` | Garis Tegas | `#74877B` | `oklch(59.1% 0.024 155)` | **3.82:1** (Batas UI AA) | Batas input field, outline tombol sekunder, border kartu |
 
 ### 2.2 Sistem Kedalaman Spasial (*Elevation & Atmospheric Shadow Layering*)
-Locabite tidak menggunakan bayangan abu-abu buram generik. Sistem elevasi menggunakan **pembiasan warna alami (*ambient tint*)** dengan multi-stop drop shadow:
+LokaWaste tidak menggunakan bayangan abu-abu buram generik. Sistem elevasi menggunakan **pembiasan warna alami (*ambient tint*)** dengan multi-stop drop shadow:
 
 ```css
 /* Token Shadow Fisik Deterministik */
@@ -198,7 +198,7 @@ Bukan sekadar animasi kosmetik, *Time-Ring* adalah instrumen keselamatan pangan 
 4. **Respek `prefers-reduced-motion`:** Menghilangkan transisi denyut (*pulsing*) bagi pengguna yang sensitif terhadap gerakan.
 
 ### 3.2 Mesin Peta Spasial Dual-Layer (*Google Maps-Grade GIS Engine*)
-Peta Locabite menggabungkan performa ubin cepat dengan kontrol geospasial kelas dunia:
+Peta LokaWaste menggabungkan performa ubin cepat dengan kontrol geospasial kelas dunia:
 - **Pilihan Layer Instan (Basemap Switcher):** Pengguna dapat berganti antara peta kartografi jernih (OpenStreetMap) dan citra satelit resolusi tinggi fotorealistik (Esri World Imagery) dengan satu sentuhan.
 - **Pencarian Cerdas Multilokasi (*Autocomplete Suggestions*):** Saat mencari *"Sukajadi"*, antarmuka menampilkan dropdown melayang dengan pembeda jelas antardaerah (Sukajadi Bandung vs Sukajadi Tangerang vs Sukajadi Riau).
 - **Titik Fix Bebas Klik (*Click-to-Pin*):** Pengguna dapat mengetuk titik mana saja di peta atau menggeser pin tengah secara bebas untuk memindahkan pusat pencarian, memicu *Reverse Geocoding* otomatis untuk membaca nama jalan terkini.
@@ -239,7 +239,7 @@ Setiap layar dan komponen harus memiliki rancangan untuk **8 kemungkinan status 
 ```
 Desktop (Split View Rasio 400px : Flex-1)
 +-----------------------------------------------------------------------------------+
-|  [L] Locabite   Peta & Makanan   Galang Pangan   Jadi Relawan       [Profil / Masuk] |
+|  [L] LokaWaste   Peta & Makanan   Galang Pangan   Jadi Relawan       [Profil / Masuk] |
 +---------------------+-------------------------------------------------------------+
 | DAFTAR ITEM SEKITAR |  [ 🔍 Cari jalan, kelurahan, kecamatan...            ] [GPS]  |
 | Pusat: Tembalang    |  [ Makanan | Galang ] [ 1km | 3km | 5km | 10km ] [🛰️ Satelit]  |
@@ -302,7 +302,7 @@ Menghilangkan kebingungan navigasi dengan 4 tab terintegrasi dalam satu antarmuk
 
 ## 6. Koreografi Gerak, Respon Taktil & Strategi Optimis UI
 
-Animasi dalam Locabite dirancang dengan prinsip **fisika pegas fungsional (*functional spring physics*)**, bukan efek lambat yang membuang waktu:
+Animasi dalam LokaWaste dirancang dengan prinsip **fisika pegas fungsional (*functional spring physics*)**, bukan efek lambat yang membuang waktu:
 
 ### 6.1 Kurva Transisi dan Durasi Standar:
 - **Micro-Interaction (Hover, Focus, Pressed):**
@@ -327,7 +327,7 @@ Animasi dalam Locabite dirancang dengan prinsip **fisika pegas fungsional (*func
 
 ## 7. Aksesibilitas Ekstrem (Sertifikasi WCAG 2.2 AAA)
 
-Sistem antarmuka Locabite menjamin kemudahan akses tanpa batas bagi seluruh pengguna:
+Sistem antarmuka LokaWaste menjamin kemudahan akses tanpa batas bagi seluruh pengguna:
 
 1. **Uji Buta Warna (*Color-Blind Safe Visual Redundancy*):**
    - Penanda waktu krisis tidak pernah hanya mengandalkan warna merah atau hijau.
@@ -474,4 +474,4 @@ Gunakan daftar audit berikut sebelum setiap rilis fitur:
    - Seluruh peta di web (`home.blade.php`, `listings/create.blade.php`, `volunteer/campaigns/create.blade.php`, `listings/show.blade.php`) menggunakan dok kontrol vertikal minimalis putih dengan tombol perbesar (+) dan perkecil (-) SVG, menggantikan kontrol bawaan peramban demi keselarasan estetika Google Maps.
 
 ---
-*Dokumen ini merupakan spesifikasi antarmuka definitif untuk Locabite v2.0. Setiap penambahan fitur atau modifikasi tampilan wajib merujuk pada prinsip, token desain, dan aturan aksesibilitas yang telah ditetapkan di atas.*
+*Dokumen ini merupakan spesifikasi antarmuka definitif untuk LokaWaste v2.0. Setiap penambahan fitur atau modifikasi tampilan wajib merujuk pada prinsip, token desain, dan aturan aksesibilitas yang telah ditetapkan di atas.*

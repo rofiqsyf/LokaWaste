@@ -1,4 +1,4 @@
-<x-layouts.app :title="$campaign->title . ' — Galang Makanan Locabite'">
+<x-layouts.app :title="$campaign->title . ' — Galang Makanan LokaWaste'">
 
 <div class="max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-6">
 

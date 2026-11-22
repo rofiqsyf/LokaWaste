@@ -35,7 +35,7 @@ class DemoSeeder extends Seeder
 
         // 1. Admin
         $admin = User::firstOrCreate(['email' => 'admin@locabite.test'], [
-            'name' => 'Admin Locabite',
+            'name' => 'Admin LokaWaste',
             'password' => Hash::make('password'),
             'role' => 'admin',
             'phone' => '081200000001',

@@ -1,4 +1,4 @@
-<x-layouts.app title="Wilayah Relawan Saya — Locabite">
+<x-layouts.app title="Wilayah Relawan Saya — LokaWaste">
 
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
 

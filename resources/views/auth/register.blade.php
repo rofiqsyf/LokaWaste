@@ -1,4 +1,4 @@
-<x-layouts.app title="Daftar Akun — Locabite">
+<x-layouts.app title="Daftar Akun — LokaWaste">
 
 <div class="min-h-[calc(100vh-12rem)] flex items-center justify-center px-4 py-12">
     <div class="max-w-xl w-full bg-white rounded-3xl border border-[#D5E0D9] shadow-card p-6 sm:p-8 space-y-6">

@@ -1,4 +1,4 @@
-<x-layouts.app title="Masuk — Locabite">
+<x-layouts.app title="Masuk — LokaWaste">
 
 <div class="min-h-[calc(100vh-12rem)] flex items-center justify-center px-4 py-12">
     <div class="max-w-md w-full bg-white rounded-3xl border border-[#D5E0D9] shadow-card p-8 space-y-6">
@@ -7,7 +7,7 @@
             <div class="w-12 h-12 mx-auto rounded-2xl bg-[#1E7A4C] flex items-center justify-center text-white font-display font-bold text-2xl mb-3 shadow-sm">
                 L
             </div>
-            <h1 class="font-display font-bold text-2xl text-[#16251D]">Masuk ke Locabite</h1>
+            <h1 class="font-display font-bold text-2xl text-[#16251D]">Masuk ke LokaWaste</h1>
             <p class="text-xs text-[#4E6157] mt-1">Satu akun untuk berbagi dan mengambil surplus makanan.</p>
         </div>
 

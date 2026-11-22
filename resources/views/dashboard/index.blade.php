@@ -1,4 +1,4 @@
-<x-layouts.app title="Dashboard — Locabite">
+<x-layouts.app title="Dashboard — LokaWaste">
 
 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6" x-data="{ tab: '{{ $tab }}', ...qrHandover() }">
 

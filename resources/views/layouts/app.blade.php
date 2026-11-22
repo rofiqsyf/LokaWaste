@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? 'Locabite — Cegah Food Waste, Salurkan Makanan Berlebih' }}</title>
+    <title>{{ $title ?? 'LokaWaste — Cegah Food Waste, Salurkan Makanan Berlebih' }}</title>
 
     <!-- Google Fonts for Bricolage Grotesque & Atkinson Hyperlegible -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -41,7 +41,7 @@
                             </svg>
                         </div>
                         <div class="flex flex-col">
-                            <span class="font-display font-extrabold text-xl tracking-tight text-[#16251D] group-hover:text-[#1E7A4C] transition-colors leading-none">Locabite</span>
+                            <span class="font-display font-extrabold text-xl tracking-tight text-[#16251D] group-hover:text-[#1E7A4C] transition-colors leading-none">LokaWaste</span>
                             <span class="text-[10px] text-[#4E6157] font-medium tracking-wide mt-1 hidden sm:inline">Penyelamat Pangan</span>
                         </div>
                     </a>

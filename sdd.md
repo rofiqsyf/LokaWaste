@@ -1,7 +1,7 @@
 # SDD — Software Design Document
 
 **Judul Project:** Website Pencegahan Food Waste dan Distribusi Makanan Berlebih Berbasis Web dan Geolokasi
-**Nama Kode:** Locabite
+**Nama Kode:** LokaWaste
 **Framework:** Laravel 13
 **Penyusun:** Rofiq Syaifurrohman (NIM 2024150032)
 **Mata Kuliah:** Web Framework 2026
@@ -50,7 +50,7 @@ Audit dilakukan terhadap versi 1.1 dengan pemeriksaan logika dan pengujian numer
 ### 1.1 Latar Belakang
 Makanan layak konsumsi masih banyak terbuang dari restoran, toko roti, hotel, katering, dan rumah tangga, sementara sebagian masyarakat masih kesulitan mendapatkan makanan. Kendala utamanya adalah tidak adanya penghubung yang cepat antara pihak yang memiliki makanan berlebih dan pihak yang membutuhkannya dalam batas waktu layak konsumsi yang singkat.
 
-Locabite adalah aplikasi web yang menghubungkan pengguna berdasarkan **lokasi terdekat** (geolokasi) dan **batas waktu layak konsumsi**. Setiap pengguna dapat membagikan surplus makanannya dan juga mengambil surplus makanan pengguna lain. Pengguna yang ingin berperan lebih dapat mengajukan diri sebagai **relawan** di wilayah tertentu untuk membantu menyalurkan makanan ke panti, pondok pesantren, dan tunawisma lewat **galang makanan**.
+LokaWaste adalah aplikasi web yang menghubungkan pengguna berdasarkan **lokasi terdekat** (geolokasi) dan **batas waktu layak konsumsi**. Setiap pengguna dapat membagikan surplus makanannya dan juga mengambil surplus makanan pengguna lain. Pengguna yang ingin berperan lebih dapat mengajukan diri sebagai **relawan** di wilayah tertentu untuk membantu menyalurkan makanan ke panti, pondok pesantren, dan tunawisma lewat **galang makanan**.
 
 ### 1.2 Tujuan
 1. Menyediakan platform untuk mempublikasikan surplus makanan beserta lokasi dan batas waktu ambil.
@@ -270,7 +270,7 @@ draft -> pending_review -> published -> closed
 
 **Listing dan waktu**
 1. `expires_at` harus lebih lambat dari `max(sekarang, available_from)` dan jendela ambil maksimal 24 jam.
-2. Untuk `food_type = cooked`, jendela dari `prepared_at` dibatasi nilai konfigurasi (`locabite.max_cooked_hours`). Nilai awal dibuat konservatif dan **harus dikonfirmasi dengan pedoman keamanan pangan setempat**; sistem tidak mengklaim kelayakan pangan.
+2. Untuk `food_type = cooked`, jendela dari `prepared_at` dibatasi nilai konfigurasi (`lokawaste.max_cooked_hours`). Nilai awal dibuat konservatif dan **harus dikonfirmasi dengan pedoman keamanan pangan setempat**; sistem tidak mengklaim kelayakan pangan.
 3. Waktu disimpan dalam UTC dan ditampilkan dalam zona waktu provinsi listing (WIB, WITA, atau WIT) lengkap dengan singkatan zona.
 4. Koordinat harus valid dan berada dalam kotak batas wilayah Indonesia (lat -11.5 sampai 6.5, lng 94.5 sampai 141.5) agar pin asal tidak masuk data.
 
@@ -868,7 +868,7 @@ Notifikasi dikumpulkan dalam ringkasan per jam (bukan satu notifikasi per listin
 Semua gambar melewati pipeline: validasi mime asli (bukan ekstensi), batas 2 MB, **decode lalu encode ulang ke WebP** (membuang EXIF dan GPS), ubah ukuran maksimal 1280 px, simpan dengan nama acak di storage non-eksekusi.
 
 ### 8.8 Komponen Katalog Makanan E-Commerce dan Hand-off ke Peta Interaktif
-1. **Filosofi Integrasi Pangan:** Berbeda dari e-commerce komersial yang mengandalkan keranjang belanja dan checkout pembayaran, Locabite berfokus pada penyelamatan surplus makanan (*food waste rescue*) di mana setiap item memiliki jendela kelayakan waktu singkat (*perishable time window*) dan harus dijemput langsung di titik fisik.
+1. **Filosofi Integrasi Pangan:** Berbeda dari e-commerce komersial yang mengandalkan keranjang belanja dan checkout pembayaran, LokaWaste berfokus pada penyelamatan surplus makanan (*food waste rescue*) di mana setiap item memiliki jendela kelayakan waktu singkat (*perishable time window*) dan harus dijemput langsung di titik fisik.
 2. **Katalog Terstruktur (`ListingController::catalog`):**
    - Menampilkan seluruh listing aktif (`visibleToMap()`) dalam antarmuka e-commerce berstandar industri dengan kartu produk responsif (1-4 kolom).
    - Pengurutan default berbasis urgensi kedaluwarsa (`expires_at ASC`) untuk memprioritaskan makanan yang paling mendekati batas kedaluwarsa, dengan opsi sortir alternatif (terdekat, terbaru, porsi terbanyak).

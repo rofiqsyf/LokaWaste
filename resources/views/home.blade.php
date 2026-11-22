@@ -1,4 +1,4 @@
-<x-layouts.app title="Locabite — Peta Makanan Berlebih & Penyelamat Pangan">
+<x-layouts.app title="LokaWaste — Peta Makanan Berlebih & Penyelamat Pangan">
 
 <div x-data="homeMap()" x-init="init()" class="relative flex-1 flex flex-col lg:flex-row h-[calc(100dvh-4rem)] lg:h-[calc(100vh-4rem)] w-full max-w-full overflow-hidden">
 
@@ -2457,7 +2457,7 @@ document.addEventListener('alpine:init', () => {
             if (!item) return;
             const shareUrl = `${window.location.origin}/?focus=${item.id}&lat=${item.lat}&lng=${item.lng}`;
             const shareData = {
-                title: `${item.title} — Locabite`,
+                title: `${item.title} — LokaWaste`,
                 text: `Ambil makanan berlebih "${item.title}" (${item.portions_left} porsi) di ${item.pickup_address}. Mari selamatkan pangan!`,
                 url: shareUrl
             };

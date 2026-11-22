@@ -1,4 +1,4 @@
-<x-layouts.app :title="$listing->title . ' — Locabite'">
+<x-layouts.app :title="$listing->title . ' — LokaWaste'">
 
 <div x-data="qrHandover()" class="max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-6">
 
@@ -615,7 +615,7 @@
         @csrf
         <input type="hidden" name="listing_id" value="{{ $listing->id }}">
         <h3 class="font-display font-bold text-lg text-[#16251D]">Laporkan Masalah</h3>
-        <p class="text-xs text-[#4E6157]">Laporan Anda membantu menjaga keselamatan dan kepercayaan komunitas pangan Locabite.</p>
+        <p class="text-xs text-[#4E6157]">Laporan Anda membantu menjaga keselamatan dan kepercayaan komunitas pangan LokaWaste.</p>
 
         <div>
             <label class="text-xs font-semibold text-[#16251D] block mb-1">Alasan Laporan</label>

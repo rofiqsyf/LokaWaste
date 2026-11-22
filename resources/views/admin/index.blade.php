@@ -1,11 +1,11 @@
-<x-layouts.app title="Panel Admin — Locabite">
+<x-layouts.app title="Panel Admin — LokaWaste">
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
 
     <!-- Admin Header -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-            <h1 class="font-display font-bold text-3xl text-[#16251D]">Panel Administrasi Locabite</h1>
+            <h1 class="font-display font-bold text-3xl text-[#16251D]">Panel Administrasi LokaWaste</h1>
             <p class="text-sm text-[#4E6157] mt-1">Kelola persetujuan relawan, moderasi galang makanan, pengguna, dan laporan.</p>
         </div>
 

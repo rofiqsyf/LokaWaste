@@ -1,4 +1,4 @@
-<x-layouts.app title="Ajukan Diri Sebagai Relawan — Locabite">
+<x-layouts.app title="Ajukan Diri Sebagai Relawan — LokaWaste">
 
 <div class="max-w-3xl mx-auto px-4 sm:px-6 py-8" x-data="volunteerApply(@js($provinces))">
 
@@ -402,7 +402,7 @@
                 <span>Kirim Pengajuan Relawan</span>
             </button>
             <p class="text-[11px] text-[#4E6157] text-center mt-2">
-                Setiap kecamatan akan ditinjau secara teliti oleh Admin Locabite. Status dapat dipantau di Dashboard Anda.
+                Setiap kecamatan akan ditinjau secara teliti oleh Admin LokaWaste. Status dapat dipantau di Dashboard Anda.
             </p>
         </div>
 
