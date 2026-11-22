@@ -359,7 +359,11 @@
                                                    class="input-field w-28 text-center font-bold text-base" required>
                                         </div>
                                         <div class="text-xs text-[#4E6157] pt-4">
-                                            Maksimal <strong class="text-[#16251D]">{{ min($listing->max_portions_per_claim, $listing->portions_left) }} porsi</strong> per klaim.
+                                            @if($listing->max_portions_per_claim < $listing->portions_left)
+                                                Dibatasi oleh pemberi: Maksimal <strong class="text-[#16251D]">{{ $listing->max_portions_per_claim }} porsi</strong> per klaim.
+                                            @else
+                                                Bebas diambil hingga <strong class="text-[#16251D]">{{ $listing->portions_left }} porsi</strong> (Sesuai sisa tersedia).
+                                            @endif
                                         </div>
                                     </div>
 

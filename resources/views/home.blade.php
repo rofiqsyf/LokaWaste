@@ -389,7 +389,9 @@
                          @click="openPlaceDetail(item)"
                          :class="[
                             selectedId === item.id ? 'ring-2 ring-[#2A6F97] bg-blue-50/40 shadow-card border-[#2A6F97]' : 'bg-white hover:border-[#1E7A4C]/70 hover:shadow-card hover:-translate-y-0.5 border-[#D5E0D9]',
-                            item.remaining_minutes < 60 ? 'border-red-200 bg-linear-to-r from-red-50/20 via-white to-white' : ''
+                            item.my_claim && item.my_claim.status === 'pending' ? 'border-amber-300 ring-2 ring-amber-100 bg-linear-to-b from-amber-50/25 to-white' : '',
+                            item.my_claim && item.my_claim.status === 'approved' ? 'border-emerald-300 ring-2 ring-emerald-100 bg-linear-to-b from-emerald-50/25 to-white' : '',
+                            item.remaining_minutes < 60 && !item.my_claim ? 'border-red-200 bg-linear-to-r from-red-50/20 via-white to-white' : ''
                          ]"
                          class="p-4 rounded-2xl border shadow-xs cursor-pointer transition-all duration-200 space-y-3 group">
                         
@@ -444,6 +446,49 @@
                                 <span class="truncate" x-text="item.user_name"></span>
                             </div>
                         </div>
+
+                        <!-- Active Claim Banner (If user has submitted a claim) -->
+                        <template x-if="item.my_claim">
+                            <div class="rounded-xl overflow-hidden text-xs">
+                                <template x-if="item.my_claim.status === 'pending'">
+                                    <div class="p-2.5 bg-amber-50/90 border border-amber-200 rounded-xl flex items-center justify-between text-amber-950">
+                                        <div class="flex items-center gap-2 min-w-0">
+                                            <span class="w-2 h-2 rounded-full bg-amber-500 animate-ping shrink-0"></span>
+                                            <div class="min-w-0">
+                                                <span class="font-bold text-amber-900 block truncate leading-tight">Pengajuan Sedang Ditinjau</span>
+                                                <span class="text-[10px] text-amber-700">Menunggu konfirmasi pemberi</span>
+                                            </div>
+                                        </div>
+                                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-white border border-amber-200 text-amber-800 shrink-0" x-text="`${item.my_claim.portions_requested} porsi`"></span>
+                                    </div>
+                                </template>
+                                <template x-if="item.my_claim.status === 'approved'">
+                                    <div class="p-2.5 bg-emerald-50 border border-emerald-300 rounded-xl flex items-center justify-between text-emerald-950">
+                                        <div class="flex items-center gap-2 min-w-0">
+                                            <div class="w-4 h-4 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0">
+                                                <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                            </div>
+                                            <div class="min-w-0">
+                                                <span class="font-bold text-[#14573A] block truncate leading-tight">Pengajuan Disetujui!</span>
+                                                <span class="text-[10px] text-[#1E7A4C]">Siap diambil di lokasi</span>
+                                            </div>
+                                        </div>
+                                        <div class="text-right shrink-0">
+                                            <span class="font-mono font-bold text-xs bg-white px-2 py-0.5 rounded border border-emerald-300 text-[#14573A]" x-text="`Kode: ${item.my_claim.pickup_code || '---'}`"></span>
+                                        </div>
+                                    </div>
+                                </template>
+                                <template x-if="item.my_claim.status === 'picked_up'">
+                                    <div class="p-2 bg-gray-50 border border-gray-200 rounded-xl flex items-center justify-between text-gray-700">
+                                        <span class="font-bold flex items-center gap-1.5 text-xs">
+                                            <svg class="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                            Selesai Diambil
+                                        </span>
+                                        <span class="text-[11px] text-gray-500" x-text="`${item.my_claim.portions_approved} porsi`"></span>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
 
                         <!-- Meta Row: Portions, Distance, and Action Buttons -->
                         <div class="flex items-center justify-between pt-2 border-t border-gray-100 text-xs">
@@ -740,6 +785,112 @@
                     </div>
                 </div>
 
+                <!-- Live Claim Tracking Card (When user has submitted an active claim) -->
+                <template x-if="activePlace?.my_claim">
+                    <div class="rounded-2xl p-4 border transition-all duration-200 space-y-3"
+                         :class="[
+                            activePlace.my_claim.status === 'pending' ? 'bg-linear-to-br from-amber-50 via-white to-amber-50/40 border-amber-300 shadow-xs' : '',
+                            activePlace.my_claim.status === 'approved' ? 'bg-linear-to-br from-emerald-50 via-white to-emerald-50/40 border-emerald-300 shadow-xs' : '',
+                            activePlace.my_claim.status === 'picked_up' ? 'bg-gray-50 border-gray-200' : 'bg-gray-50 border-gray-200'
+                         ]">
+                        
+                        <!-- Header with Status Badge -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <template x-if="activePlace.my_claim.status === 'pending'">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping shrink-0"></span>
+                                </template>
+                                <template x-if="activePlace.my_claim.status === 'approved'">
+                                    <div class="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                    </div>
+                                </template>
+                                <div>
+                                    <span class="text-xs font-black tracking-wide uppercase"
+                                          :class="activePlace.my_claim.status === 'pending' ? 'text-amber-800' : (activePlace.my_claim.status === 'approved' ? 'text-[#14573A]' : 'text-gray-800')"
+                                          x-text="activePlace.my_claim.status === 'pending' ? 'Status: Menunggu Konfirmasi' : (activePlace.my_claim.status === 'approved' ? 'Status: Disetujui! Siap Diambil' : 'Status: ' + activePlace.my_claim.status)"></span>
+                                </div>
+                            </div>
+
+                            <a href="{{ route('dashboard') }}" class="text-[11px] font-bold text-[#2A6F97] hover:underline flex items-center gap-0.5">
+                                <span>Dashboard</span>
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                            </a>
+                        </div>
+
+                        <!-- Progress Steps Tracker -->
+                        <div class="pt-1">
+                            <div class="grid grid-cols-3 gap-1 relative text-center">
+                                <!-- Step 1: Diajukan -->
+                                <div class="flex flex-col items-center">
+                                    <div class="w-6 h-6 rounded-full bg-emerald-600 text-white text-[10px] font-bold flex items-center justify-center shadow-2xs">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                    </div>
+                                    <span class="text-[9.5px] font-bold text-[#14573A] mt-1">Diajukan</span>
+                                </div>
+                                <!-- Step 2: Peninjauan -->
+                                <div class="flex flex-col items-center">
+                                    <div class="w-6 h-6 rounded-full text-[10px] font-bold flex items-center justify-center"
+                                         :class="activePlace.my_claim.status === 'pending' ? 'bg-amber-500 text-white ring-4 ring-amber-100 animate-pulse' : (activePlace.my_claim.status === 'approved' || activePlace.my_claim.status === 'picked_up' ? 'bg-emerald-600 text-white shadow-2xs' : 'bg-gray-200 text-gray-500')">
+                                        <template x-if="activePlace.my_claim.status === 'approved' || activePlace.my_claim.status === 'picked_up'">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                        </template>
+                                        <template x-if="activePlace.my_claim.status === 'pending'">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        </template>
+                                    </div>
+                                    <span class="text-[9.5px] font-bold mt-1"
+                                          :class="activePlace.my_claim.status === 'pending' ? 'text-amber-800' : (activePlace.my_claim.status === 'approved' || activePlace.my_claim.status === 'picked_up' ? 'text-[#14573A]' : 'text-gray-400')">Ditinjau</span>
+                                </div>
+                                <!-- Step 3: Siap Ambil -->
+                                <div class="flex flex-col items-center">
+                                    <div class="w-6 h-6 rounded-full text-[10px] font-bold flex items-center justify-center"
+                                         :class="activePlace.my_claim.status === 'approved' ? 'bg-emerald-600 text-white ring-4 ring-emerald-100 shadow-2xs' : (activePlace.my_claim.status === 'picked_up' ? 'bg-emerald-600 text-white' : 'bg-gray-200 text-gray-500')">
+                                        <template x-if="activePlace.my_claim.status === 'approved' || activePlace.my_claim.status === 'picked_up'">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                        </template>
+                                        <template x-if="activePlace.my_claim.status !== 'approved' && activePlace.my_claim.status !== 'picked_up'">
+                                            <span>3</span>
+                                        </template>
+                                    </div>
+                                    <span class="text-[9.5px] font-bold mt-1"
+                                          :class="activePlace.my_claim.status === 'approved' ? 'text-[#14573A]' : (activePlace.my_claim.status === 'picked_up' ? 'text-gray-600' : 'text-gray-400')">Siap Ambil</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Status Details Box -->
+                        <template x-if="activePlace.my_claim.status === 'pending'">
+                            <div class="p-3 bg-white/90 rounded-xl border border-amber-200 text-xs text-amber-950 space-y-1.5">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[#4E6157]">Permintaan Anda:</span>
+                                    <span class="font-bold text-amber-900" x-text="`${activePlace.my_claim.portions_requested} Porsi Makanan`"></span>
+                                </div>
+                                <p class="text-[11px] text-[#4E6157] leading-relaxed">
+                                    Pemberi makanan sedang meninjau permintaan Anda. Segera setelah dikonfirmasi, kode pengambilan akan terbuka otomatis.
+                                </p>
+                            </div>
+                        </template>
+
+                        <template x-if="activePlace.my_claim.status === 'approved'">
+                            <div class="p-3 bg-white/90 rounded-xl border-2 border-emerald-500 text-center space-y-1.5 shadow-2xs">
+                                <span class="text-[11px] text-[#4E6157] font-semibold block">Tunjukkan kode ini kepada pemberi saat serah terima:</span>
+                                <div class="flex items-center justify-center gap-2">
+                                    <div class="font-mono font-black text-2xl tracking-widest text-[#14573A] bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-200"
+                                         x-text="activePlace.my_claim.pickup_code || '---'"></div>
+                                    <button type="button"
+                                            @click="copyAddress(activePlace.my_claim.pickup_code)"
+                                            class="p-1.5 rounded-lg bg-gray-100 hover:bg-emerald-100 text-[#1E7A4C] transition"
+                                            title="Salin Kode Pengambilan">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                                    </button>
+                                </div>
+                                <span class="text-xs text-[#1E7A4C] font-bold block" x-text="`Disetujui: ${activePlace.my_claim.portions_approved} porsi`"></span>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+
                 <!-- Full Address Card with Copy Action -->
                 <div class="bg-gray-50/90 rounded-2xl p-3.5 border border-gray-100 space-y-2">
                     <div class="flex items-center justify-between text-xs text-[#4E6157]">
@@ -858,7 +1009,7 @@
                     <!-- 4. Direct Claim / Detail Link -->
                     <a :href="activePlace?.detail_url"
                        class="p-2.5 rounded-2xl bg-[#16251D] hover:bg-black text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition active:scale-95">
-                        <span>Ambil Makanan</span>
+                        <span x-text="activePlace?.my_claim ? 'Kelola Pengajuan' : 'Ambil Makanan'"></span>
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
                         </svg>
@@ -1244,6 +1395,12 @@ document.addEventListener('alpine:init', () => {
             this.loadData();
             this.reverseGeocodeLabel(this.userLat, this.userLng);
 
+            // Automatically sync location to device GPS in real-time if not focused on specific query params
+            const urlParams = new URLSearchParams(window.location.search);
+            if (!urlParams.has('lat') && !urlParams.has('focus') && navigator.geolocation) {
+                this.useCurrentLocation(true);
+            }
+
             // Invalidate Leaflet size as flex layout settles to avoid grey tile boxes
             this.$nextTick(() => {
                 if (this.map) this.map.invalidateSize();
@@ -1460,31 +1617,86 @@ document.addEventListener('alpine:init', () => {
                 const color = this.getTimeColor(l.remaining_minutes);
                 const shortTime = this.getTimeShort(l.remaining_minutes);
 
-                const markerHtml = `
-                    <div style="display:flex; flex-direction:column; align-items:center; cursor:pointer; filter:drop-shadow(0 3px 6px rgba(0,0,0,0.22)); transition:transform 0.15s ease;">
-                        <div style="width:30px; height:30px; border-radius:50% 50% 50% 0; transform:rotate(-45deg); background:${color}; border:2.5px solid white; display:grid; place-items:center;">
-                            <span style="transform:rotate(45deg); color:white; font-size:11px; font-weight:800; font-family:'Atkinson Hyperlegible',sans-serif;">${l.portions_left}</span>
+                let markerHtml = '';
+                if (l.my_claim && l.my_claim.status === 'pending') {
+                    markerHtml = `
+                        <div style="display:flex; flex-direction:column; align-items:center; cursor:pointer; filter:drop-shadow(0 4px 10px rgba(217, 119, 6, 0.45)); transition:transform 0.15s ease;">
+                            <div style="background:#D97706; color:white; font-size:9.5px; font-weight:800; padding:2px 7px; border-radius:999px; margin-bottom:2px; letter-spacing:0.02em; border:1.5px solid white; box-shadow:0 2px 5px rgba(0,0,0,0.2); white-space:nowrap; display:flex; align-items:center; gap:4px;">
+                                <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#FEF3C7;"></span>
+                                <span>Ditinjau (${l.my_claim.portions_requested} porsi)</span>
+                            </div>
+                            <div style="width:32px; height:32px; border-radius:50% 50% 50% 0; transform:rotate(-45deg); background:#D97706; border:3px solid white; display:grid; place-items:center;">
+                                <div style="transform:rotate(45deg); color:white; display:flex; align-items:center; justify-content:center;">
+                                    <svg style="width:16px; height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                </div>
+                            </div>
+                            <div style="background:#16251D; color:white; font-size:9px; font-weight:700; padding:1px 6px; border-radius:999px; margin-top:2px; letter-spacing:0.02em; border:1px solid rgba(255,255,255,0.25);">
+                                ${shortTime}
+                            </div>
                         </div>
-                        <div style="background:#16251D; color:white; font-size:9.5px; font-weight:700; padding:1px 6px; border-radius:999px; margin-top:2px; letter-spacing:0.02em; border:1px solid rgba(255,255,255,0.25);">
-                            ${shortTime}
+                    `;
+                } else if (l.my_claim && l.my_claim.status === 'approved') {
+                    markerHtml = `
+                        <div style="display:flex; flex-direction:column; align-items:center; cursor:pointer; filter:drop-shadow(0 4px 10px rgba(5, 150, 105, 0.45)); transition:transform 0.15s ease;">
+                            <div style="background:#059669; color:white; font-size:9.5px; font-weight:800; padding:2px 7px; border-radius:999px; margin-bottom:2px; letter-spacing:0.02em; border:1.5px solid white; box-shadow:0 2px 5px rgba(0,0,0,0.2); white-space:nowrap; display:flex; align-items:center; gap:4px;">
+                                <svg style="width:10px; height:10px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                <span>Siap Diambil</span>
+                            </div>
+                            <div style="width:32px; height:32px; border-radius:50% 50% 50% 0; transform:rotate(-45deg); background:#059669; border:3px solid white; display:grid; place-items:center;">
+                                <div style="transform:rotate(45deg); color:white; display:flex; align-items:center; justify-content:center;">
+                                    <svg style="width:17px; height:17px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                </div>
+                            </div>
+                            <div style="background:#16251D; color:white; font-size:9px; font-weight:700; padding:1px 6px; border-radius:999px; margin-top:2px; letter-spacing:0.02em; border:1px solid rgba(255,255,255,0.25);">
+                                ${shortTime}
+                            </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                } else {
+                    markerHtml = `
+                        <div style="display:flex; flex-direction:column; align-items:center; cursor:pointer; filter:drop-shadow(0 3px 6px rgba(0,0,0,0.22)); transition:transform 0.15s ease;">
+                            <div style="width:30px; height:30px; border-radius:50% 50% 50% 0; transform:rotate(-45deg); background:${color}; border:2.5px solid white; display:grid; place-items:center;">
+                                <span style="transform:rotate(45deg); color:white; font-size:11px; font-weight:800; font-family:'Atkinson Hyperlegible',sans-serif;">${l.portions_left}</span>
+                            </div>
+                            <div style="background:#16251D; color:white; font-size:9.5px; font-weight:700; padding:1px 6px; border-radius:999px; margin-top:2px; letter-spacing:0.02em; border:1px solid rgba(255,255,255,0.25);">
+                                ${shortTime}
+                            </div>
+                        </div>
+                    `;
+                }
 
                 const icon = L.divIcon({
-                    className: 'food-pin',
+                    className: l.my_claim ? 'food-pin food-pin-claimed' : 'food-pin',
                     html: markerHtml,
-                    iconSize: [36, 44],
-                    iconAnchor: [18, 40]
+                    iconSize: l.my_claim ? [40, 52] : [36, 44],
+                    iconAnchor: l.my_claim ? [20, 48] : [18, 40]
                 });
 
                 const m = L.marker([l.lat, l.lng], { icon: icon });
+
+                let claimBadgeHtml = '';
+                if (l.my_claim) {
+                    if (l.my_claim.status === 'pending') {
+                        claimBadgeHtml = `
+                            <div style="background:#FEF3C7; color:#92400E; padding:4px 8px; border-radius:6px; font-size:10px; font-weight:700; margin-bottom:6px; border:1px solid #FDE68A;">
+                                Pengajuan Anda sedang ditinjau (${l.my_claim.portions_requested} porsi)
+                            </div>
+                        `;
+                    } else if (l.my_claim.status === 'approved') {
+                        claimBadgeHtml = `
+                            <div style="background:#D1FAE5; color:#065F46; padding:4px 8px; border-radius:6px; font-size:10px; font-weight:700; margin-bottom:6px; border:1px solid #A7F3D0;">
+                                Disetujui! Kode: ${l.my_claim.pickup_code || '---'} (${l.my_claim.portions_approved} porsi)
+                            </div>
+                        `;
+                    }
+                }
 
                 // Popup with rich direct actions
                 const popupContent = `
                     <div style="font-family:'Atkinson Hyperlegible',sans-serif; min-width:210px; padding:2px;">
                         <div style="font-size:10px; font-weight:bold; color:#1E7A4C; text-transform:uppercase; margin-bottom:2px;">${l.category_name || 'Makanan'}</div>
                         <h4 style="font-weight:bold; font-size:13px; margin:0 0 4px 0; color:#16251D; line-height:1.3;">${l.title}</h4>
+                        ${claimBadgeHtml}
                         <div style="font-size:11px; color:#4E6157; margin-bottom:6px;">
                             ${l.portions_left} porsi • ${l.distance_km} km
                         </div>
@@ -1499,7 +1711,7 @@ document.addEventListener('alpine:init', () => {
                                 Alamat & Info
                             </button>
                             <a href="${l.detail_url}" style="background:#16251D; color:white; padding:4px 8px; border-radius:8px; font-size:10px; text-decoration:none; font-weight:bold;">
-                                Ambil
+                                ${l.my_claim ? 'Klaim Anda' : 'Ambil'}
                             </a>
                         </div>
                     </div>
@@ -2027,9 +2239,9 @@ document.addEventListener('alpine:init', () => {
             }, 3200);
         },
 
-        useCurrentLocation() {
+        useCurrentLocation(silent = false) {
             if (!navigator.geolocation) {
-                alert("Peramban Anda tidak mendukung geolokasi GPS.");
+                if (!silent) alert("Peramban Anda tidak mendukung geolokasi GPS.");
                 return;
             }
 
@@ -2038,11 +2250,12 @@ document.addEventListener('alpine:init', () => {
                 (pos) => {
                     this.locating = false;
                     this.setCenterLocation(pos.coords.latitude, pos.coords.longitude);
-                    this.map.flyTo([this.userLat, this.userLng], 15);
+                    if (!silent) this.map.flyTo([this.userLat, this.userLng], 15);
+                    else this.map.setView([this.userLat, this.userLng], 15);
                 },
                 (err) => {
                     this.locating = false;
-                    alert("Akses GPS ditolak atau tidak tersedia. Gunakan pencarian alamat di atas.");
+                    if (!silent) alert("Akses GPS ditolak atau tidak tersedia. Gunakan pencarian alamat di atas.");
                 },
                 { enableHighAccuracy: true, timeout: 8000 }
             );

@@ -368,24 +368,54 @@
                                       class="input-field text-xs"></textarea>
                         </div>
 
-                        <!-- Max portions & Campaign -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="font-bold text-xs text-[#16251D] block mb-1">Maks. Porsi per Pengambil</label>
-                                <input type="number" name="max_portions_per_claim" value="3" min="1" max="20" class="input-field text-xs">
-                                <span class="text-[10px] text-[#4E6157] mt-1 block">Mencegah penimbunan porsi oleh satu orang.</span>
+                        <!-- Max portions per claim (Default: Bebas / Tanpa Batas) -->
+                        <div class="space-y-3 p-4 rounded-2xl bg-gray-50/80 border border-gray-200/80">
+                            <div class="flex items-center justify-between gap-3">
+                                <div class="min-w-0">
+                                    <span class="font-bold text-xs text-[#16251D] block">Batasi Porsi per Pengambil?</span>
+                                    <span class="text-[11px] text-[#4E6157] block">Secara default bebas diambil siapa saja sesuai sisa porsi tersedia.</span>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                    <input type="checkbox" x-model="hasPortionLimit" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1E7A4C]"></div>
+                                </label>
                             </div>
 
-                            <div>
-                                <label class="font-bold text-xs text-[#16251D] block mb-1">Tujukan untuk Galang Panti</label>
-                                <select name="campaign_id" class="input-field text-xs">
-                                    <option value="">-- Terbuka untuk Umum --</option>
-                                    @foreach($campaigns as $camp)
-                                        <option value="{{ $camp->id }}">Galang: {{ $camp->title }} ({{ $camp->beneficiary_name }})</option>
-                                    @endforeach
-                                </select>
-                                <span class="text-[10px] text-[#4E6157] mt-1 block">Diprioritaskan untuk relawan galang selama 2 jam pertama.</span>
-                            </div>
+                            <template x-if="hasPortionLimit">
+                                <div class="pt-2 border-t border-gray-200/60 flex items-center gap-3">
+                                    <div class="w-28 shrink-0">
+                                        <label class="text-[10px] font-bold text-[#4E6157] block mb-1">Maks. Porsi</label>
+                                        <input type="number"
+                                               x-model="customMaxPortions"
+                                               min="1"
+                                               :max="portions"
+                                               class="input-field text-xs font-bold text-center">
+                                    </div>
+                                    <p class="text-[11px] text-[#4E6157] leading-tight pt-3">
+                                        Setiap pemohon hanya boleh meminta maksimal <strong class="text-[#16251D]" x-text="`${customMaxPortions} porsi`"></strong> per klaim.
+                                    </p>
+                                </div>
+                            </template>
+                            <template x-if="!hasPortionLimit">
+                                <div class="text-[11px] font-semibold text-[#1E7A4C] flex items-center gap-1.5 pt-1">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                    <span>Bebas (Pemohon dapat meminta hingga seluruh <span x-text="`${portions} porsi`"></span>).</span>
+                                </div>
+                            </template>
+
+                            <input type="hidden" name="max_portions_per_claim" :value="hasPortionLimit ? customMaxPortions : portions">
+                        </div>
+
+                        <!-- Campaign Priority Selector -->
+                        <div>
+                            <label class="font-bold text-xs text-[#16251D] block mb-1">Tujukan untuk Galang Panti</label>
+                            <select name="campaign_id" class="input-field text-xs">
+                                <option value="">-- Terbuka untuk Umum --</option>
+                                @foreach($campaigns as $camp)
+                                    <option value="{{ $camp->id }}">Galang: {{ $camp->title }} ({{ $camp->beneficiary_name }})</option>
+                                @endforeach
+                            </select>
+                            <span class="text-[10px] text-[#4E6157] mt-1 block">Diprioritaskan untuk relawan galang selama 2 jam pertama.</span>
                         </div>
 
                         <!-- Allergen Chips -->
@@ -758,6 +788,8 @@ document.addEventListener('alpine:init', () => {
         foodType: '{{ old('food_type', $duplicate->food_type ?? 'cooked') }}',
         categoryId: '{{ old('category_id', $duplicate->category_id ?? ($categories->first()->id ?? 1)) }}',
         portions: {{ old('portions_total', $duplicate->portions_total ?? 5) }},
+        hasPortionLimit: {{ old('max_portions_per_claim') && old('max_portions_per_claim') < old('portions_total', 5) ? 'true' : 'false' }},
+        customMaxPortions: {{ old('max_portions_per_claim', 2) }},
         hours: {{ old('hours_valid', 2) }},
         lat: {{ old('latitude', $user->default_latitude ?? -7.05194) }},
         lng: {{ old('longitude', $user->default_longitude ?? 110.43778) }},
@@ -885,6 +917,18 @@ document.addEventListener('alpine:init', () => {
             this.$nextTick(() => {
                 this.initPickerMap();
                 this.reverseGeocode();
+
+                // Automatically calibrate to device GPS location if available
+                if (navigator.geolocation && !{{ old('latitude') ? 'true' : 'false' }}) {
+                    navigator.geolocation.getCurrentPosition((pos) => {
+                        this.lat = pos.coords.latitude;
+                        this.lng = pos.coords.longitude;
+                        if (this.map) this.map.setView([this.lat, this.lng], 16);
+                        if (this.marker) this.marker.setLatLng([this.lat, this.lng]);
+                        this.findNearestDistrict(this.lat, this.lng);
+                        this.reverseGeocode();
+                    }, () => {}, { enableHighAccuracy: true, timeout: 6000 });
+                }
             });
         },
 

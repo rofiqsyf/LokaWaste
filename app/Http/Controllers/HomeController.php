@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\CampaignStatus;
 use App\Models\Category;
+use App\Models\Claim;
 use App\Models\District;
 use App\Models\FoodCampaign;
 use App\Models\Regency;
@@ -60,13 +61,24 @@ class HomeController extends Controller
 
         $currentUserId = auth()->id();
 
-        $data = $listings->map(function ($l) use ($currentUserId) {
+        // Fetch current user's claims for these listings
+        $userClaims = $currentUserId
+            ? Claim::where('user_id', $currentUserId)
+                ->whereIn('listing_id', $listings->pluck('id'))
+                ->orderBy('created_at', 'desc')
+                ->get()
+                ->keyBy('listing_id')
+            : collect();
+
+        $data = $listings->map(function ($l) use ($currentUserId, $userClaims) {
             $totalMins = (int) round($l->windowMinutes());
             $remainingMins = max(0, (int) round(now()->diffInMinutes($l->expires_at, false)));
 
             $pickupAddress = $l->show_exact_location
                 ? ($l->pickup_address ?: ('Kec. ' . ($l->district?->name ?? '') . ', ' . ($l->district?->regency?->name ?? '')))
                 : ('Area Kec. ' . ($l->district?->name ?? '') . ', ' . ($l->district?->regency?->name ?? '') . ' (Alamat presisi dibuka setelah klaim disetujui)');
+
+            $myClaim = $userClaims->get($l->id);
 
             return [
                 'id' => $l->id,
@@ -80,6 +92,7 @@ class HomeController extends Controller
                 'is_owner' => $currentUserId && $l->user_id === $currentUserId,
                 'portions_left' => (int) $l->portions_left,
                 'portions_total' => (int) $l->portions_total,
+                'max_portions_per_claim' => (int) $l->max_portions_per_claim,
                 'distance_km' => round((float) $l->distance_km, 1),
                 'halal_claim' => (bool) $l->halal_claim,
                 'food_type' => $l->food_type,
@@ -100,6 +113,15 @@ class HomeController extends Controller
                 'campaign_id' => $l->campaign_id,
                 'campaign_title' => $l->campaign?->title,
                 'campaign_priority_active' => (bool) ($l->campaign_priority_until && $l->campaign_priority_until->isFuture()),
+                'my_claim' => $myClaim ? [
+                    'id' => $myClaim->id,
+                    'status' => $myClaim->status,
+                    'portions_requested' => (int) $myClaim->portions_requested,
+                    'portions_approved' => (int) ($myClaim->portions_approved ?? $myClaim->portions_requested),
+                    'pickup_code' => $myClaim->status === 'approved' ? $myClaim->pickup_code : null,
+                    'note' => $myClaim->note,
+                    'created_at' => $myClaim->created_at->toIso8601String(),
+                ] : null,
             ];
         });
 
