@@ -2,6 +2,14 @@
 @import 'leaflet/dist/leaflet.css';
 
 @layer base {
+    html, body {
+        height: 100%;
+        height: 100dvh;
+        overflow: hidden;
+        overscroll-behavior: none;
+        -webkit-overflow-scrolling: touch;
+    }
+
     :root {
         --color-bg: #F2F6F3;
         --color-surface: #FFFFFF;

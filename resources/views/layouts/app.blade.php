@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="id" class="overflow-x-clip">
+<html lang="id" class="h-full overflow-hidden overscroll-none">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? 'Locabite — Cegah Food Waste, Salurkan Makanan Berlebih' }}</title>
 
@@ -19,7 +19,7 @@
 
     @stack('styles')
 </head>
-<body class="bg-[#F2F6F3] text-[#16251D] min-h-screen flex flex-col font-sans antialiased pb-20 md:pb-0 overflow-x-clip">
+<body class="bg-[#F2F6F3] text-[#16251D] h-full h-[100dvh] flex flex-col font-sans antialiased overflow-hidden overscroll-none select-none md:select-auto">
 
     <!-- Accessibility Skip Link -->
     <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#1E7A4C] focus:text-white focus:rounded-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#2A6F97]">
@@ -27,7 +27,7 @@
     </a>
 
     <!-- Top Navigation Bar -->
-    <header class="bg-white/95 backdrop-blur-xl border-b border-[#D5E0D9]/80 sticky top-0 z-40 shadow-[0_1px_3px_rgba(22,37,29,0.03)] transition-all">
+    <header class="h-16 shrink-0 bg-white/95 backdrop-blur-xl border-b border-[#D5E0D9]/80 z-40 shadow-[0_1px_3px_rgba(22,37,29,0.03)] transition-all">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16 gap-4">
                 <!-- Brand -->
@@ -140,70 +140,70 @@
         </div>
     </header>
 
-    <!-- Flash Alerts / Toasts (WCAG accessible) -->
-    @if (session('success') || session('error') || session('warning') || session('info'))
-        <div aria-live="polite" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-3">
-            @if (session('success'))
-                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
-                     class="mb-3 p-3.5 bg-[#1E7A4C]/10 border border-[#1E7A4C] text-[#14573A] rounded-xl flex items-center justify-between text-sm shadow-xs">
-                    <div class="flex items-center gap-2">
-                        <svg class="w-5 h-5 text-[#1E7A4C] shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                        </svg>
-                        <span>{{ session('success') }}</span>
+    <!-- Main Content Container (General Fixed Viewport Shell) -->
+    <main id="main-content" class="flex-1 min-h-0 w-full relative {{ request()->routeIs('home') ? 'overflow-hidden flex flex-col' : 'overflow-y-auto overflow-x-hidden' }}">
+        <!-- Flash Alerts / Toasts (WCAG accessible) -->
+        @if (session('success') || session('error') || session('warning') || session('info'))
+            <div aria-live="polite" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 shrink-0">
+                @if (session('success'))
+                    <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
+                         class="mb-3 p-3.5 bg-[#1E7A4C]/10 border border-[#1E7A4C] text-[#14573A] rounded-xl flex items-center justify-between text-sm shadow-xs">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-[#1E7A4C] shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                            <span>{{ session('success') }}</span>
+                        </div>
+                        <button @click="show = false" class="text-[#14573A] hover:text-black font-bold text-lg">&times;</button>
                     </div>
-                    <button @click="show = false" class="text-[#14573A] hover:text-black font-bold text-lg">&times;</button>
-                </div>
-            @endif
+                @endif
 
-            @if (session('error'))
-                <div x-data="{ show: true }" x-show="show"
-                     class="mb-3 p-3.5 bg-[#C93A2E]/10 border border-[#C93A2E] text-[#C93A2E] rounded-xl flex items-center justify-between text-sm shadow-xs">
-                    <div class="flex items-center gap-2">
-                        <svg class="w-5 h-5 text-[#C93A2E] shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                        </svg>
-                        <span>{{ session('error') }}</span>
+                @if (session('error'))
+                    <div x-data="{ show: true }" x-show="show"
+                         class="mb-3 p-3.5 bg-[#C93A2E]/10 border border-[#C93A2E] text-[#C93A2E] rounded-xl flex items-center justify-between text-sm shadow-xs">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-[#C93A2E] shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                            </svg>
+                            <span>{{ session('error') }}</span>
+                        </div>
+                        <button @click="show = false" class="text-[#C93A2E] hover:text-black font-bold text-lg">&times;</button>
                     </div>
-                    <button @click="show = false" class="text-[#C93A2E] hover:text-black font-bold text-lg">&times;</button>
-                </div>
-            @endif
+                @endif
 
-            @if (session('warning'))
-                <div x-data="{ show: true }" x-show="show"
-                     class="mb-3 p-3.5 bg-[#FBEFC9] border border-[#B45309] text-[#7A4A00] rounded-xl flex items-center justify-between text-sm shadow-xs">
-                    <div class="flex items-center gap-2">
-                        <svg class="w-5 h-5 text-[#B45309] shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                        </svg>
-                        <span>{{ session('warning') }}</span>
+                @if (session('warning'))
+                    <div x-data="{ show: true }" x-show="show"
+                         class="mb-3 p-3.5 bg-[#FBEFC9] border border-[#B45309] text-[#7A4A00] rounded-xl flex items-center justify-between text-sm shadow-xs">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-[#B45309] shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                            </svg>
+                            <span>{{ session('warning') }}</span>
+                        </div>
+                        <button @click="show = false" class="text-[#7A4A00] hover:text-black font-bold text-lg">&times;</button>
                     </div>
-                    <button @click="show = false" class="text-[#7A4A00] hover:text-black font-bold text-lg">&times;</button>
-                </div>
-            @endif
+                @endif
 
-            @if (session('info'))
-                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)"
-                     class="mb-3 p-3.5 bg-[#2A6F97]/10 border border-[#2A6F97] text-[#2A6F97] rounded-xl flex items-center justify-between text-sm shadow-xs">
-                    <div class="flex items-center gap-2">
-                        <svg class="w-5 h-5 text-[#2A6F97] shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-                        </svg>
-                        <span>{{ session('info') }}</span>
+                @if (session('info'))
+                    <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)"
+                         class="mb-3 p-3.5 bg-[#2A6F97]/10 border border-[#2A6F97] text-[#2A6F97] rounded-xl flex items-center justify-between text-sm shadow-xs">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-[#2A6F97] shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                            </svg>
+                            <span>{{ session('info') }}</span>
+                        </div>
+                        <button @click="show = false" class="text-[#2A6F97] hover:text-black font-bold text-lg">&times;</button>
                     </div>
-                    <button @click="show = false" class="text-[#2A6F97] hover:text-black font-bold text-lg">&times;</button>
-                </div>
-            @endif
-        </div>
-    @endif
+                @endif
+            </div>
+        @endif
 
-    <!-- Main Content -->
-    <main id="main-content" class="flex-1 w-full max-w-full overflow-hidden">
         {{ $slot }}
     </main>
 
-    <!-- Mobile Bottom Navigation Bar (SDD 4.1 & design.md 8) -->
-    <nav class="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-[#D5E0D9] z-40 flex items-center justify-around h-16 px-2 shadow-lg">
+    <!-- Mobile Bottom Navigation Bar (Fixed Pinned Bottom) -->
+    <nav class="md:hidden shrink-0 h-16 bg-white border-t border-[#D5E0D9] z-40 flex items-center justify-around px-2 shadow-lg relative select-none">
         <!-- Peta -->
         <a href="{{ route('home') }}" class="flex flex-col items-center justify-center flex-1 py-1 {{ request()->routeIs('home') ? 'text-[#1E7A4C]' : 'text-[#4E6157]' }}">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

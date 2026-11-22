@@ -1,6 +1,6 @@
 <x-layouts.app title="Locabite — Peta Makanan Berlebih & Penyelamat Pangan">
 
-<div x-data="homeMap()" x-init="init()" class="relative flex-1 flex flex-col lg:flex-row h-[calc(100dvh-4rem)] lg:h-[calc(100vh-4rem)] w-full max-w-full overflow-hidden">
+<div x-data="homeMap()" x-init="init()" class="relative flex-1 min-h-0 h-full w-full max-w-full flex flex-col lg:flex-row overflow-hidden">
 
     <!-- Top Floating Filter & Search Bar on Map (Google Maps / Apple Maps Class) -->
     <div class="absolute top-3 inset-x-3 md:inset-x-6 z-20 pointer-events-none flex flex-col gap-2 max-w-2xl mx-auto">
