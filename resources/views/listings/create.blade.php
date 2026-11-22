@@ -1,24 +1,48 @@
 <x-layouts.app title="Bagikan Makanan — Locabite">
 
-<div class="max-w-2xl mx-auto px-4 sm:px-6 py-6" x-data="createListingForm()">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8" x-data="createListingForm()">
 
-    <!-- Header -->
-    <div class="mb-6">
-        <a href="{{ route('home') }}" class="text-xs font-bold text-[#4E6157] hover:text-[#1E7A4C] inline-flex items-center gap-1 mb-2">
-            &larr; Batal & Kembali
-        </a>
-        <h1 class="font-display font-bold text-2xl sm:text-3xl text-[#16251D]">Bagikan Makanan Berlebih</h1>
-        <p class="text-xs sm:text-sm text-[#4E6157] mt-1">Cegah makanan terbuang dengan menyalurkannya ke warga terdekat dalam hitungan menit.</p>
+    <!-- Header & Breadcrumb -->
+    <div class="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#D5E0D9]/80 pb-6">
+        <div>
+            <a href="{{ route('home') }}" class="inline-flex items-center gap-1.5 text-xs font-bold text-[#4E6157] hover:text-[#1E7A4C] mb-2 group transition">
+                <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                <span>Kembali ke Peta</span>
+            </a>
+            <h1 class="font-display font-black text-2xl sm:text-3xl lg:text-4xl text-[#16251D] tracking-tight">Bagikan Makanan Berlebih</h1>
+            <p class="text-xs sm:text-sm text-[#4E6157] mt-1 max-w-xl">Salurkan makanan surplus Anda ke warga dan komunitas terdekat. Cepat, aman, dan privasi alamat terlindungi.</p>
+        </div>
+
+        <div class="flex items-center gap-2 self-start sm:self-auto flex-wrap">
+            <div class="px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-[#14573A] flex items-center gap-1.5 shadow-2xs">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-xs font-bold">Target 30 Detik</span>
+            </div>
+            <div class="px-3 py-1.5 rounded-full bg-white border border-[#D5E0D9] text-[#4E6157] flex items-center gap-1.5 shadow-2xs text-xs font-medium">
+                <svg class="w-3.5 h-3.5 text-[#2A6F97]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
+                <span>Privasi ~200m Terjaga</span>
+            </div>
+        </div>
     </div>
 
     <!-- Main Form -->
-    <form method="POST" action="{{ route('listings.store') }}" enctype="multipart/form-data" class="bg-white rounded-3xl border border-[#D5E0D9] shadow-card p-6 sm:p-8 space-y-6">
+    <form method="POST" action="{{ route('listings.store') }}" enctype="multipart/form-data" class="space-y-6">
         @csrf
 
         @if ($errors->any())
-            <div class="p-4 bg-red-50 border border-[#C93A2E] rounded-2xl text-xs text-[#C93A2E] space-y-1">
-                <strong class="font-bold block">Mohon perbaiki isian berikut:</strong>
-                <ul class="list-disc list-inside">
+            <div class="p-4 sm:p-5 bg-red-50 border border-[#C93A2E] rounded-3xl text-xs text-[#C93A2E] space-y-1.5 shadow-xs">
+                <div class="flex items-center gap-2 font-bold text-sm">
+                    <svg class="w-4 h-4 shrink-0 text-[#C93A2E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="9" stroke-width="2"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01"/>
+                    </svg>
+                    <span>Mohon perbaiki data berikut sebelum menyimpan:</span>
+                </div>
+                <ul class="list-disc list-inside space-y-0.5 pl-6 font-medium">
                     @foreach ($errors->all() as $err)
                         <li>{{ $err }}</li>
                     @endforeach
@@ -26,325 +50,584 @@
             </div>
         @endif
 
-        <!-- 1. Foto Makanan (opsional, disarankan) -->
-        <div>
-            <label class="font-bold text-xs text-[#16251D] block mb-1.5">Foto Makanan (Opsional)</label>
-            <div class="flex items-center gap-4">
-                <div class="relative w-24 h-24 rounded-2xl bg-[#F2F6F3] border-2 border-dashed border-[#74877B] flex items-center justify-center overflow-hidden shrink-0">
-                    <template x-if="photoPreview">
-                        <img :src="photoPreview" class="w-full h-full object-cover">
-                    </template>
-                    <template x-if="!photoPreview">
-                        <svg class="w-8 h-8 text-[#74877B]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                    </template>
-                </div>
-                <div class="space-y-1">
-                    <input type="file" name="photo" id="photo-input" accept="image/*" @change="previewImage($event)" class="text-xs file:btn-secondary file:text-xs file:py-1 file:px-3 file:mr-2 file:border-0">
-                    <p class="text-[11px] text-[#4E6157]">Maks. 2 MB. Metadata GPS & EXIF otomatis dihapus untuk keamanan privasi Anda.</p>
-                </div>
-            </div>
-        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- LEFT COLUMN: Core Details (7 cols) -->
+            <div class="lg:col-span-7 space-y-6">
 
-        <!-- 2. Nama Makanan & Kategori -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="sm:col-span-2">
-                <label class="font-bold text-xs text-[#16251D] block mb-1">Nama Makanan <span class="text-red-500">*</span></label>
-                <input type="text" name="title" value="{{ old('title', $duplicate->title ?? '') }}" placeholder="Contoh: 15 Kotak Nasi Ayam Bakar Komplit" class="input-field text-sm" required>
-            </div>
+                <!-- CARD 1: Identitas Makanan -->
+                <div class="bg-white rounded-3xl border border-[#D5E0D9] shadow-card p-5 sm:p-7 space-y-5">
+                    <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-[#1E7A4C] text-white text-xs font-bold flex items-center justify-center shrink-0">1</span>
+                            <h2 class="font-display font-bold text-base text-[#16251D]">Identitas Makanan</h2>
+                        </div>
+                        <span class="text-[11px] font-semibold text-[#4E6157]">Langkah 1 dari 3</span>
+                    </div>
 
-            <div>
-                <label class="font-bold text-xs text-[#16251D] block mb-1">Kategori <span class="text-red-500">*</span></label>
-                <select name="category_id" class="input-field text-sm" required>
-                    @foreach($categories as $cat)
-                        <option value="{{ $cat->id }}" {{ old('category_id', $duplicate->category_id ?? '') == $cat->id ? 'selected' : '' }}>
-                            {{ $cat->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+                    <!-- Photo Upload Dropzone -->
+                    <div>
+                        <label class="font-bold text-xs text-[#16251D] block mb-2">
+                            Foto Makanan <span class="text-[#4E6157] font-normal">(Opsional, sangat disarankan)</span>
+                        </label>
+                        <div class="relative">
+                            <input type="file" name="photo" id="photo-input" accept="image/*" @change="previewImage($event)" class="sr-only">
+                            
+                            <template x-if="photoPreview">
+                                <div class="relative rounded-2xl overflow-hidden border border-[#D5E0D9] bg-gray-50 max-h-56 group">
+                                    <img :src="photoPreview" class="w-full h-48 sm:h-56 object-cover">
+                                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                        <label for="photo-input" class="px-3 py-1.5 rounded-xl bg-white text-[#16251D] text-xs font-bold cursor-pointer hover:bg-gray-100 transition shadow-sm">
+                                            Ganti Foto
+                                        </label>
+                                        <button type="button" @click="removePhoto()" class="px-3 py-1.5 rounded-xl bg-[#C93A2E] text-white text-xs font-bold hover:bg-red-700 transition shadow-sm">
+                                            Hapus
+                                        </button>
+                                    </div>
+                                    <div class="absolute bottom-2 left-2 px-2.5 py-1 rounded-lg bg-black/70 backdrop-blur-xs text-[10px] font-semibold text-white flex items-center gap-1.5">
+                                        <svg class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                        <span>Metadata GPS otomatis dibersihkan</span>
+                                    </div>
+                                </div>
+                            </template>
 
-            <div>
-                <label class="font-bold text-xs text-[#16251D] block mb-1">Jenis Pangan <span class="text-red-500">*</span></label>
-                <select name="food_type" x-model="foodType" class="input-field text-sm" required>
-                    <option value="cooked">Makanan Dimasak (Siap Santap)</option>
-                    <option value="packaged">Makanan Kemasan</option>
-                    <option value="raw">Bahan Mentah</option>
-                </select>
-            </div>
-        </div>
+                            <template x-if="!photoPreview">
+                                <label for="photo-input" class="cursor-pointer border-2 border-dashed border-[#D5E0D9] hover:border-[#1E7A4C] rounded-2xl p-5 sm:p-6 transition-all duration-200 bg-gray-50/60 hover:bg-emerald-50/20 flex flex-col items-center justify-center text-center group">
+                                    <div class="w-12 h-12 rounded-2xl bg-white border border-[#D5E0D9] shadow-2xs text-[#4E6157] group-hover:text-[#1E7A4C] group-hover:border-[#1E7A4C]/50 flex items-center justify-center transition mb-2.5">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-xs font-bold text-[#16251D] group-hover:text-[#1E7A4C] transition">Ketuk untuk unggah foto makanan</span>
+                                    <span class="text-[11px] text-[#4E6157] mt-0.5">Format JPG, PNG, atau WebP (Maks. 2 MB)</span>
+                                    <div class="mt-2.5 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white border border-gray-200 text-[10px] font-semibold text-[#4E6157]">
+                                        <svg class="w-3 h-3 text-[#2A6F97]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                                        <span>EXIF GPS otomatis dihapus demi privasi rumah</span>
+                                    </div>
+                                </label>
+                            </template>
+                        </div>
+                    </div>
 
-        <!-- 3. Porsi & Batas Waktu Ambil -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-[#D5E0D9]">
-            <!-- Portions Stepper -->
-            <div>
-                <label class="font-bold text-xs text-[#16251D] block mb-1">Jumlah Porsi Tersedia <span class="text-red-500">*</span></label>
-                <div class="flex items-center gap-2">
-                    <button type="button" @click="portions = Math.max(1, portions - 1)" class="w-11 h-11 rounded-xl bg-gray-100 hover:bg-gray-200 text-lg font-bold flex items-center justify-center shrink-0">-</button>
-                    <input type="number" name="portions_total" x-model="portions" min="1" max="500" class="input-field text-center font-bold text-base w-24" required>
-                    <button type="button" @click="portions = portions + 1" class="w-11 h-11 rounded-xl bg-gray-100 hover:bg-gray-200 text-lg font-bold flex items-center justify-center shrink-0">+</button>
-                    <span class="text-xs text-[#4E6157]">porsi</span>
-                </div>
-            </div>
+                    <!-- Food Title -->
+                    <div>
+                        <label class="font-bold text-xs text-[#16251D] flex items-center justify-between mb-1.5">
+                            <span>Nama Makanan <span class="text-red-500">*</span></span>
+                            <span class="text-[11px] font-normal text-[#4E6157]">Sebutkan jumlah & menu lengkap</span>
+                        </label>
+                        <input type="text"
+                               name="title"
+                               x-model="title"
+                               placeholder="Contoh: 15 Kotak Nasi Ayam Bakar Madu Komplit"
+                               class="input-field text-sm font-medium placeholder:text-[#4E6157]/50"
+                               required>
+                    </div>
 
-            <!-- Batas Waktu Quick Chips (SDD 3.5) -->
-            <div>
-                <label class="font-bold text-xs text-[#16251D] block mb-1">Batas Waktu Ambil <span class="text-red-500">*</span></label>
-                <div class="flex items-center gap-1.5 flex-wrap">
-                    <template x-for="h in [1, 2, 4, 8]" :key="h">
-                        <button type="button" @click="hours = h"
-                                :class="hours === h ? 'bg-[#1E7A4C] text-white font-bold' : 'bg-gray-100 text-[#4E6157] hover:bg-gray-200'"
-                                class="px-3 py-2 rounded-xl text-xs transition"
-                                x-text="`+${h} jam`">
-                        </button>
-                    </template>
-                </div>
-                <input type="hidden" name="hours_valid" :value="hours">
-                <span class="text-[11px] text-[#4E6157] block mt-1.5">
-                    Makanan akan kedaluwarsa dalam <strong x-text="`${hours} jam ke depan`"></strong>.
-                </span>
-            </div>
-        </div>
-
-        <!-- 4. Titik Lokasi Pengambilan (Interactive Map & Autocomplete Search) -->
-        <div class="space-y-3 pt-2 border-t border-[#D5E0D9]">
-            <div class="flex items-center justify-between">
-                <div>
-                    <label class="font-bold text-xs text-[#16251D] block">Titik & Alamat Pengambilan <span class="text-red-500">*</span></label>
-                    <p class="text-[11px] text-[#4E6157]">Klik peta atau cari alamat di bawah untuk menentukan titik temu presisi.</p>
-                </div>
-                <div class="flex items-center gap-3">
-                    <button type="button" @click="toggleBasemap()" class="text-xs text-[#4E6157] hover:text-[#16251D] font-medium flex items-center gap-1.5 px-2 py-1 rounded-lg border border-gray-200">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
-                        <span x-text="basemap === 'satellite' ? 'Satelit' : 'Peta Jalan'"></span>
-                    </button>
-                    <button type="button" @click="detectLocation()" class="text-xs font-bold text-[#2A6F97] hover:underline flex items-center gap-1">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                        <span>Lokasi Saya</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Location Search with Autocomplete Dropdown (Google Maps style) -->
-            <div class="relative">
-                <div class="relative">
-                    <input type="text"
-                           x-model="searchQuery"
-                           @input.debounce.300ms="fetchSuggestions()"
-                           @focus="if (suggestions.length > 0) showSuggestions = true"
-                           placeholder="Cari jalan, patokan toko, atau nama kelurahan... (misal: Tembalang, Jl. Sudirman)"
-                           class="w-full pl-8 pr-8 py-2 text-xs rounded-xl border border-[#74877B] text-[#16251D] focus:ring-2 focus:ring-[#2A6F97] bg-white">
-                    <svg class="w-4 h-4 text-gray-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                    <button type="button" x-show="searchQuery" @click="searchQuery = ''; suggestions = []; showSuggestions = false;" class="absolute right-2.5 top-2.5 w-5 h-5 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-700 flex items-center justify-center transition">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
-                    </button>
-                </div>
-
-                <!-- Suggestions dropdown (Top-tier World-Class UI) -->
-                <div x-show="showSuggestions && suggestions.length > 0"
-                     x-transition:enter="transition ease-out duration-200"
-                     x-transition:enter-start="opacity-0 translate-y-2 scale-98"
-                     x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-                     x-transition:leave="transition ease-in duration-150"
-                     x-transition:leave-start="opacity-100 translate-y-0 scale-100"
-                     x-transition:leave-end="opacity-0 translate-y-2 scale-98"
-                     @click.away="showSuggestions = false"
-                     class="absolute top-full left-0 right-0 mt-2 bg-white/95 backdrop-blur-2xl rounded-3xl shadow-[0_20px_50px_rgba(22,37,29,0.18)] border border-[#D5E0D9]/80 overflow-hidden z-40 p-2 space-y-1 max-h-56 overflow-y-auto">
-                    <template x-for="(s, idx) in suggestions" :key="s.id || idx">
-                        <div @click="selectSuggestion(s)"
-                             class="group p-2.5 rounded-2xl hover:bg-linear-to-r hover:from-emerald-50/90 hover:via-teal-50/40 hover:to-transparent cursor-pointer transition-all duration-200 flex items-center justify-between gap-3 border border-transparent hover:border-emerald-200/60 active:scale-[0.99]">
-                            <div class="flex items-center gap-2.5 min-w-0">
-                                <div class="w-8 h-8 rounded-xl bg-linear-to-br from-emerald-100 to-teal-50 text-[#1E7A4C] group-hover:from-[#1E7A4C] group-hover:to-[#14573A] group-hover:text-white flex items-center justify-center shrink-0 transition-all shadow-xs">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <!-- Food Type Segmented Cards -->
+                    <div>
+                        <label class="font-bold text-xs text-[#16251D] block mb-2">Jenis Pangan <span class="text-red-500">*</span></label>
+                        <input type="hidden" name="food_type" :value="foodType">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                            <!-- Cooked -->
+                            <div @click="foodType = 'cooked'"
+                                 :class="foodType === 'cooked' ? 'border-[#1E7A4C] bg-emerald-50/70 ring-2 ring-[#1E7A4C]/20 text-[#14573A]' : 'border-gray-200 bg-white hover:bg-gray-50 text-[#4E6157]'"
+                                 class="p-3 rounded-2xl border cursor-pointer transition-all duration-200 flex sm:flex-col items-center sm:text-center gap-2.5 group">
+                                <div class="w-8 h-8 rounded-xl bg-white border border-[#D5E0D9] flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+                                    <svg class="w-4 h-4 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v3m-4-3v3m8-3v3M4 11h16a8 8 0 01-16 0z"/>
                                     </svg>
                                 </div>
                                 <div class="min-w-0 flex-1">
-                                    <div class="flex items-center gap-1.5">
-                                        <h5 class="font-display font-bold text-xs text-[#16251D] group-hover:text-[#1E7A4C] truncate" x-text="s.title"></h5>
-                                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-gray-100 text-[#4E6157] group-hover:bg-emerald-100 group-hover:text-[#14573A] shrink-0" x-text="s.type_label || 'Wilayah'"></span>
-                                    </div>
-                                    <p class="text-[11px] text-[#4E6157] group-hover:text-[#16251D] truncate mt-0.5" x-text="s.subtitle || s.display_name"></p>
+                                    <div class="font-bold text-xs text-[#16251D]">Siap Santap</div>
+                                    <div class="text-[10px] text-[#4E6157] leading-tight mt-0.5">Makanan masak dapur / katering</div>
                                 </div>
                             </div>
-                            <div class="opacity-0 group-hover:opacity-100 transition-opacity text-[#1E7A4C] flex items-center gap-1 font-bold text-xs pr-1">
-                                <span>Pilih</span>
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
-                                </svg>
+
+                            <!-- Packaged -->
+                            <div @click="foodType = 'packaged'"
+                                 :class="foodType === 'packaged' ? 'border-[#1E7A4C] bg-emerald-50/70 ring-2 ring-[#1E7A4C]/20 text-[#14573A]' : 'border-gray-200 bg-white hover:bg-gray-50 text-[#4E6157]'"
+                                 class="p-3 rounded-2xl border cursor-pointer transition-all duration-200 flex sm:flex-col items-center sm:text-center gap-2.5 group">
+                                <div class="w-8 h-8 rounded-xl bg-white border border-[#D5E0D9] flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+                                    <svg class="w-4 h-4 text-[#2A6F97]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                    </svg>
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <div class="font-bold text-xs text-[#16251D]">Kemasan</div>
+                                    <div class="text-[10px] text-[#4E6157] leading-tight mt-0.5">Roti, kaleng, biskuit, snack</div>
+                                </div>
+                            </div>
+
+                            <!-- Raw -->
+                            <div @click="foodType = 'raw'"
+                                 :class="foodType === 'raw' ? 'border-[#1E7A4C] bg-emerald-50/70 ring-2 ring-[#1E7A4C]/20 text-[#14573A]' : 'border-gray-200 bg-white hover:bg-gray-50 text-[#4E6157]'"
+                                 class="p-3 rounded-2xl border cursor-pointer transition-all duration-200 flex sm:flex-col items-center sm:text-center gap-2.5 group">
+                                <div class="w-8 h-8 rounded-xl bg-white border border-[#D5E0D9] flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+                                    <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                                    </svg>
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <div class="font-bold text-xs text-[#16251D]">Bahan Mentah</div>
+                                    <div class="text-[10px] text-[#4E6157] leading-tight mt-0.5">Sayuran, buah segar, beras</div>
+                                </div>
                             </div>
                         </div>
-                    </template>
-                </div>
-            </div>
-
-            <!-- Mini Map for Picking Coordinates (Google Maps Style) -->
-            <div class="relative rounded-2xl border border-[#D5E0D9] overflow-hidden shadow-xs">
-                <div id="picker-map" class="h-56 w-full"></div>
-
-                <!-- Google Maps Control Dock (Bottom-Right) -->
-                <div class="absolute bottom-3 right-3 z-10 flex flex-col items-center gap-1.5 pointer-events-auto">
-                    <div class="flex flex-col rounded-xl bg-white/95 backdrop-blur-md border border-[#D5E0D9] shadow-sm overflow-hidden">
-                        <button type="button" @click="map.zoomIn()" class="w-7 h-7 flex items-center justify-center text-[#16251D] hover:bg-gray-100 transition border-b border-gray-100" title="Perbesar">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
-                        </button>
-                        <button type="button" @click="map.zoomOut()" class="w-7 h-7 flex items-center justify-center text-[#16251D] hover:bg-gray-100 transition" title="Perkecil">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4"/></svg>
-                        </button>
                     </div>
 
-                    <button type="button" @click="toggleBasemap()" class="w-7 h-7 rounded-xl bg-white/95 backdrop-blur-md hover:bg-white text-[#4E6157] hover:text-[#1E7A4C] border border-[#D5E0D9] shadow-sm flex items-center justify-center transition" title="Ganti tampilan peta">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Reverse Geocoding Address Suggestion Pill -->
-            <template x-if="detectedAddress">
-                <div class="p-2.5 bg-emerald-50 rounded-xl border border-emerald-200 flex items-center justify-between gap-2 text-xs">
-                    <div class="truncate text-emerald-900 flex items-center gap-1.5 min-w-0">
-                        <svg class="w-3.5 h-3.5 text-emerald-700 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        </svg>
-                        <span class="truncate"><strong>Titik dipilih:</strong> <span x-text="detectedAddress"></span></span>
-                    </div>
-                    <button type="button" @click="useDetectedAddress()" class="btn-primary text-[10px] py-1 px-2.5 shrink-0">
-                        Pakai Alamat Ini
-                    </button>
-                </div>
-            </template>
-
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div class="sm:col-span-2">
-                    <input type="text" name="pickup_address" x-model="address" placeholder="Detail alamat/patokan (misal: Toko Roti Sari Rasa, Jl. Melati No. 4)" class="input-field text-xs" required>
-                </div>
-                <div>
-                    <select name="district_id" x-model="selectedDistrict" class="input-field text-xs" required>
-                        @foreach($districts as $d)
-                            <option value="{{ $d->id }}" {{ old('district_id', $user->district_id ?? '') == $d->id ? 'selected' : '' }}>
-                                Kec. {{ $d->name }} ({{ $d->regency->name }})
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-
-            <!-- Safe Meeting Zone Recommendations (design.md 1.C) -->
-            <div class="space-y-1.5">
-                <span class="text-[11px] font-bold text-[#4E6157] block">Rekomendasi Titik Temu Aman (Untuk Menjaga Privasi Rumah Anda):</span>
-                <div class="flex items-center gap-1.5 flex-wrap">
-                    <button type="button" @click="appendSafeZone('Pos Satpam / Gerbang Masuk')" class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 hover:bg-emerald-50 hover:text-[#1E7A4C] text-[11px] rounded-lg border border-[#D5E0D9] transition">
-                        <svg class="w-3.5 h-3.5 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                        Pos Satpam / Gerbang
-                    </button>
-                    <button type="button" @click="appendSafeZone('Minimarket Terdekat (Area Parkir)')" class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 hover:bg-emerald-50 hover:text-[#1E7A4C] text-[11px] rounded-lg border border-[#D5E0D9] transition">
-                        <svg class="w-3.5 h-3.5 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-                        Minimarket 24 Jam
-                    </button>
-                    <button type="button" @click="appendSafeZone('Halaman Masjid')" class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 hover:bg-emerald-50 hover:text-[#1E7A4C] text-[11px] rounded-lg border border-[#D5E0D9] transition">
-                        <svg class="w-3.5 h-3.5 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/></svg>
-                        Halaman Masjid
-                    </button>
-                    <button type="button" @click="appendSafeZone('SPBU Terdekat')" class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 hover:bg-emerald-50 hover:text-[#1E7A4C] text-[11px] rounded-lg border border-[#D5E0D9] transition">
-                        <svg class="w-3.5 h-3.5 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                        SPBU Terdekat
-                    </button>
-                </div>
-            </div>
-
-            <!-- Coordinates hidden inputs -->
-            <input type="hidden" name="latitude" :value="lat">
-            <input type="hidden" name="longitude" :value="lng">
-
-            <!-- Privacy Guarantee notice -->
-            <div class="p-3 bg-blue-50/60 rounded-xl border border-[#2A6F97]/30 text-[11px] text-[#2A6F97] flex items-center gap-2">
-                <svg class="w-4 h-4 shrink-0 text-[#2A6F97]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                </svg>
-                <span><strong>Privasi Anda Terjaga:</strong> Pengguna publik hanya melihat titik perkiraan (~200m). Alamat lengkap baru diberikan setelah Anda menyetujui klaim.</span>
-            </div>
-        </div>
-
-        <!-- 5. Pernyataan & Keamanan Pangan -->
-        <div class="space-y-3 pt-2 border-t border-[#D5E0D9]">
-            <div class="flex items-start gap-2.5">
-                <input type="checkbox" name="halal_claim" value="1" id="halal-check" class="mt-0.5 rounded border-[#74877B] text-[#1E7A4C] focus:ring-[#1E7A4C]">
-                <label for="halal-check" class="text-xs text-[#16251D]">
-                    <strong>Saya menyatakan makanan ini halal</strong> (sesuai bahan dan proses pembuatannya).
-                </label>
-            </div>
-
-            <div class="flex items-start gap-2.5">
-                <input type="checkbox" name="is_vegetarian" value="1" id="veg-check" class="mt-0.5 rounded border-[#74877B] text-[#1E7A4C] focus:ring-[#1E7A4C]">
-                <label for="veg-check" class="text-xs text-[#16251D]">
-                    Makanan ini vegetarian (tidak mengandung daging/unggas/seafood).
-                </label>
-            </div>
-        </div>
-
-        <!-- 6. Opsi Lanjutan (Terlipat) -->
-        <div x-data="{ open: false }" class="border-t border-[#D5E0D9] pt-3">
-            <button type="button" @click="open = !open" class="text-xs font-bold text-[#4E6157] hover:text-[#16251D] flex items-center justify-between w-full">
-                <span>Opsi Lanjutan (Deskripsi, Batas Klaim, Galang, Alergen)</span>
-                <span x-text="open ? '▲ Tutup' : '▼ Buka'"></span>
-            </button>
-
-            <div x-show="open" x-collapse class="space-y-4 pt-4">
-                <div>
-                    <label class="font-bold text-xs text-[#16251D] block mb-1">Deskripsi Tambahan</label>
-                    <textarea name="description" rows="2" class="input-field text-xs" placeholder="Informasi tambahan mengenai kondisi makanan, sendok garpu, dll."></textarea>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Category Selector -->
                     <div>
-                        <label class="font-bold text-xs text-[#16251D] block mb-1">Maksimal Porsi per Pengambil</label>
-                        <input type="number" name="max_portions_per_claim" value="3" min="1" max="20" class="input-field text-xs">
-                        <span class="text-[10px] text-[#4E6157]">Mencegah penimbunan porsi oleh 1 orang.</span>
-                    </div>
-
-                    <div>
-                        <label class="font-bold text-xs text-[#16251D] block mb-1">Tujukan untuk Galang Makanan (Opsional)</label>
-                        <select name="campaign_id" class="input-field text-xs">
-                            <option value="">-- Terbuka untuk umum --</option>
-                            @foreach($campaigns as $camp)
-                                <option value="{{ $camp->id }}">Galang: {{ $camp->title }} ({{ $camp->beneficiary_name }})</option>
+                        <label class="font-bold text-xs text-[#16251D] block mb-1.5">Kategori Makanan <span class="text-red-500">*</span></label>
+                        <select name="category_id" x-model="categoryId" class="input-field text-sm" required>
+                            @foreach($categories as $cat)
+                                <option value="{{ $cat->id }}" {{ old('category_id', $duplicate->category_id ?? '') == $cat->id ? 'selected' : '' }}>
+                                    {{ $cat->name }}
+                                </option>
                             @endforeach
                         </select>
-                        <span class="text-[10px] text-[#4E6157]">Diprioritaskan untuk relawan galang selama 2 jam pertama.</span>
                     </div>
                 </div>
 
-                <div>
-                    <label class="font-bold text-xs text-[#16251D] block mb-1.5">Informasi Alergen</label>
-                    <div class="flex items-center gap-3 flex-wrap text-xs">
-                        <label class="inline-flex items-center gap-1.5"><input type="checkbox" name="allergens[]" value="Telur"> Telur</label>
-                        <label class="inline-flex items-center gap-1.5"><input type="checkbox" name="allergens[]" value="Susu"> Susu/Dairy</label>
-                        <label class="inline-flex items-center gap-1.5"><input type="checkbox" name="allergens[]" value="Kacang"> Kacang-kacangan</label>
-                        <label class="inline-flex items-center gap-1.5"><input type="checkbox" name="allergens[]" value="Gluten"> Gluten/Gandum</label>
-                        <label class="inline-flex items-center gap-1.5"><input type="checkbox" name="allergens[]" value="Seafood"> Seafood</label>
-                        <label class="inline-flex items-center gap-1.5"><input type="checkbox" name="allergens[]" value="Kedelai"> Kedelai</label>
+                <!-- CARD 2: Kuantitas & Masa Layak Konsumsi -->
+                <div class="bg-white rounded-3xl border border-[#D5E0D9] shadow-card p-5 sm:p-7 space-y-6">
+                    <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-[#1E7A4C] text-white text-xs font-bold flex items-center justify-center shrink-0">2</span>
+                            <h2 class="font-display font-bold text-base text-[#16251D]">Kuantitas & Masa Layak</h2>
+                        </div>
+                        <span class="text-[11px] font-semibold text-[#4E6157]">Langkah 2 dari 3</span>
                     </div>
-                </div>
 
-                @if($user->is_verified)
-                    <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200">
-                        <label class="inline-flex items-center gap-2 text-xs font-bold text-emerald-900 cursor-pointer">
-                            <input type="checkbox" name="show_exact_location" value="1">
-                            <span>Tampilkan titik presisi di peta (Hak Istimewa Usaha/Lembaga Terverifikasi)</span>
+                    <!-- Portions Stepper with Quick Presets -->
+                    <div>
+                        <label class="font-bold text-xs text-[#16251D] flex items-center justify-between mb-2">
+                            <span>Jumlah Porsi Tersedia <span class="text-red-500">*</span></span>
+                            <span class="text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200" x-text="`Cukup untuk ~${portions} orang`"></span>
                         </label>
-                    </div>
-                @endif
-            </div>
-        </div>
+                        
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                            <!-- Tactile Stepper Box -->
+                            <div class="inline-flex items-center bg-gray-50 p-1.5 rounded-2xl border border-gray-200 shadow-2xs">
+                                <button type="button"
+                                        @click="portions = Math.max(1, portions - 1)"
+                                        class="w-12 h-12 rounded-xl bg-white hover:bg-gray-100 active:scale-95 text-[#16251D] hover:text-[#1E7A4C] font-bold text-xl flex items-center justify-center transition shadow-2xs"
+                                        title="Kurangi porsi">
+                                    -
+                                </button>
+                                <div class="px-4 text-center">
+                                    <input type="number"
+                                           name="portions_total"
+                                           x-model="portions"
+                                           min="1"
+                                           max="500"
+                                           class="w-20 text-center font-display font-black text-2xl text-[#16251D] bg-transparent border-0 focus:ring-0 p-0"
+                                           required>
+                                    <span class="text-[10px] font-bold uppercase tracking-wider text-[#4E6157] block -mt-1">Porsi</span>
+                                </div>
+                                <button type="button"
+                                        @click="portions = portions + 1"
+                                        class="w-12 h-12 rounded-xl bg-white hover:bg-gray-100 active:scale-95 text-[#16251D] hover:text-[#1E7A4C] font-bold text-xl flex items-center justify-center transition shadow-2xs"
+                                        title="Tambah porsi">
+                                    +
+                                </button>
+                            </div>
 
-        <!-- Submit Button -->
-        <div class="pt-4">
-            <button type="submit" class="btn-primary w-full text-base py-3">
-                Simpan & Bagikan Makanan Sekarang
-            </button>
+                            <!-- Quick Preset Portion Chips -->
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <template x-for="p in [5, 10, 20, 50]" :key="p">
+                                    <button type="button"
+                                            @click="portions = p"
+                                            :class="portions === p ? 'bg-[#1E7A4C] text-white font-bold border-transparent shadow-xs' : 'bg-gray-100 hover:bg-gray-200 text-[#4E6157] border-gray-200'"
+                                            class="px-3 py-2 rounded-xl text-xs font-semibold border transition active:scale-95"
+                                            x-text="`${p} porsi`">
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Expiration Time Selector (Interactive Chips) -->
+                    <div class="pt-4 border-t border-gray-100">
+                        <label class="font-bold text-xs text-[#16251D] flex items-center justify-between mb-2">
+                            <span>Batas Waktu Ambil <span class="text-red-500">*</span></span>
+                            <span class="text-[11px] text-[#4E6157]">Dihitung dari sekarang</span>
+                        </label>
+
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                            <template x-for="item in timePresets" :key="item.h">
+                                <button type="button"
+                                        @click="hours = item.h"
+                                        :class="hours === item.h ? 'bg-[#1E7A4C] text-white ring-2 ring-[#1E7A4C]/30 font-bold shadow-xs' : 'bg-gray-50 hover:bg-gray-100 text-[#4E6157] border-gray-200'"
+                                        class="p-3 rounded-2xl border text-left transition-all duration-200 active:scale-95">
+                                    <div class="text-xs font-bold" x-text="`+${item.h} Jam`"></div>
+                                    <div class="text-[10px] opacity-80 mt-0.5" x-text="item.label"></div>
+                                </button>
+                            </template>
+                        </div>
+                        <input type="hidden" name="hours_valid" :value="hours">
+
+                        <!-- Live Expiration Deadline Indicator -->
+                        <div class="mt-3.5 p-3 rounded-2xl bg-amber-50/70 border border-amber-200/80 flex items-center justify-between gap-3 text-xs text-amber-900">
+                            <div class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-amber-700 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <span>Kedaluwarsa maksimal: <strong class="font-black text-[#16251D]" x-text="deadlineFormatted"></strong></span>
+                            </div>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-amber-800 border border-amber-300 shrink-0">Otomatis Ditutup</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 3: Jaminan Keamanan Pangan & Halal -->
+                <div class="bg-white rounded-3xl border border-[#D5E0D9] shadow-card p-5 sm:p-7 space-y-4">
+                    <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-[#1E7A4C] text-white text-xs font-bold flex items-center justify-center shrink-0">3</span>
+                            <h2 class="font-display font-bold text-base text-[#16251D]">Keamanan & Sertifikasi</h2>
+                        </div>
+                        <span class="text-[11px] font-semibold text-[#4E6157]">Langkah 3 dari 3</span>
+                    </div>
+
+                    <!-- Halal Card Toggle -->
+                    <label class="p-3.5 rounded-2xl border cursor-pointer transition-all duration-200 flex items-start gap-3"
+                           :class="halal ? 'border-emerald-300 bg-emerald-50/50' : 'border-gray-200 hover:bg-gray-50'">
+                        <input type="checkbox" name="halal_claim" value="1" x-model="halal" class="mt-1 w-4 h-4 rounded text-[#1E7A4C] focus:ring-[#1E7A4C] border-gray-300">
+                        <div class="min-w-0 flex-1">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-xs text-[#16251D]">Saya menyatakan makanan ini Halal</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">Halal</span>
+                            </div>
+                            <p class="text-[11px] text-[#4E6157] mt-0.5">Bahan dan proses pengolahan bebas dari unsur non-halal sesuai syariat Islam.</p>
+                        </div>
+                    </label>
+
+                    <!-- Vegetarian Card Toggle -->
+                    <label class="p-3.5 rounded-2xl border cursor-pointer transition-all duration-200 flex items-start gap-3"
+                           :class="vegetarian ? 'border-emerald-300 bg-emerald-50/50' : 'border-gray-200 hover:bg-gray-50'">
+                        <input type="checkbox" name="is_vegetarian" value="1" x-model="vegetarian" class="mt-1 w-4 h-4 rounded text-[#1E7A4C] focus:ring-[#1E7A4C] border-gray-300">
+                        <div class="min-w-0 flex-1">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-xs text-[#16251D]">Makanan Vegetarian</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">Vegetarian</span>
+                            </div>
+                            <p class="text-[11px] text-[#4E6157] mt-0.5">Bebas dari daging mamalia, unggas, ikan, dan produk laut.</p>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- CARD 4: Opsi Lanjutan (Alergen, Galang, Batas Klaim) -->
+                <div x-data="{ open: false }" class="bg-white rounded-3xl border border-[#D5E0D9] shadow-card overflow-hidden">
+                    <button type="button"
+                            @click="open = !open"
+                            class="p-5 sm:p-6 w-full flex items-center justify-between text-left hover:bg-gray-50/70 transition">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-xl bg-gray-100 text-[#4E6157] flex items-center justify-center shrink-0">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-display font-bold text-sm text-[#16251D]">Opsi Tambahan & Preferensi</h3>
+                                <p class="text-[11px] text-[#4E6157]">Informasi alergen, petunjuk simpan, galang makanan panti, & batas klaim</p>
+                            </div>
+                        </div>
+                        <span class="text-xs font-bold text-[#1E7A4C] flex items-center gap-1">
+                            <span x-text="open ? 'Sembunyikan' : 'Buka Opsi'"></span>
+                            <svg :class="open ? 'rotate-180' : ''" class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </span>
+                    </button>
+
+                    <div x-show="open" x-collapse class="p-5 sm:p-6 pt-0 border-t border-gray-100 space-y-5">
+                        <!-- Storage Note -->
+                        <div>
+                            <label class="font-bold text-xs text-[#16251D] block mb-1.5">Petunjuk Penyimpanan (Opsional)</label>
+                            <input type="text"
+                                   name="storage_note"
+                                   placeholder="Misal: Simpan dalam suhu ruang, segera panaskan sebelum disantap"
+                                   class="input-field text-xs">
+                        </div>
+
+                        <!-- Description -->
+                        <div>
+                            <label class="font-bold text-xs text-[#16251D] block mb-1.5">Deskripsi Tambahan</label>
+                            <textarea name="description"
+                                      rows="2"
+                                      placeholder="Keterangan tambahan untuk pemohon (kemasan bawa sendiri, sendok garpu, dll.)"
+                                      class="input-field text-xs"></textarea>
+                        </div>
+
+                        <!-- Max portions & Campaign -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="font-bold text-xs text-[#16251D] block mb-1">Maks. Porsi per Pengambil</label>
+                                <input type="number" name="max_portions_per_claim" value="3" min="1" max="20" class="input-field text-xs">
+                                <span class="text-[10px] text-[#4E6157] mt-1 block">Mencegah penimbunan porsi oleh satu orang.</span>
+                            </div>
+
+                            <div>
+                                <label class="font-bold text-xs text-[#16251D] block mb-1">Tujukan untuk Galang Panti</label>
+                                <select name="campaign_id" class="input-field text-xs">
+                                    <option value="">-- Terbuka untuk Umum --</option>
+                                    @foreach($campaigns as $camp)
+                                        <option value="{{ $camp->id }}">Galang: {{ $camp->title }} ({{ $camp->beneficiary_name }})</option>
+                                    @endforeach
+                                </select>
+                                <span class="text-[10px] text-[#4E6157] mt-1 block">Diprioritaskan untuk relawan galang selama 2 jam pertama.</span>
+                            </div>
+                        </div>
+
+                        <!-- Allergen Chips -->
+                        <div>
+                            <label class="font-bold text-xs text-[#16251D] block mb-2">Informasi Alergen</label>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                @foreach(['Telur', 'Susu', 'Kacang', 'Gluten', 'Seafood', 'Kedelai'] as $allergen)
+                                    <label class="cursor-pointer">
+                                        <input type="checkbox" name="allergens[]" value="{{ $allergen }}" class="sr-only peer">
+                                        <span class="px-3 py-1.5 rounded-xl border border-gray-200 text-xs font-semibold text-[#4E6157] peer-checked:bg-amber-50 peer-checked:text-amber-900 peer-checked:border-amber-300 peer-checked:font-bold transition-all inline-flex items-center gap-1.5 shadow-2xs">
+                                            <span>{{ $allergen }}</span>
+                                        </span>
+                                    </label>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        @if($user->is_verified)
+                            <div class="p-3.5 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs">
+                                <label class="inline-flex items-center gap-2.5 font-bold text-emerald-900 cursor-pointer">
+                                    <input type="checkbox" name="show_exact_location" value="1" class="rounded text-[#1E7A4C] focus:ring-[#1E7A4C]">
+                                    <span>Tampilkan titik presisi langsung di peta publik (Hak Istimewa Usaha/Mitra Terverifikasi)</span>
+                                </label>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN: Location Picker & Live Summary (5 cols) -->
+            <div class="lg:col-span-5 space-y-6 lg:sticky lg:top-24">
+
+                <!-- CARD: Titik Penjemputan & Peta Spasial -->
+                <div class="bg-white rounded-3xl border border-[#D5E0D9] shadow-card p-5 sm:p-6 space-y-4">
+                    <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 rounded-xl bg-emerald-100 text-[#1E7A4C] flex items-center justify-center shrink-0">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                            </div>
+                            <h2 class="font-display font-bold text-base text-[#16251D]">Titik Penjemputan</h2>
+                        </div>
+
+                        <!-- Top actions: Satellite switch & GPS -->
+                        <div class="flex items-center gap-2">
+                            <button type="button"
+                                    @click="toggleBasemap()"
+                                    class="text-[11px] font-semibold text-[#4E6157] hover:text-[#16251D] px-2.5 py-1 rounded-lg border border-gray-200 bg-gray-50 hover:bg-white transition flex items-center gap-1 shadow-2xs">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+                                <span x-text="basemap === 'satellite' ? 'Satelit' : 'Jalan'"></span>
+                            </button>
+                            <button type="button"
+                                    @click="detectLocation()"
+                                    class="text-[11px] font-bold text-[#1E7A4C] bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 px-2.5 py-1 rounded-lg transition flex items-center gap-1 shadow-2xs active:scale-95"
+                                    title="Pusatkan ke GPS Saya">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 2v2m0 16v2m10-10h-2M4 12H2m15.071-7.071l-1.414 1.414M8.343 15.657l-1.414 1.414m12.142 0l-1.414-1.414M8.343 8.343L6.929 6.929M12 8a4 4 0 100 8 4 4 0 000-8z"/></svg>
+                                <span>GPS Saya</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Location Search with Google Maps Autocomplete Dropdown -->
+                    <div class="relative">
+                        <div class="relative">
+                            <input type="text"
+                                   x-model="searchQuery"
+                                   @input.debounce.300ms="fetchSuggestions()"
+                                   @focus="if (suggestions.length > 0) showSuggestions = true"
+                                   placeholder="Cari jalan, patokan toko, kelurahan..."
+                                   class="w-full pl-9 pr-8 py-2 text-xs rounded-xl border border-gray-200 text-[#16251D] focus:border-[#1E7A4C] focus:ring-2 focus:ring-[#1E7A4C]/20 bg-gray-50/70 focus:bg-white transition">
+                            <svg class="w-4 h-4 text-[#4E6157] absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            <button type="button" x-show="searchQuery" @click="searchQuery = ''; suggestions = []; showSuggestions = false;" class="absolute right-2.5 top-2 w-5 h-5 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-700 flex items-center justify-center transition">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
+
+                        <!-- Suggestions Dropdown -->
+                        <div x-show="showSuggestions && suggestions.length > 0"
+                             x-transition:enter="transition ease-out duration-150"
+                             x-transition:enter-start="opacity-0 translate-y-2 scale-98"
+                             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                             x-transition:leave="transition ease-in duration-100"
+                             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                             x-transition:leave-end="opacity-0 translate-y-2 scale-98"
+                             @click.away="showSuggestions = false"
+                             class="absolute top-full left-0 right-0 mt-1.5 bg-white rounded-2xl shadow-[0_16px_40px_rgba(22,37,29,0.18)] border border-[#D5E0D9] overflow-hidden z-50 p-1.5 space-y-1 max-h-52 overflow-y-auto">
+                            <template x-for="(s, idx) in suggestions" :key="s.id || idx">
+                                <div @click="selectSuggestion(s)"
+                                     class="p-2 rounded-xl hover:bg-emerald-50/80 cursor-pointer transition flex items-center justify-between gap-2 border border-transparent hover:border-emerald-200/60 active:scale-[0.99]">
+                                    <div class="min-w-0 flex-1">
+                                        <div class="flex items-center gap-1.5">
+                                            <span class="font-bold text-xs text-[#16251D] truncate" x-text="s.title"></span>
+                                            <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-gray-100 text-[#4E6157] shrink-0" x-text="s.type_label || 'Wilayah'"></span>
+                                        </div>
+                                        <p class="text-[11px] text-[#4E6157] truncate" x-text="s.subtitle || s.display_name"></p>
+                                    </div>
+                                    <span class="text-[11px] font-bold text-[#1E7A4C] shrink-0">Pilih &rarr;</span>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Map Canvas -->
+                    <div class="relative rounded-2xl border border-[#D5E0D9] overflow-hidden shadow-xs">
+                        <div id="picker-map" class="h-64 sm:h-72 w-full"></div>
+
+                        <!-- Zoom Dock (+ / -) Google Maps Style -->
+                        <div class="absolute bottom-3 right-3 z-10 flex flex-col items-center gap-1.5 pointer-events-auto">
+                            <div class="flex flex-col rounded-xl bg-white/95 backdrop-blur-md border border-[#D5E0D9] shadow-sm overflow-hidden">
+                                <button type="button" @click="map.zoomIn()" class="w-8 h-8 flex items-center justify-center text-[#16251D] hover:bg-gray-100 transition border-b border-gray-100" title="Perbesar">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                                </button>
+                                <button type="button" @click="map.zoomOut()" class="w-8 h-8 flex items-center justify-center text-[#16251D] hover:bg-gray-100 transition" title="Perkecil">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4"/></svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Instruction badge over map -->
+                        <div class="absolute top-2.5 left-2.5 z-10 px-2.5 py-1 rounded-xl bg-white/95 backdrop-blur-md text-[10px] font-bold text-[#16251D] border border-gray-200/80 shadow-2xs pointer-events-none">
+                            Geser pin merah untuk atur titik
+                        </div>
+                    </div>
+
+                    <!-- Reverse Geocode Suggestion Pill -->
+                    <template x-if="detectedAddress">
+                        <div class="p-2.5 bg-emerald-50/80 rounded-2xl border border-emerald-200/80 flex items-center justify-between gap-2 text-xs">
+                            <div class="truncate text-emerald-950 flex items-center gap-1.5 min-w-0">
+                                <svg class="w-3.5 h-3.5 text-emerald-700 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                </svg>
+                                <span class="truncate"><strong class="font-bold">Titik:</strong> <span x-text="detectedAddress"></span></span>
+                            </div>
+                            <button type="button" @click="useDetectedAddress()" class="btn-primary text-[10px] py-1 px-2.5 rounded-lg shrink-0">
+                                Salin ke Alamat
+                            </button>
+                        </div>
+                    </template>
+
+                    <!-- Address Input & District Selector -->
+                    <div class="space-y-2.5">
+                        <div>
+                            <label class="font-bold text-xs text-[#16251D] block mb-1">Patokan / Detail Alamat <span class="text-red-500">*</span></label>
+                            <input type="text"
+                                   name="pickup_address"
+                                   x-model="address"
+                                   placeholder="Misal: Warung Bu Sari, Jl. Banjarsari No. 12"
+                                   class="input-field text-xs font-medium"
+                                   required>
+                        </div>
+
+                        <div>
+                            <label class="font-bold text-xs text-[#16251D] block mb-1">Kecamatan <span class="text-red-500">*</span></label>
+                            <select name="district_id" x-model="selectedDistrict" class="input-field text-xs" required>
+                                @foreach($districts as $d)
+                                    <option value="{{ $d->id }}" {{ old('district_id', $duplicate->district_id ?? $user->district_id ?? '') == $d->id ? 'selected' : '' }}>
+                                        Kec. {{ $d->name }} ({{ $d->regency->name }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Rekomendasi Titik Temu Aman (Safe Zones) -->
+                    <div class="space-y-1.5 pt-1">
+                        <span class="text-[11px] font-bold text-[#4E6157] block">Rekomendasi Titik Temu Aman (Demi Privasi Rumah):</span>
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                            <button type="button" @click="appendSafeZone('Pos Satpam / Gerbang')" class="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 hover:bg-emerald-50 hover:text-[#1E7A4C] text-[11px] font-semibold rounded-lg border border-[#D5E0D9] transition active:scale-95">
+                                <svg class="w-3 h-3 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                                <span>Pos Satpam</span>
+                            </button>
+                            <button type="button" @click="appendSafeZone('Minimarket 24 Jam')" class="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 hover:bg-emerald-50 hover:text-[#1E7A4C] text-[11px] font-semibold rounded-lg border border-[#D5E0D9] transition active:scale-95">
+                                <svg class="w-3 h-3 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                                <span>Minimarket 24 Jam</span>
+                            </button>
+                            <button type="button" @click="appendSafeZone('Halaman Masjid')" class="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 hover:bg-emerald-50 hover:text-[#1E7A4C] text-[11px] font-semibold rounded-lg border border-[#D5E0D9] transition active:scale-95">
+                                <svg class="w-3 h-3 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/></svg>
+                                <span>Halaman Masjid</span>
+                            </button>
+                            <button type="button" @click="appendSafeZone('Area SPBU')" class="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 hover:bg-emerald-50 hover:text-[#1E7A4C] text-[11px] font-semibold rounded-lg border border-[#D5E0D9] transition active:scale-95">
+                                <svg class="w-3 h-3 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+                                <span>Area SPBU</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Hidden Coordinates -->
+                    <input type="hidden" name="latitude" :value="lat">
+                    <input type="hidden" name="longitude" :value="lng">
+
+                    <!-- Privacy Shield Guarantee -->
+                    <div class="p-3 bg-blue-50/70 rounded-2xl border border-blue-200/80 text-[11px] text-[#2A6F97] flex items-start gap-2.5">
+                        <svg class="w-4 h-4 shrink-0 text-[#2A6F97] mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                        <span><strong>Perlindungan Privasi:</strong> Publik hanya melihat perkiraan titik radius ~200m di peta. Alamat presisi ini hanya dibuka kepada pemohon yang klaimnya telah Anda setujui.</span>
+                    </div>
+                </div>
+
+                <!-- CARD: Ringkasan Live & Tombol Aksi Utama -->
+                <div class="bg-linear-to-br from-[#16251D] to-[#14573A] text-white rounded-3xl p-5 sm:p-6 shadow-xl space-y-4">
+                    <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-300">Ringkasan Donasi</span>
+                        <span class="text-[11px] font-bold bg-white/15 px-2.5 py-0.5 rounded-full text-white" x-text="`${portions} Porsi`"></span>
+                    </div>
+
+                    <div>
+                        <h3 class="font-display font-black text-lg text-white line-clamp-1 leading-snug" x-text="title || 'Nama Makanan Belum Diisi'"></h3>
+                        <div class="flex items-center gap-2 mt-2 text-xs text-emerald-100 flex-wrap">
+                            <span class="px-2 py-0.5 rounded-md bg-white/10 text-white font-medium" x-text="foodTypeLabel"></span>
+                            <template x-if="halal">
+                                <span class="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-400/30">Halal</span>
+                            </template>
+                            <template x-if="vegetarian">
+                                <span class="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-400/30">Vegetarian</span>
+                            </template>
+                        </div>
+                    </div>
+
+                    <div class="pt-2 border-t border-white/10 text-xs text-gray-300 space-y-1.5">
+                        <div class="flex items-center justify-between">
+                            <span>Batas Waktu Ambil:</span>
+                            <strong class="text-white" x-text="deadlineFormatted"></strong>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span>Titik Penjemputan:</span>
+                            <strong class="text-white truncate max-w-[180px]" x-text="address || 'Belum ditentukan'"></strong>
+                        </div>
+                    </div>
+
+                    <div class="pt-2">
+                        <button type="submit"
+                                class="w-full py-3.5 px-5 rounded-2xl bg-white hover:bg-emerald-50 active:scale-98 text-[#14573A] font-extrabold text-sm sm:text-base flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all duration-150">
+                            <svg class="w-5 h-5 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            <span>Bagikan Makanan Sekarang</span>
+                        </button>
+                    </div>
+
+                    <div class="text-center text-[11px] text-gray-300 pt-1">
+                        100% Bebas Biaya • Membantu Penyelamatan Pangan
+                    </div>
+                </div>
+
+            </div>
+
         </div>
 
     </form>
@@ -356,13 +639,17 @@
 document.addEventListener('alpine:init', () => {
     Alpine.data('createListingForm', () => ({
         photoPreview: null,
-        foodType: 'cooked',
+        title: '{{ old('title', $duplicate->title ?? '') }}',
+        foodType: '{{ old('food_type', $duplicate->food_type ?? 'cooked') }}',
+        categoryId: '{{ old('category_id', $duplicate->category_id ?? ($categories->first()->id ?? 1)) }}',
         portions: {{ old('portions_total', $duplicate->portions_total ?? 5) }},
-        hours: 2,
-        lat: {{ $user->default_latitude ?? -7.05194 }},
-        lng: {{ $user->default_longitude ?? 110.43778 }},
+        hours: {{ old('hours_valid', 2) }},
+        lat: {{ old('latitude', $user->default_latitude ?? -7.05194) }},
+        lng: {{ old('longitude', $user->default_longitude ?? 110.43778) }},
         address: '{{ old('pickup_address', $duplicate->pickup_address ?? '') }}',
-        selectedDistrict: '{{ old('district_id', $user->district_id ?? 1) }}',
+        selectedDistrict: '{{ old('district_id', $duplicate->district_id ?? $user->district_id ?? ($districts->first()->id ?? 1)) }}',
+        halal: {{ old('halal_claim', true) ? 'true' : 'false' }},
+        vegetarian: {{ old('is_vegetarian', false) ? 'true' : 'false' }},
         detectedAddress: '',
         searchQuery: '',
         suggestions: [],
@@ -372,6 +659,27 @@ document.addEventListener('alpine:init', () => {
         marker: null,
         osmLayer: null,
         satLayer: null,
+
+        timePresets: [
+            { h: 1, label: 'Kritis (<1 jam)' },
+            { h: 2, label: 'Standar (2 jam)' },
+            { h: 4, label: 'Sore (4 jam)' },
+            { h: 8, label: 'Malam (8 jam)' },
+        ],
+
+        get foodTypeLabel() {
+            if (this.foodType === 'cooked') return 'Siap Santap';
+            if (this.foodType === 'packaged') return 'Kemasan';
+            return 'Bahan Mentah';
+        },
+
+        get deadlineFormatted() {
+            const d = new Date(Date.now() + this.hours * 3600 * 1000);
+            const hoursStr = String(d.getHours()).padStart(2, '0');
+            const minsStr = String(d.getMinutes()).padStart(2, '0');
+            const isToday = d.getDate() === (new Date()).getDate();
+            return `Pukul ${hoursStr}:${minsStr} WIB (${isToday ? 'Hari ini' : 'Besok'})`;
+        },
 
         init() {
             this.$nextTick(() => {
@@ -393,13 +701,29 @@ document.addEventListener('alpine:init', () => {
                 attribution: '&copy; Esri World Imagery'
             });
 
+            // Custom Google Maps-style red teardrop pin
+            const customPin = L.divIcon({
+                className: 'custom-picker-pin',
+                html: `
+                    <div style="position:relative; width:34px; height:42px; transform:translate(-17px, -42px);">
+                        <svg viewBox="0 0 24 24" style="width:34px; height:42px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));" fill="none">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="#C93A2E"/>
+                            <circle cx="12" cy="9" r="3.2" fill="#FFFFFF"/>
+                        </svg>
+                    </div>
+                `,
+                iconSize: [34, 42],
+                iconAnchor: [17, 42]
+            });
+
             this.marker = L.marker([this.lat, this.lng], {
-                draggable: true
+                draggable: true,
+                icon: customPin
             }).addTo(this.map);
 
-            this.marker.bindTooltip("Geser atau klik peta untuk atur titik", {
+            this.marker.bindTooltip("Geser pin ini ke titik temu presisi", {
                 direction: 'top',
-                offset: [0, -10]
+                offset: [0, -38]
             });
 
             this.marker.on('dragend', () => {
@@ -415,6 +739,16 @@ document.addEventListener('alpine:init', () => {
                 this.lng = e.latlng.lng;
                 this.reverseGeocode();
             });
+
+            // Prevent grey tiles by observing container resize
+            if (window.ResizeObserver) {
+                const ro = new ResizeObserver(() => {
+                    if (this.map) this.map.invalidateSize();
+                });
+                const el = document.getElementById('picker-map');
+                if (el) ro.observe(el);
+            }
+            setTimeout(() => { if (this.map) this.map.invalidateSize(); }, 300);
         },
 
         toggleBasemap() {
@@ -427,6 +761,7 @@ document.addEventListener('alpine:init', () => {
                 this.osmLayer.addTo(this.map);
                 this.basemap = 'standard';
             }
+            if (this.map) this.map.invalidateSize();
         },
 
         async fetchSuggestions() {
@@ -503,6 +838,12 @@ document.addEventListener('alpine:init', () => {
             if (file) {
                 this.photoPreview = URL.createObjectURL(file);
             }
+        },
+
+        removePhoto() {
+            this.photoPreview = null;
+            const input = document.getElementById('photo-input');
+            if (input) input.value = '';
         }
     }));
 });
