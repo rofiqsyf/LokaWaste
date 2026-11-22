@@ -209,7 +209,14 @@
         </div>
 
         <!-- Sleek Single-Row Aesthetic Filter Strip (Google Maps & Apple Maps Class) -->
-        <div class="pointer-events-auto flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+        <div x-show="!routeInfo"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 -translate-y-2"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 -translate-y-2"
+             class="pointer-events-auto flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
             <!-- Layer Segmented Switcher: Makanan | Galang -->
             <div class="inline-flex rounded-full bg-white/95 backdrop-blur-md p-1 shadow-sm border border-[#D5E0D9] shrink-0">
                 <button @click="layer = 'food'; loadData()"
@@ -500,7 +507,7 @@
              x-transition:leave="transition ease-in duration-200"
              x-transition:leave-start="opacity-100 translate-y-0 scale-100"
              x-transition:leave-end="opacity-0 -translate-y-4 scale-95"
-             class="absolute top-20 sm:top-24 inset-x-3 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-[460px] z-[1000] pointer-events-auto bg-white/95 backdrop-blur-2xl rounded-3xl shadow-[0_20px_50px_-10px_rgba(22,37,29,0.25),0_4px_12px_rgba(22,37,29,0.08)] border border-emerald-500/40 p-4 space-y-3">
+             class="absolute top-16 sm:top-18 inset-x-3 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-[460px] max-w-[calc(100vw-1.5rem)] z-[1000] pointer-events-auto bg-white/95 backdrop-blur-2xl rounded-3xl shadow-[0_20px_50px_-10px_rgba(22,37,29,0.25),0_4px_12px_rgba(22,37,29,0.08)] border border-emerald-500/40 p-4 space-y-3">
             
             <div class="flex items-start justify-between gap-3">
                 <div class="min-w-0 flex-1">
@@ -577,7 +584,7 @@
              x-transition:leave="transition ease-in duration-200"
              x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
              x-transition:leave-end="opacity-0 translate-y-8 sm:translate-y-0 sm:scale-95"
-             class="fixed sm:absolute inset-x-0 bottom-0 sm:bottom-6 sm:left-6 sm:inset-x-auto sm:w-[420px] max-h-[85vh] sm:max-h-[640px] z-[1000] bg-white/98 backdrop-blur-2xl rounded-t-3xl sm:rounded-3xl shadow-[0_25px_60px_-12px_rgba(22,37,29,0.35),0_6px_20px_rgba(22,37,29,0.12)] border border-[#D5E0D9] overflow-hidden flex flex-col pointer-events-auto">
+             class="fixed sm:absolute inset-x-0 bottom-0 sm:bottom-4 sm:left-4 sm:inset-x-auto sm:w-[410px] max-h-[78vh] sm:max-h-[calc(100%-7.5rem)] z-[1000] bg-white/98 backdrop-blur-2xl rounded-t-3xl sm:rounded-3xl shadow-[0_25px_60px_-12px_rgba(22,37,29,0.35),0_6px_20px_rgba(22,37,29,0.12)] border border-[#D5E0D9] overflow-hidden flex flex-col pointer-events-auto">
             
             <!-- Mobile pull handle -->
             <div class="sm:hidden pt-2 pb-1 flex justify-center">
@@ -719,7 +726,7 @@
              x-transition:leave="transition ease-in duration-200"
              x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
              x-transition:leave-end="opacity-0 translate-y-8 sm:translate-y-0 sm:scale-95"
-             class="fixed sm:absolute inset-x-0 bottom-0 sm:bottom-6 sm:left-6 sm:inset-x-auto sm:w-[420px] max-h-[85vh] sm:max-h-[640px] z-[1000] bg-white/98 backdrop-blur-2xl rounded-t-3xl sm:rounded-3xl shadow-[0_25px_60px_-12px_rgba(22,37,29,0.35),0_6px_20px_rgba(22,37,29,0.12)] border border-[#D5E0D9] overflow-hidden flex flex-col pointer-events-auto">
+             class="fixed sm:absolute inset-x-0 bottom-0 sm:bottom-4 sm:left-4 sm:inset-x-auto sm:w-[410px] max-h-[78vh] sm:max-h-[calc(100%-7.5rem)] z-[1000] bg-white/98 backdrop-blur-2xl rounded-t-3xl sm:rounded-3xl shadow-[0_25px_60px_-12px_rgba(22,37,29,0.35),0_6px_20px_rgba(22,37,29,0.12)] border border-[#D5E0D9] overflow-hidden flex flex-col pointer-events-auto">
             
             <!-- Mobile pull handle -->
             <div class="sm:hidden pt-2 pb-1 flex justify-center">
@@ -800,7 +807,7 @@
         </div>
 
         <!-- Floating Re-open Sidebar Button (When sidebar is collapsed on desktop) -->
-        <button x-show="!desktopSidebarOpen"
+        <button x-show="!desktopSidebarOpen && !activePlace && !searchedPlace"
                 @click="toggleDesktopSidebar(true)"
                 class="hidden lg:flex items-center gap-2 absolute top-4 left-4 z-20 bg-white/95 backdrop-blur-md px-3.5 py-2.5 rounded-2xl shadow-card border border-[#D5E0D9] text-xs font-bold text-[#16251D] hover:border-[#1E7A4C] hover:text-[#1E7A4C] transition active:scale-95">
             <svg class="w-4 h-4 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -836,7 +843,14 @@
         </template>
 
         <!-- Floating Location Tag (Bottom-Left) -->
-        <div class="absolute bottom-4 left-4 z-10 pointer-events-auto bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full shadow-card border border-[#D5E0D9] flex items-center gap-2 text-xs text-[#16251D]">
+        <div x-show="!activePlace && !searchedPlace"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 scale-95"
+             x-transition:enter-end="opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100 scale-100"
+             x-transition:leave-end="opacity-0 scale-95"
+             class="absolute bottom-4 left-4 z-10 pointer-events-auto bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full shadow-card border border-[#D5E0D9] flex items-center gap-2 text-xs text-[#16251D]">
             <span class="w-2.5 h-2.5 rounded-full bg-[#1E7A4C] animate-ping"></span>
             <span class="font-bold text-[11px]" x-text="currentLocationLabel"></span>
             <span class="text-[10px] text-[#4E6157] font-medium" x-text="`• Radius ${radius}km`"></span>
@@ -1308,6 +1322,8 @@ document.addEventListener('alpine:init', () => {
 
         openPlaceDetail(item) {
             if (!item) return;
+            this.routeInfo = null;
+            this.searchedPlace = null;
             this.activePlace = item;
             this.selectedId = item.id;
             this.focusMarker(item);
@@ -1320,6 +1336,8 @@ document.addEventListener('alpine:init', () => {
         async drawRoute(item, mode = 'driving') {
             if (!item || !item.lat || !item.lng) return;
 
+            this.activePlace = null;
+            this.searchedPlace = null;
             this.routeMode = mode;
             this.routeTarget = item;
             this.routingLoading = true;
@@ -1526,6 +1544,7 @@ document.addEventListener('alpine:init', () => {
 
         openSearchedPlace(s) {
             this.closePlaceDetail();
+            this.routeInfo = null;
             this.searchedPlace = {
                 title: s.title,
                 subtitle: s.subtitle || s.display_name,
