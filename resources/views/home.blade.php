@@ -220,7 +220,7 @@
             </div>
         </div>
 
-        <!-- Sleek Single-Row Aesthetic Filter Strip (Google Maps & Apple Maps Class) -->
+        <!-- Sleek Single-Row Aesthetic Filter Strip (Google Maps & Apple Maps Class) with Scroll Arrows -->
         <div x-show="!routeInfo"
              x-transition:enter="transition ease-out duration-200"
              x-transition:enter-start="opacity-0 -translate-y-2"
@@ -228,74 +228,118 @@
              x-transition:leave="transition ease-in duration-150"
              x-transition:leave-start="opacity-100 translate-y-0"
              x-transition:leave-end="opacity-0 -translate-y-2"
-             class="pointer-events-auto flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-            <!-- Layer Segmented Switcher: Makanan | Galang -->
-            <div class="inline-flex rounded-full bg-white/95 backdrop-blur-md p-1 shadow-sm border border-[#D5E0D9] shrink-0">
-                <button @click="layer = 'food'; loadData()"
-                        :class="layer === 'food' ? 'bg-[#1E7A4C] text-white shadow-2xs font-bold' : 'text-[#4E6157] hover:text-[#16251D] font-medium'"
-                        class="px-3 py-1 text-xs rounded-full transition">
-                    Makanan
-                </button>
-                <button @click="layer = 'campaigns'; loadData()"
-                        :class="layer === 'campaigns' ? 'bg-[#2A6F97] text-white shadow-2xs font-bold' : 'text-[#4E6157] hover:text-[#16251D] font-medium'"
-                        class="px-3 py-1 text-xs rounded-full transition">
-                    Galang
+             class="pointer-events-auto relative">
+
+            <!-- Left Scroll Button (Appears when scrolled right) -->
+            <div x-show="canScrollChipsLeft"
+                 x-transition:enter="transition ease-out duration-150"
+                 x-transition:enter-start="opacity-0 scale-75"
+                 x-transition:enter-end="opacity-100 scale-100"
+                 x-transition:leave="transition ease-in duration-100"
+                 x-transition:leave-start="opacity-100 scale-100"
+                 x-transition:leave-end="opacity-0 scale-75"
+                 class="absolute left-0 top-0 bottom-1 flex items-center pr-2 bg-gradient-to-r from-white via-white/90 to-transparent z-10 pointer-events-auto">
+                <button type="button"
+                        @click="scrollChips(-180)"
+                        class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/95 backdrop-blur-md border border-[#D5E0D9] shadow-md hover:border-[#1E7A4C] text-[#16251D] hover:text-[#1E7A4C] hover:bg-emerald-50 flex items-center justify-center transition active:scale-90 cursor-pointer group"
+                        title="Geser ke kiri">
+                    <svg class="w-4 h-4 transition-transform group-hover:-translate-x-0.5 text-[#16251D] group-hover:text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+                    </svg>
                 </button>
             </div>
 
-            <!-- Radius Quick Filter (Cycle Pill) -->
-            <template x-if="layer === 'food'">
-                <button @click="cycleRadius()"
-                        class="px-3 py-1.5 text-xs font-semibold rounded-full bg-white/95 backdrop-blur-md text-[#16251D] border border-[#D5E0D9] shadow-sm hover:border-[#1E7A4C] shrink-0 transition flex items-center gap-1.5 active:scale-95 cursor-pointer"
-                        title="Klik untuk ubah radius pencarian (1 km, 5 km, 10 km, 20 km)">
-                    <svg class="w-3.5 h-3.5 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="9" stroke-width="2"/>
-                        <circle cx="12" cy="12" r="3" stroke-width="2"/>
-                    </svg>
-                    <span x-text="`Radius ${radius} km`"></span>
-                </button>
-            </template>
-
-            <!-- Halal filter toggle -->
-            <button @click="halalOnly = !halalOnly; loadData()"
-                    :class="halalOnly ? 'bg-emerald-700 text-white font-bold border-transparent shadow-xs' : 'bg-white/95 text-[#4E6157] border-[#D5E0D9] shadow-sm'"
-                    class="px-3 py-1.5 text-xs rounded-full border shrink-0 transition flex items-center gap-1.5 font-medium active:scale-95">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span>Halal</span>
-            </button>
-
-            <!-- Urgent filter (< 2 jam) -->
-            <button @click="urgentOnly = !urgentOnly; filterListings()"
-                    :class="urgentOnly ? 'bg-[#C93A2E] text-white font-bold border-transparent shadow-xs' : 'bg-white/95 text-[#4E6157] border-[#D5E0D9] shadow-sm'"
-                    class="px-3 py-1.5 text-xs rounded-full border shrink-0 transition flex items-center gap-1.5 font-medium active:scale-95">
-                <svg class="w-3.5 h-3.5 text-current shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span>&lt; 2 Jam</span>
-            </button>
-
-            <!-- Divider -->
-            <div class="h-5 w-px bg-gray-300/60 shrink-0 mx-0.5"></div>
-
-            <!-- Category Chips in the same continuous sleek scrollable strip -->
-            <template x-if="layer === 'food'">
-                <div class="flex items-center gap-1.5 shrink-0">
-                    <button @click="selectedCategory = ''; filterListings()"
-                            :class="selectedCategory === '' ? 'bg-[#1E7A4C] text-white font-bold shadow-2xs' : 'bg-white/95 text-[#4E6157] hover:bg-gray-50 border border-[#D5E0D9] shadow-sm'"
-                            class="px-3 py-1.5 text-xs rounded-full shrink-0 transition active:scale-95">
-                        Semua Kategori
+            <!-- Horizontal Scrollable Chips Container -->
+            <div x-ref="filterChips"
+                 @scroll.passive="checkChipsScroll()"
+                 class="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none scroll-smooth pr-9 sm:pr-10">
+                <!-- Layer Segmented Switcher: Makanan | Galang -->
+                <div class="inline-flex rounded-full bg-white/95 backdrop-blur-md p-1 shadow-sm border border-[#D5E0D9] shrink-0">
+                    <button @click="layer = 'food'; loadData()"
+                            :class="layer === 'food' ? 'bg-[#1E7A4C] text-white shadow-2xs font-bold' : 'text-[#4E6157] hover:text-[#16251D] font-medium'"
+                            class="px-3 py-1 text-xs rounded-full transition cursor-pointer">
+                        Makanan
                     </button>
-                    @foreach($categories as $cat)
-                        <button @click="selectedCategory = '{{ $cat->name }}'; filterListings()"
-                                :class="selectedCategory === '{{ $cat->name }}' ? 'bg-[#1E7A4C] text-white font-bold shadow-2xs' : 'bg-white/95 text-[#4E6157] hover:bg-gray-50 border border-[#D5E0D9] shadow-sm'"
-                                class="px-3 py-1.5 text-xs rounded-full shrink-0 transition active:scale-95">
-                            {{ $cat->name }}
-                        </button>
-                    @endforeach
+                    <button @click="layer = 'campaigns'; loadData()"
+                            :class="layer === 'campaigns' ? 'bg-[#2A6F97] text-white shadow-2xs font-bold' : 'text-[#4E6157] hover:text-[#16251D] font-medium'"
+                            class="px-3 py-1 text-xs rounded-full transition cursor-pointer">
+                        Galang
+                    </button>
                 </div>
-            </template>
+
+                <!-- Radius Quick Filter (Cycle Pill) -->
+                <template x-if="layer === 'food'">
+                    <button @click="cycleRadius()"
+                            class="px-3 py-1.5 text-xs font-semibold rounded-full bg-white/95 backdrop-blur-md text-[#16251D] border border-[#D5E0D9] shadow-sm hover:border-[#1E7A4C] shrink-0 transition flex items-center gap-1.5 active:scale-95 cursor-pointer"
+                            title="Klik untuk ubah radius pencarian (1 km, 5 km, 10 km, 20 km)">
+                        <svg class="w-3.5 h-3.5 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="9" stroke-width="2"/>
+                            <circle cx="12" cy="12" r="3" stroke-width="2"/>
+                        </svg>
+                        <span x-text="`Radius ${radius} km`"></span>
+                    </button>
+                </template>
+
+                <!-- Halal filter toggle -->
+                <button @click="halalOnly = !halalOnly; loadData()"
+                        :class="halalOnly ? 'bg-emerald-700 text-white font-bold border-transparent shadow-xs' : 'bg-white/95 text-[#4E6157] border-[#D5E0D9] shadow-sm'"
+                        class="px-3 py-1.5 text-xs rounded-full border shrink-0 transition flex items-center gap-1.5 font-medium active:scale-95 cursor-pointer">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>Halal</span>
+                </button>
+
+                <!-- Urgent filter (< 2 jam) -->
+                <button @click="urgentOnly = !urgentOnly; filterListings()"
+                        :class="urgentOnly ? 'bg-[#C93A2E] text-white font-bold border-transparent shadow-xs' : 'bg-white/95 text-[#4E6157] border-[#D5E0D9] shadow-sm'"
+                        class="px-3 py-1.5 text-xs rounded-full border shrink-0 transition flex items-center gap-1.5 font-medium active:scale-95 cursor-pointer">
+                    <svg class="w-3.5 h-3.5 text-current shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>&lt; 2 Jam</span>
+                </button>
+
+                <!-- Divider -->
+                <div class="h-5 w-px bg-gray-300/60 shrink-0 mx-0.5"></div>
+
+                <!-- Category Chips in the same continuous sleek scrollable strip -->
+                <template x-if="layer === 'food'">
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <button @click="selectedCategory = ''; filterListings()"
+                                :class="selectedCategory === '' ? 'bg-[#1E7A4C] text-white font-bold shadow-2xs' : 'bg-white/95 text-[#4E6157] hover:bg-gray-50 border border-[#D5E0D9] shadow-sm'"
+                                class="px-3 py-1.5 text-xs rounded-full shrink-0 transition active:scale-95 cursor-pointer">
+                            Semua Kategori
+                        </button>
+                        @foreach($categories as $cat)
+                            <button @click="selectedCategory = '{{ $cat->name }}'; filterListings()"
+                                    :class="selectedCategory === '{{ $cat->name }}' ? 'bg-[#1E7A4C] text-white font-bold shadow-2xs' : 'bg-white/95 text-[#4E6157] hover:bg-gray-50 border border-[#D5E0D9] shadow-sm'"
+                                    class="px-3 py-1.5 text-xs rounded-full shrink-0 transition active:scale-95 cursor-pointer">
+                                {{ $cat->name }}
+                            </button>
+                        @endforeach
+                    </div>
+                </template>
+            </div>
+
+            <!-- Right Scroll Button (Panah ke kanan yang diminta pengguna) -->
+            <div x-show="canScrollChipsRight"
+                 x-transition:enter="transition ease-out duration-150"
+                 x-transition:enter-start="opacity-0 scale-75"
+                 x-transition:enter-end="opacity-100 scale-100"
+                 x-transition:leave="transition ease-in duration-100"
+                 x-transition:leave-start="opacity-100 scale-100"
+                 x-transition:leave-end="opacity-0 scale-75"
+                 class="absolute right-0 top-0 bottom-1 flex items-center pl-3 bg-gradient-to-l from-white via-white/90 to-transparent z-10 pointer-events-auto">
+                <button type="button"
+                        @click="scrollChips(180)"
+                        class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/95 backdrop-blur-md border border-[#D5E0D9] shadow-md hover:border-[#1E7A4C] text-[#16251D] hover:text-[#1E7A4C] hover:bg-emerald-50 flex items-center justify-center transition active:scale-90 cursor-pointer group"
+                        title="Geser kategori ke kanan">
+                    <svg class="w-4 h-4 transition-transform group-hover:translate-x-0.5 text-[#16251D] group-hover:text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -1385,6 +1429,8 @@ document.addEventListener('alpine:init', () => {
         navSteps: [],
         navStepIndex: 0,
         lastNavUpdateCoord: null,
+        canScrollChipsLeft: false,
+        canScrollChipsRight: true,
         claimQrModalOpen: false,
         activeClaimQr: { title: '', code: '', portions: 1, dataUrl: null },
 
@@ -1473,13 +1519,21 @@ document.addEventListener('alpine:init', () => {
             // Invalidate Leaflet size as flex layout settles to avoid grey tile boxes
             this.$nextTick(() => {
                 if (this.map) this.map.invalidateSize();
-                setTimeout(() => { if (this.map) this.map.invalidateSize(); }, 250);
-                setTimeout(() => { if (this.map) this.map.invalidateSize(); }, 600);
+                this.checkChipsScroll();
+                setTimeout(() => { 
+                    if (this.map) this.map.invalidateSize();
+                    this.checkChipsScroll();
+                }, 250);
+                setTimeout(() => { 
+                    if (this.map) this.map.invalidateSize();
+                    this.checkChipsScroll();
+                }, 600);
             });
 
             // Window resize handler
             window.addEventListener('resize', () => {
                 if (this.map) this.map.invalidateSize();
+                this.checkChipsScroll();
             });
 
             // 60-second periodic poll when tab is visible
@@ -2320,6 +2374,21 @@ document.addEventListener('alpine:init', () => {
         closeClaimQr() {
             this.claimQrModalOpen = false;
             this.activeClaimQr = { title: '', code: '', portions: 1, dataUrl: null };
+        },
+
+        checkChipsScroll() {
+            const el = this.$refs.filterChips;
+            if (!el) return;
+            this.canScrollChipsLeft = el.scrollLeft > 6;
+            this.canScrollChipsRight = el.scrollLeft < (el.scrollWidth - el.clientWidth - 6);
+        },
+
+        scrollChips(offset) {
+            const el = this.$refs.filterChips;
+            if (el) {
+                el.scrollBy({ left: offset, behavior: 'smooth' });
+                setTimeout(() => this.checkChipsScroll(), 320);
+            }
         },
 
         async copyAddress(address) {
