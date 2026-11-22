@@ -7,44 +7,54 @@
         <!-- Search bar with Autocomplete Dropdown & Directions Mode (Google Maps Class) -->
         <div class="pointer-events-auto relative">
             <!-- Normal Search Mode Header -->
-            <div x-show="!directionsMode"
+            <div x-show="!directionsMode && !routeInfo"
                  class="bg-white/95 backdrop-blur-2xl rounded-2xl shadow-[0_12px_36px_-6px_rgba(22,37,29,0.14),0_2px_8px_rgba(22,37,29,0.04)] border border-[#D5E0D9]/80 p-1.5 sm:p-2 flex items-center gap-1.5 sm:gap-2 transition-all focus-within:border-[#1E7A4C]/60 focus-within:shadow-[0_16px_40px_-6px_rgba(30,122,76,0.20)]">
-                <div class="relative flex-1">
+                <div class="relative flex-1 min-w-0">
                     <input type="text"
                            x-model="searchQuery"
                            @input.debounce.300ms="fetchSuggestions()"
                            @focus="if (suggestions.length > 0) showSuggestions = true"
                            @keydown.enter.prevent="selectFirstOrSearch()"
                            placeholder="Cari jalan, kelurahan, atau kecamatan (misal: Tembalang, Alun-alun)..."
-                           class="w-full pl-9 pr-8 py-2 text-sm rounded-xl border border-transparent text-[#16251D] placeholder:text-[#4E6157]/60 focus:outline-none bg-gray-50/70 focus:bg-white focus:border-[#74877B] transition-all">
-                    <svg class="w-4 h-4 text-[#4E6157] absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                           class="w-full h-9 pl-9 pr-8 text-xs sm:text-sm rounded-xl border border-transparent text-[#16251D] placeholder:text-[#4E6157]/60 focus:outline-none bg-gray-50/80 focus:bg-white focus:border-[#74877B] transition-all">
+                    <svg class="w-4 h-4 text-[#4E6157] absolute left-3 top-2.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
                     <!-- Clear search button -->
-                    <button type="button" x-show="searchQuery" @click="clearSearch()" class="absolute right-2.5 top-2 text-gray-400 hover:text-gray-700 w-6 h-6 rounded-full hover:bg-gray-100 flex items-center justify-center transition" title="Hapus pencarian">
+                    <button type="button" x-show="searchQuery" @click="clearSearch()" class="absolute right-2 top-1.5 text-gray-400 hover:text-gray-700 w-6 h-6 rounded-full hover:bg-gray-100 flex items-center justify-center transition" title="Hapus pencarian">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
                     </button>
                 </div>
 
-                <!-- Google Maps Directions Mode Trigger Button -->
+                <!-- Google Maps Directions Mode Trigger Button (Button 1: Rute) -->
                 <button type="button"
                         @click="toggleDirectionsMode()"
-                        class="p-2 text-[#2A6F97] hover:bg-blue-50 hover:text-[#1E7A4C] rounded-xl border border-[#D5E0D9] shrink-0 transition active:scale-95 bg-white flex items-center gap-1 font-bold text-xs shadow-2xs"
-                        title="Buka Mode Petunjuk Arah / Rute Google Maps">
-                    <svg class="w-4 h-4 text-[#2A6F97]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                        class="h-9 px-3 rounded-xl bg-emerald-50/80 hover:bg-emerald-100/90 text-[#14573A] border border-emerald-200/90 hover:border-emerald-300 font-bold text-xs flex items-center gap-1.5 transition-all shadow-2xs active:scale-95 shrink-0 group cursor-pointer"
+                        title="Buka Mode Petunjuk Arah / Rute">
+                    <svg class="w-4 h-4 text-[#1E7A4C] group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
                     </svg>
                     <span class="hidden sm:inline">Rute</span>
                 </button>
 
-                <button @click="selectFirstOrSearch()" class="btn-primary text-xs px-3 sm:px-3.5 py-2 shrink-0 shadow-xs active:scale-95 transition-transform font-bold">
-                    Cari
+                <!-- Search Action Button (Button 2: Cari) -->
+                <button type="button"
+                        @click="selectFirstOrSearch()"
+                        class="h-9 px-3.5 sm:px-4 rounded-xl bg-[#1E7A4C] hover:bg-[#14573A] text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-xs hover:shadow-sm active:scale-95 shrink-0 cursor-pointer"
+                        title="Cari lokasi">
+                    <span>Cari</span>
                 </button>
-                <button @click="useCurrentLocation()" :disabled="locating" title="Gunakan lokasi GPS saya saat ini" class="p-2 text-[#1E7A4C] hover:bg-emerald-50 rounded-xl border border-[#D5E0D9] shrink-0 transition active:scale-95 bg-white">
-                    <svg :class="locating ? 'animate-spin' : ''" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v2m0 16v2m10-10h-2M4 12H2m15.071-7.071l-1.414 1.414M8.343 15.657l-1.414 1.414m12.142 0l-1.414-1.414M8.343 8.343L6.929 6.929M12 8a4 4 0 100 8 4 4 0 000-8z" />
+
+                <!-- Current Location GPS Button (Button 3: GPS) -->
+                <button type="button"
+                        @click="useCurrentLocation()"
+                        :disabled="locating"
+                        class="w-9 h-9 rounded-xl bg-gray-50/80 hover:bg-emerald-50 text-[#1E7A4C] hover:text-[#14573A] border border-[#D5E0D9] hover:border-emerald-300 flex items-center justify-center transition-all shadow-2xs active:scale-95 shrink-0 group cursor-pointer"
+                        title="Gunakan lokasi GPS saya saat ini">
+                    <svg :class="locating ? 'animate-spin' : 'group-hover:scale-110'" class="w-4.5 h-4.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 2v2m0 16v2m10-10h-2M4 12H2m15.071-7.071l-1.414 1.414M8.343 15.657l-1.414 1.414m12.142 0l-1.414-1.414M8.343 8.343L6.929 6.929M12 8a4 4 0 100 8 4 4 0 000-8z" />
                     </svg>
                 </button>
             </div>
@@ -294,12 +304,12 @@
          ]"
          class="relative w-full bg-white border-t lg:border-t-0 lg:border-r border-[#D5E0D9] flex flex-col order-2 lg:order-1 transition-all duration-300 z-10 shrink-0">
 
-        <!-- Desktop Collapse / Expand Handle Button (Google Maps Style) -->
+        <!-- Desktop Collapse / Expand Handle Button (World-Class Floating Circle) -->
         <button type="button"
                 @click="toggleDesktopSidebar()"
-                class="hidden lg:flex absolute -right-3.5 top-1/2 -translate-y-1/2 z-30 w-7 h-12 bg-white rounded-r-xl border border-l-0 border-[#D5E0D9] shadow-md items-center justify-center text-[#4E6157] hover:text-[#16251D] hover:bg-gray-50 transition active:scale-95"
+                class="hidden lg:flex absolute -right-4 top-1/2 -translate-y-1/2 z-30 w-8 h-8 rounded-full bg-white border border-[#D5E0D9] shadow-[0_2px_10px_rgba(22,37,29,0.14)] items-center justify-center text-[#4E6157] hover:text-[#1E7A4C] hover:border-[#1E7A4C] hover:bg-emerald-50 transition-all duration-200 active:scale-90 hover:scale-110 cursor-pointer group"
                 :title="desktopSidebarOpen ? 'Ciutkan panel daftar' : 'Buka panel daftar'">
-            <svg :class="desktopSidebarOpen ? '' : 'rotate-180'" class="w-3.5 h-3.5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg :class="desktopSidebarOpen ? '' : 'rotate-180'" class="w-4 h-4 transition-transform duration-300 text-[#4E6157] group-hover:text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
             </svg>
         </button>
@@ -318,11 +328,19 @@
         <div class="hidden lg:flex items-center justify-between px-5 py-3.5 border-b border-[#D5E0D9] bg-gray-50/60">
             <div>
                 <h1 class="font-display font-bold text-base text-[#16251D]" x-text="layer === 'food' ? 'Penyelamat Makanan' : 'Galang Makanan'"></h1>
-                <p class="text-xs text-[#4E6157] truncate max-w-[240px]" x-text="`Pusat: ${currentLocationLabel}`"></p>
+                <p class="text-xs text-[#4E6157] truncate max-w-[200px]" x-text="`Pusat: ${currentLocationLabel}`"></p>
             </div>
             <div class="flex items-center gap-2">
                 <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#14573A] border border-emerald-200/80"
                       x-text="`${filteredItems.length} opsi`"></span>
+                <button type="button"
+                        @click="toggleDesktopSidebar(false)"
+                        class="w-7 h-7 rounded-lg text-[#4E6157] hover:text-[#16251D] hover:bg-gray-200/70 flex items-center justify-center transition cursor-pointer"
+                        title="Ciutkan panel daftar">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>
+                    </svg>
+                </button>
             </div>
         </div>
 
@@ -497,7 +515,7 @@
 
     <!-- MAP CONTAINER -->
     <div class="flex-1 min-w-0 order-1 lg:order-2 h-full relative z-0 overflow-hidden">
-        <div id="locabite-map" class="h-full w-full"></div>
+        <div id="locabite-map" class="h-full w-full relative z-0 isolate"></div>
 
         <!-- Floating Active Route HUD (Navigation like Google Maps) -->
         <div x-show="routeInfo"
@@ -507,7 +525,7 @@
              x-transition:leave="transition ease-in duration-200"
              x-transition:leave-start="opacity-100 translate-y-0 scale-100"
              x-transition:leave-end="opacity-0 -translate-y-4 scale-95"
-             class="absolute top-16 sm:top-18 inset-x-3 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-[460px] max-w-[calc(100vw-1.5rem)] z-[1000] pointer-events-auto bg-white/95 backdrop-blur-2xl rounded-3xl shadow-[0_20px_50px_-10px_rgba(22,37,29,0.25),0_4px_12px_rgba(22,37,29,0.08)] border border-emerald-500/40 p-4 space-y-3">
+             class="absolute top-3 sm:top-4 inset-x-3 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-[460px] max-w-[calc(100vw-1.5rem)] z-[1000] pointer-events-auto bg-white/98 backdrop-blur-2xl rounded-3xl shadow-[0_20px_50px_-10px_rgba(22,37,29,0.25),0_4px_12px_rgba(22,37,29,0.08)] border border-emerald-500/40 p-4 space-y-3">
             
             <div class="flex items-start justify-between gap-3">
                 <div class="min-w-0 flex-1">
@@ -809,9 +827,9 @@
         <!-- Floating Re-open Sidebar Button (When sidebar is collapsed on desktop) -->
         <button x-show="!desktopSidebarOpen && !activePlace && !searchedPlace"
                 @click="toggleDesktopSidebar(true)"
-                class="hidden lg:flex items-center gap-2 absolute top-4 left-4 z-20 bg-white/95 backdrop-blur-md px-3.5 py-2.5 rounded-2xl shadow-card border border-[#D5E0D9] text-xs font-bold text-[#16251D] hover:border-[#1E7A4C] hover:text-[#1E7A4C] transition active:scale-95">
+                class="hidden lg:flex items-center gap-2 absolute top-4 left-4 z-20 bg-white/95 backdrop-blur-md px-3.5 h-9 rounded-full shadow-[0_4px_16px_rgba(22,37,29,0.12)] border border-[#D5E0D9] text-xs font-bold text-[#16251D] hover:border-[#1E7A4C] hover:text-[#1E7A4C] hover:bg-emerald-50/50 transition active:scale-95 cursor-pointer">
             <svg class="w-4 h-4 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 6h16M4 12h16M4 18h7" />
             </svg>
             <span>Buka Panel (<span x-text="filteredItems.length"></span>)</span>
         </button>
