@@ -15,6 +15,16 @@ class VolunteerApplication extends Model
         'user_id',
         'regency_id',
         'motivation',
+        'phone',
+        'availability',
+        'transportation',
+        'experience',
+        'target_beneficiaries',
+        'has_food_safety_commitment',
+    ];
+
+    protected $casts = [
+        'has_food_safety_commitment' => 'boolean',
     ];
 
     public function user(): BelongsTo

@@ -246,8 +246,8 @@
             <!-- Radius Quick Filter (Cycle Pill) -->
             <template x-if="layer === 'food'">
                 <button @click="cycleRadius()"
-                        class="px-3 py-1.5 text-xs font-semibold rounded-full bg-white/95 backdrop-blur-md text-[#16251D] border border-[#D5E0D9] shadow-sm hover:border-[#1E7A4C] shrink-0 transition flex items-center gap-1.5 active:scale-95"
-                        title="Klik untuk ubah radius pencarian">
+                        class="px-3 py-1.5 text-xs font-semibold rounded-full bg-white/95 backdrop-blur-md text-[#16251D] border border-[#D5E0D9] shadow-sm hover:border-[#1E7A4C] shrink-0 transition flex items-center gap-1.5 active:scale-95 cursor-pointer"
+                        title="Klik untuk ubah radius pencarian (1 km, 5 km, 10 km, 20 km)">
                     <svg class="w-3.5 h-3.5 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <circle cx="12" cy="12" r="9" stroke-width="2"/>
                         <circle cx="12" cy="12" r="3" stroke-width="2"/>
@@ -368,13 +368,20 @@
                     <h3 class="font-display font-bold text-base text-[#16251D] mb-1">
                         Belum ada makanan dalam <span x-text="`${radius} km`"></span>
                     </h3>
-                    <p class="text-xs text-[#4E6157] mb-4">
-                        Coba klik titik lain di peta, perluas radius ke 5 atau 10 km, atau bagikan makanan berlebih milik Anda.
+                    <p class="text-xs text-[#4E6157] mb-3">
+                        Coba klik titik lain di peta, pilih radius pencarian, atau bagikan makanan berlebih milik Anda.
                     </p>
+                    <div class="flex flex-wrap items-center justify-center gap-1.5 max-w-xs mx-auto mb-3">
+                        <template x-for="r in [1, 5, 10, 20]" :key="r">
+                            <button type="button"
+                                    @click="radius = r; loadData()"
+                                    :class="radius === r ? 'bg-[#1E7A4C] text-white font-bold shadow-2xs' : 'bg-gray-100 hover:bg-gray-200 text-[#4E6157] font-semibold'"
+                                    class="px-2.5 py-1 text-xs rounded-xl transition cursor-pointer"
+                                    x-text="`${r} km`">
+                            </button>
+                        </template>
+                    </div>
                     <div class="flex flex-col gap-2 max-w-xs mx-auto">
-                        <button @click="radius = 10; loadData()" class="btn-secondary text-xs">
-                            Perluas ke 10 km
-                        </button>
                         <a href="{{ route('listings.create') }}" class="btn-primary text-xs">
                             Bagikan makanan sekarang
                         </a>
@@ -2276,7 +2283,7 @@ document.addEventListener('alpine:init', () => {
         },
 
         cycleRadius() {
-            const steps = [1, 3, 5, 10];
+            const steps = [1, 5, 10, 20];
             const nextIdx = (steps.indexOf(this.radius) + 1) % steps.length;
             this.radius = steps[nextIdx];
             this.loadData();

@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\District;
+use App\Models\Province;
 use App\Models\Regency;
 use App\Models\VolunteerArea;
+use App\Services\EmsifaWilayahService;
 use App\Services\VolunteerApplicationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class VolunteerController extends Controller
 {
@@ -14,32 +18,134 @@ class VolunteerController extends Controller
         protected VolunteerApplicationService $volunteerService
     ) {}
 
-    public function showApplyForm()
+    public function showApplyForm(EmsifaWilayahService $wilayahService)
     {
-        $regencies = Regency::with('districts', 'province')->orderBy('name')->get();
-        $user = Auth::user();
+        $provinces = $wilayahService->getProvinces();
+        $user = Auth::user()->load('district.regency.province');
         $myAreas = $user->volunteerAreas()->with('district.regency')->get();
 
-        return view('volunteer.apply', compact('regencies', 'myAreas', 'user'));
+        return view('volunteer.apply', compact('provinces', 'myAreas', 'user'));
     }
 
-    public function apply(Request $request)
+    public function apply(Request $request, EmsifaWilayahService $wilayahService)
     {
         $validated = $request->validate([
-            'regency_id' => ['required', 'exists:regencies,id'],
+            'regency_id' => ['required'],
             'district_ids' => ['required', 'array', 'min:1'],
-            'district_ids.*' => ['exists:districts,id'],
-            'motivation' => ['required', 'string', 'min:10', 'max:1000'],
+            'motivation' => ['required', 'string', 'min:10', 'max:2000'],
+            'phone' => ['nullable', 'string', 'max:25'],
+            'availability' => ['nullable', 'string', 'max:100'],
+            'transportation' => ['nullable', 'string', 'max:100'],
+            'experience' => ['nullable', 'string', 'max:1000'],
+            'target_beneficiaries' => ['nullable'],
+            'has_food_safety_commitment' => ['nullable'],
         ]);
 
         $user = Auth::user();
 
+        // 1. Resolve or Sync Regency (Supports both local ID and EMSIFA code)
+        $regencyInput = $validated['regency_id'];
+        $regency = Regency::where('id', $regencyInput)
+            ->orWhere('code', (string) $regencyInput)
+            ->first();
+
+        if (!$regency) {
+            $regencyName = $request->input('regency_name');
+            $provinceCode = $request->input('province_id');
+            $provinceName = $request->input('province_name');
+
+            $province = Province::where('code', (string) $provinceCode)
+                ->orWhere('id', $provinceCode)
+                ->first();
+
+            if (!$province && $provinceCode) {
+                $province = Province::create([
+                    'code' => (string) $provinceCode,
+                    'name' => Str::title(strtolower(trim($provinceName ?? 'Provinsi'))),
+                    'timezone' => EmsifaWilayahService::getTimezoneByProvinceCode((string) $provinceCode),
+                ]);
+            }
+
+            $isKota = str_starts_with(strtoupper($regencyName ?? ''), 'KOTA');
+            $regency = Regency::create([
+                'province_id' => $province?->id ?? 1,
+                'code' => (string) $regencyInput,
+                'name' => Str::title(strtolower(trim($regencyName ?? 'Kabupaten/Kota'))),
+                'type' => $isKota ? 'kota' : 'kabupaten',
+            ]);
+        }
+
+        // 2. Resolve Districts (Supports local IDs or EMSIFA codes)
+        $resolvedDistrictIds = [];
+        $districtNamesMap = $request->input('district_names', []);
+        if (is_string($districtNamesMap)) {
+            $districtNamesMap = json_decode($districtNamesMap, true) ?: [];
+        }
+
+        $emsifaDistricts = null;
+
+        foreach ($validated['district_ids'] as $distInput) {
+            $dist = District::where('id', $distInput)
+                ->orWhere('code', (string) $distInput)
+                ->first();
+
+            if (!$dist) {
+                $dName = $districtNamesMap[$distInput] ?? null;
+                if (!$dName) {
+                    if ($emsifaDistricts === null) {
+                        $emsifaDistricts = $wilayahService->getDistricts((string) ($regency->code ?? $regency->id));
+                    }
+                    foreach ($emsifaDistricts as $ed) {
+                        if ((string) $ed['id'] === (string) $distInput) {
+                            $dName = $ed['name'];
+                            break;
+                        }
+                    }
+                }
+
+                $dist = $wilayahService->syncOrCreateDistrict(
+                    $distInput,
+                    $dName ?: "Kecamatan {$distInput}",
+                    $regency->code ?? $regency->id,
+                    $regency->name,
+                    $regency->province?->code,
+                    $regency->province?->name
+                );
+            }
+
+            if ($dist) {
+                $resolvedDistrictIds[] = $dist->id;
+            }
+        }
+
+        abort_if(empty($resolvedDistrictIds), 422, 'Pilih setidaknya satu kecamatan yang valid.');
+
+        // Update user phone if provided and not yet set
+        if (!empty($validated['phone']) && empty($user->phone)) {
+            $user->update(['phone' => $validated['phone']]);
+        }
+
+        $targetBeneficiaries = $validated['target_beneficiaries'] ?? [];
+        if (is_array($targetBeneficiaries)) {
+            $targetBeneficiaries = implode(', ', $targetBeneficiaries);
+        }
+
+        $details = [
+            'phone' => $validated['phone'] ?? $user->phone,
+            'availability' => $validated['availability'] ?? null,
+            'transportation' => $validated['transportation'] ?? null,
+            'experience' => $validated['experience'] ?? null,
+            'target_beneficiaries' => $targetBeneficiaries,
+            'has_food_safety_commitment' => (bool) $request->has('has_food_safety_commitment'),
+        ];
+
         try {
             $this->volunteerService->submit(
                 $user,
-                (int) $validated['regency_id'],
-                $validated['district_ids'],
-                $validated['motivation']
+                (int) $regency->id,
+                $resolvedDistrictIds,
+                $validated['motivation'],
+                $details
             );
 
             return redirect()->route('volunteer.areas')

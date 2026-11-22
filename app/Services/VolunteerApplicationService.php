@@ -16,13 +16,26 @@ class VolunteerApplicationService
      * Submit volunteer application for a single regency and multiple districts.
      * SDD 8.3: Enforces single regency per submission, handles reapplication cooldown.
      */
-    public function submit(User $user, int $regencyId, array $districtIds, string $motivation): VolunteerApplication
-    {
-        return DB::transaction(function () use ($user, $regencyId, $districtIds, $motivation) {
+    public function submit(
+        User $user,
+        int $regencyId,
+        array $districtIds,
+        string $motivation,
+        array $details = []
+    ): VolunteerApplication {
+        return DB::transaction(function () use ($user, $regencyId, $districtIds, $motivation, $details) {
             $application = VolunteerApplication::create([
                 'user_id' => $user->id,
                 'regency_id' => $regencyId,
                 'motivation' => $motivation,
+                'phone' => $details['phone'] ?? null,
+                'availability' => $details['availability'] ?? null,
+                'transportation' => $details['transportation'] ?? null,
+                'experience' => $details['experience'] ?? null,
+                'target_beneficiaries' => is_array($details['target_beneficiaries'] ?? null)
+                    ? implode(', ', $details['target_beneficiaries'])
+                    : ($details['target_beneficiaries'] ?? null),
+                'has_food_safety_commitment' => (bool) ($details['has_food_safety_commitment'] ?? true),
             ]);
 
             // Only districts belonging to the selected regency are valid (TC-25)

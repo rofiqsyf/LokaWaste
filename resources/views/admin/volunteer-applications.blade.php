@@ -24,8 +24,16 @@
                         <div>
                             <h2 class="font-display font-bold text-base text-[#16251D]">{{ $app->user->name }}</h2>
                             <p class="text-xs text-[#4E6157]">
-                                Email: {{ $app->user->email }} • Telp: {{ $app->user->phone ?? '-' }} •
-                                Domisili: {{ $app->user->district?->name ?? '-' }}
+                                Email: {{ $app->user->email }} • 
+                                WhatsApp: 
+                                @if($app->phone || $app->user->phone)
+                                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $app->phone ?? $app->user->phone) }}" target="_blank" class="text-[#1E7A4C] font-bold hover:underline">
+                                        {{ $app->phone ?? $app->user->phone }}
+                                    </a>
+                                @else
+                                    -
+                                @endif
+                                • Domisili: {{ $app->user->district?->name ?? '-' }}
                             </p>
                         </div>
                         <div class="text-right">
@@ -36,9 +44,44 @@
                         </div>
                     </div>
 
+                    <!-- Operational Profile Badges -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
+                        <div class="bg-gray-50 p-2.5 rounded-xl border border-gray-100 space-y-0.5">
+                            <span class="text-[10px] uppercase font-bold text-[#4E6157] block">Transportasi:</span>
+                            <span class="font-bold text-[#16251D]">{{ $app->transportation ?? 'Sepeda Motor' }}</span>
+                        </div>
+                        <div class="bg-gray-50 p-2.5 rounded-xl border border-gray-100 space-y-0.5">
+                            <span class="text-[10px] uppercase font-bold text-[#4E6157] block">Waktu Siaga:</span>
+                            <span class="font-bold text-[#16251D]">{{ $app->availability ?? 'Fleksibel' }}</span>
+                        </div>
+                        <div class="bg-gray-50 p-2.5 rounded-xl border border-gray-100 space-y-0.5">
+                            <span class="text-[10px] uppercase font-bold text-[#4E6157] block">SOP Pangan:</span>
+                            <span class="font-bold text-[#1E7A4C] flex items-center gap-1">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                Pakta Terverifikasi
+                            </span>
+                        </div>
+                    </div>
+
+                    @if($app->target_beneficiaries)
+                        <div class="text-xs">
+                            <span class="font-bold text-[#4E6157] block mb-1">Sasaran Penerima Manfaat:</span>
+                            <p class="text-[#16251D] font-medium bg-[#F2F7F4] px-3 py-1.5 rounded-xl border border-emerald-100/60 inline-block">
+                                {{ $app->target_beneficiaries }}
+                            </p>
+                        </div>
+                    @endif
+
+                    @if($app->experience)
+                        <div class="text-xs">
+                            <span class="font-bold text-[#4E6157] block mb-0.5">Pengalaman Komunitas / Kerelawanan:</span>
+                            <p class="text-[#4E6157] italic">{{ $app->experience }}</p>
+                        </div>
+                    @endif
+
                     <!-- Motivation -->
                     <div class="text-xs">
-                        <span class="font-bold text-[#4E6157] block mb-1">Motivasi & Komitmen:</span>
+                        <span class="font-bold text-[#4E6157] block mb-1">Motivasi & Rencana Aksi:</span>
                         <p class="bg-[#F2F6F3] p-3 rounded-xl text-[#16251D] leading-relaxed">{{ $app->motivation }}</p>
                     </div>
 
