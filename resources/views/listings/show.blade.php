@@ -1,6 +1,6 @@
 <x-layouts.app :title="$listing->title . ' — Locabite'">
 
-<div class="max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+<div x-data="qrHandover()" class="max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-6">
 
     <!-- Top Navigation / Breadcrumb -->
     <div class="flex items-center justify-between">
@@ -289,19 +289,27 @@
                                                             <button type="submit" class="btn-danger text-xs px-2.5 py-1">Tolak</button>
                                                         </form>
                                                     @elseif($claim->status === 'approved')
-                                                        <!-- Verify pickup code form -->
-                                                        <form method="POST" action="{{ route('claims.verify-pickup', $claim->id) }}" class="flex items-center gap-1">
-                                                            @csrf
-                                                            <input type="text" name="pickup_code" placeholder="Kode 6 digit" maxlength="6"
-                                                                   class="w-24 px-2 py-1 text-xs uppercase font-mono font-bold border rounded" required>
-                                                            <button type="submit" class="btn-primary text-xs px-3 py-1">Verifikasi</button>
-                                                        </form>
-                                                        <form method="POST" action="{{ route('claims.cancel', $claim->id) }}">
-                                                            @csrf
-                                                            <button type="submit" class="text-xs text-[#C93A2E] hover:underline" onclick="return confirm('Batalkan klaim disetujui? Porsi akan dikembalikan.')">
-                                                                Batal
+                                                        <!-- Verify pickup code form & QR Scanner -->
+                                                        <div class="flex items-center gap-2">
+                                                            <button type="button"
+                                                                    @click="startScanning({{ $claim->id }})"
+                                                                    class="btn-primary text-xs px-2.5 py-1.5 flex items-center gap-1 bg-emerald-700 hover:bg-emerald-800 shadow-xs cursor-pointer">
+                                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
+                                                                <span>Scan QR</span>
                                                             </button>
-                                                        </form>
+                                                            <form method="POST" action="{{ route('claims.verify-pickup', $claim->id) }}" class="flex items-center gap-1">
+                                                                @csrf
+                                                                <input type="text" name="pickup_code" placeholder="Kode manual" maxlength="6"
+                                                                       class="w-24 px-2 py-1 text-xs uppercase font-mono font-bold border rounded" required>
+                                                                <button type="submit" class="btn-secondary text-xs px-2.5 py-1">OK</button>
+                                                            </form>
+                                                            <form method="POST" action="{{ route('claims.cancel', $claim->id) }}">
+                                                                @csrf
+                                                                <button type="submit" class="text-xs text-[#C93A2E] hover:underline" onclick="return confirm('Batalkan klaim disetujui? Porsi akan dikembalikan.')">
+                                                                    Batal
+                                                                </button>
+                                                            </form>
+                                                        </div>
                                                     @endif
                                                 </div>
                                             </div>
@@ -329,13 +337,39 @@
                                 </div>
 
                                 @if($userActiveClaim->status === 'approved')
-                                    <!-- UNLOCKED PICKUP CODE -->
-                                    <div class="p-4 bg-white rounded-xl border-2 border-[#1E7A4C] text-center space-y-1">
-                                        <span class="text-xs text-[#4E6157] font-semibold">Tunjukkan kode ini kepada pemberi saat serah terima:</span>
-                                        <div class="font-mono font-bold text-3xl tracking-widest text-[#14573A]">
-                                            {{ $userActiveClaim->pickup_code }}
+                                    <!-- Smart QR Code & Pickup Code Handover Box -->
+                                    <div class="p-4 bg-emerald-50/70 rounded-2xl border-2 border-[#1E7A4C] flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+                                        <div class="w-28 h-28 shrink-0 bg-white p-1.5 rounded-2xl border border-emerald-200/80 shadow-2xs flex items-center justify-center cursor-pointer group hover:scale-105 transition-transform"
+                                             @click="openQrEnlarged({{ $userActiveClaim->id }}, '{{ $userActiveClaim->pickup_code }}', '{{ addslashes($listing->title) }}', {{ $userActiveClaim->portions_approved ?? $userActiveClaim->portions_requested }})"
+                                             title="Ketuk untuk perbesar QR Code">
+                                            <div data-locabite-qr="LOCABITE:CLAIM:{{ $userActiveClaim->id }}:{{ $userActiveClaim->pickup_code }}" class="w-full h-full flex items-center justify-center">
+                                                <div class="w-5 h-5 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
+                                            </div>
                                         </div>
-                                        <span class="text-xs text-[#1E7A4C] font-bold block">Disetujui: {{ $userActiveClaim->portions_approved }} porsi</span>
+                                        <div class="flex-1 min-w-0 space-y-1.5">
+                                            <span class="text-[11px] font-bold text-[#14573A] block">Tunjukkan QR atau Kode kepada Pemberi:</span>
+                                            <div class="flex items-center justify-center sm:justify-start gap-2">
+                                                <span class="font-mono font-black text-2xl tracking-widest text-[#14573A] bg-white px-3 py-1 rounded-xl border border-emerald-200">
+                                                    {{ $userActiveClaim->pickup_code }}
+                                                </span>
+                                                <button type="button"
+                                                        @click="copyCode('{{ $userActiveClaim->pickup_code }}')"
+                                                        class="p-2 rounded-xl bg-white border border-emerald-200 text-[#1E7A4C] hover:bg-emerald-100 transition-colors shadow-2xs cursor-pointer"
+                                                        title="Salin Kode">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                                                </button>
+                                            </div>
+                                            <div class="flex items-center justify-center sm:justify-start gap-2 pt-0.5">
+                                                <span class="text-xs text-[#1E7A4C] font-bold">Disetujui: {{ $userActiveClaim->portions_approved }} porsi</span>
+                                                <span class="text-[#88998F]">&bull;</span>
+                                                <button type="button"
+                                                        @click="openQrEnlarged({{ $userActiveClaim->id }}, '{{ $userActiveClaim->pickup_code }}', '{{ addslashes($listing->title) }}', {{ $userActiveClaim->portions_approved ?? $userActiveClaim->portions_requested }})"
+                                                        class="text-xs font-bold text-[#2A6F97] hover:underline flex items-center gap-1 cursor-pointer">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+                                                    Perbesar QR Layar Penuh
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 @elseif($userActiveClaim->status === 'pending')
                                     <p class="text-xs text-[#4E6157]">
@@ -422,6 +456,148 @@
                 </button>
             </div>
 
+        </div>
+    </div>
+
+    <!-- SMART CAMERA QR SCANNER MODAL SHEET -->
+    <div x-show="scannerOpen"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+         style="display: none;">
+        
+        <div @click.away="closeScanner()"
+             class="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-gray-100 overflow-hidden flex flex-col max-h-[90vh]">
+            
+            <!-- Header -->
+            <div class="p-4 sm:p-5 border-b border-gray-100 flex items-center justify-between bg-gray-50/70">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-xl bg-emerald-100 text-[#1E7A4C] flex items-center justify-center">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="font-display font-bold text-sm text-[#16251D]">Scan QR Pengambilan Makanan</h3>
+                        <p class="text-[11px] text-[#4E6157]">Arahkan kamera ke QR Code di layar pemohon</p>
+                    </div>
+                </div>
+
+                <button type="button" @click="closeScanner()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-black flex items-center justify-center transition cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <!-- Scanner Viewport Body -->
+            <div class="p-4 sm:p-5 space-y-4 overflow-y-auto">
+                <!-- Camera Box -->
+                <div class="relative w-full aspect-square bg-gray-900 rounded-2xl overflow-hidden border-2 border-emerald-500/40 shadow-inner flex items-center justify-center">
+                    <div id="qr-camera-stream" class="w-full h-full"></div>
+
+                    <!-- Scanning Reticle Overlay -->
+                    <div class="absolute inset-0 pointer-events-none flex items-center justify-center">
+                        <div class="w-52 h-52 border-2 border-emerald-400 rounded-2xl relative shadow-[0_0_0_9999px_rgba(0,0,0,0.35)]">
+                            <div class="absolute -top-1 -left-1 w-5 h-5 border-t-4 border-l-4 border-emerald-400 rounded-tl-lg"></div>
+                            <div class="absolute -top-1 -right-1 w-5 h-5 border-t-4 border-r-4 border-emerald-400 rounded-tr-lg"></div>
+                            <div class="absolute -bottom-1 -left-1 w-5 h-5 border-b-4 border-l-4 border-emerald-400 rounded-bl-lg"></div>
+                            <div class="absolute -bottom-1 -right-1 w-5 h-5 border-b-4 border-r-4 border-emerald-400 rounded-br-lg"></div>
+                            <div class="w-full h-0.5 bg-emerald-400/80 shadow-[0_0_8px_#34d399] absolute top-1/2 -translate-y-1/2 animate-pulse"></div>
+                        </div>
+                    </div>
+
+                    <!-- Loading / Processing indicator -->
+                    <div x-show="scanningLoading" class="absolute inset-0 bg-black/75 flex flex-col items-center justify-center text-white space-y-2 z-10">
+                        <div class="w-8 h-8 border-3 border-emerald-400 border-t-transparent rounded-full animate-spin"></div>
+                        <span class="text-xs font-bold">Memverifikasi Serah Terima...</span>
+                    </div>
+                </div>
+
+                <!-- Success Message Banner -->
+                <div x-show="scanSuccessMessage" class="p-3.5 bg-emerald-50 border border-emerald-300 rounded-xl text-emerald-900 text-xs font-bold flex items-center gap-2">
+                    <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                    <span x-text="scanSuccessMessage"></span>
+                </div>
+
+                <!-- Error Message Banner -->
+                <div x-show="scanErrorMessage" class="p-3.5 bg-red-50 border border-red-200 rounded-xl text-red-800 text-xs flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-red-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <span x-text="scanErrorMessage"></span>
+                    </div>
+                    <button type="button" @click="scanErrorMessage = null" class="text-red-700 font-bold">&times;</button>
+                </div>
+
+                <!-- Manual Code Input Section (Fallback / Alternative) -->
+                <div class="bg-gray-50 rounded-2xl p-3.5 border border-gray-200/80 space-y-2">
+                    <span class="text-xs font-bold text-[#16251D] block">Atau Masukkan Kode 6-Digit Manual:</span>
+                    <div class="flex items-center gap-2">
+                        <input type="text"
+                               x-model="manualCode"
+                               @keydown.enter.prevent="submitManualVerification()"
+                               maxlength="10"
+                               placeholder="Contoh: AB12CD"
+                               class="input-field text-center font-mono font-bold uppercase tracking-widest text-sm flex-1">
+                        <button type="button"
+                                @click="submitManualVerification()"
+                                :disabled="scanningLoading"
+                                class="btn-primary text-xs px-4 py-2.5 shrink-0 cursor-pointer">
+                            Verifikasi
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ENLARGED QR CODE MODAL SHEET -->
+    <div x-show="qrModalOpen"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-95"
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+         style="display: none;">
+        
+        <div @click.away="closeQrEnlarged()"
+             class="bg-white w-full max-w-sm rounded-3xl shadow-2xl border border-gray-100 p-6 text-center space-y-4">
+            
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold uppercase tracking-wider text-[#1E7A4C] bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                    QR Serah Terima
+                </span>
+                <button type="button" @click="closeQrEnlarged()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-black flex items-center justify-center transition cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <div>
+                <h3 class="font-display font-black text-lg text-[#16251D] leading-snug" x-text="activeQr.title"></h3>
+                <p class="text-xs text-[#1E7A4C] font-semibold mt-1" x-text="`${activeQr.portions} Porsi Disetujui`"></p>
+            </div>
+
+            <!-- Big QR Image -->
+            <div class="p-3 bg-white rounded-2xl border-2 border-[#1E7A4C] shadow-sm flex items-center justify-center">
+                <template x-if="activeQr.dataUrl">
+                    <img :src="activeQr.dataUrl" alt="QR Code Pengambilan" class="w-64 h-64 mx-auto rounded-xl">
+                </template>
+                <template x-if="!activeQr.dataUrl">
+                    <div class="w-64 h-64 flex items-center justify-center text-xs text-[#4E6157]">Membuat QR...</div>
+                </template>
+            </div>
+
+            <!-- Code Readout -->
+            <div class="bg-gray-50 p-2.5 rounded-xl border border-gray-200 text-xs">
+                <span class="text-[#4E6157] block text-[11px]">Kode Manual:</span>
+                <span class="font-mono font-black text-xl tracking-widest text-[#14573A]" x-text="activeQr.code"></span>
+            </div>
+
+            <p class="text-[11px] text-[#4E6157] leading-relaxed">
+                Tunjukkan layar ini kepada pemberi makanan. Pemberi makanan akan memindai QR ini atau memasukkan kode di atas untuk menyelesaikan serah terima.
+            </p>
         </div>
     </div>
 

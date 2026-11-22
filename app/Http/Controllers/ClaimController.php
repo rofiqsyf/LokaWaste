@@ -107,6 +107,87 @@ class ClaimController extends Controller
     }
 
     /**
+     * Smart pickup verification from QR code scan or manual code lookup
+     */
+    public function quickVerify(Request $request)
+    {
+        $user = Auth::user();
+        $rawInput = trim((string) ($request->input('qr_payload') ?? $request->input('pickup_code') ?? ''));
+        $claimId = $request->input('claim_id');
+
+        // Parse LOCABITE:CLAIM:{id}:{code} if scanned from smart QR code
+        $code = $rawInput;
+        if (preg_match('/(?:LOCABITE:CLAIM:)?(\d+):([A-Za-z0-9]+)/i', $rawInput, $matches)) {
+            $claimId = (int) $matches[1];
+            $code = strtoupper($matches[2]);
+        } else {
+            $code = strtoupper(preg_replace('/[^A-Za-z0-9]/', '', $rawInput));
+        }
+
+        if (empty($code)) {
+            $msg = 'Kode atau format QR Code tidak valid.';
+            return $request->wantsJson() ? response()->json(['success' => false, 'message' => $msg], 422) : back()->with('error', $msg);
+        }
+
+        // Find active approved claim belonging to user's listings
+        $query = Claim::with(['listing', 'user'])
+            ->whereHas('listing', fn($q) => $q->where('user_id', $user->id))
+            ->where('status', 'approved');
+
+        if ($claimId) {
+            $query->where('id', $claimId);
+        }
+
+        $claim = $query->where('pickup_code', $code)->first();
+
+        if (!$claim) {
+            // Check if this claim was already picked up
+            $alreadyPickedUp = Claim::whereHas('listing', fn($q) => $q->where('user_id', $user->id))
+                ->where('pickup_code', $code)
+                ->where('status', 'picked_up')
+                ->first();
+
+            if ($alreadyPickedUp) {
+                $time = $alreadyPickedUp->picked_up_at ? $alreadyPickedUp->picked_up_at->format('d M Y H:i') : 'sebelumnya';
+                $msg = "Kode ini sudah pernah diverifikasi pada {$time}.";
+                return $request->wantsJson() ? response()->json(['success' => false, 'message' => $msg], 409) : back()->with('error', $msg);
+            }
+
+            $msg = 'Kode pengambilan tidak cocok dengan daftar makanan Anda yang sedang menunggu serah terima.';
+            return $request->wantsJson() ? response()->json(['success' => false, 'message' => $msg], 404) : back()->with('error', $msg);
+        }
+
+        try {
+            $success = $this->claimService->verifyPickup($claim, $code);
+
+            if ($success) {
+                $msg = "Verifikasi Berhasil! {$claim->portions_approved} porsi \"{$claim->listing->title}\" telah resmi diserahkan kepada {$claim->user->name}.";
+                if ($request->wantsJson()) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => $msg,
+                        'claim' => [
+                            'id' => $claim->id,
+                            'recipient' => $claim->user->name,
+                            'listing_title' => $claim->listing->title,
+                            'portions' => $claim->portions_approved,
+                        ]
+                    ]);
+                }
+                return back()->with('success', $msg);
+            } else {
+                $remaining = max(0, 5 - $claim->refresh()->pickup_attempts);
+                $msg = "Kode ambil salah! Sisa {$remaining} percobaan sebelum terkunci.";
+                return $request->wantsJson() ? response()->json(['success' => false, 'message' => $msg], 422) : back()->with('error', $msg);
+            }
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $e) {
+            return $request->wantsJson() ? response()->json(['success' => false, 'message' => $e->getMessage()], 422) : back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return $request->wantsJson() ? response()->json(['success' => false, 'message' => $e->getMessage()], 422) : back()->with('error', $e->getMessage());
+        }
+    }
+
+    /**
      * API: Pickup details (reveals exact address and coordinates only to approved claimer or owner)
      * SDD 6.5, FR-37, TC-18
      */

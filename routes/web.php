@@ -69,6 +69,7 @@ Route::middleware('auth')->group(function () {
 
     // Claims
     Route::post('/listings/{listing}/claims', [ClaimController::class, 'store'])->name('claims.store');
+    Route::post('/claims/quick-scan', [ClaimController::class, 'quickVerify'])->name('claims.quick-verify');
     Route::post('/claims/{claim}/approve', [ClaimController::class, 'approve'])->name('claims.approve');
     Route::post('/claims/{claim}/reject', [ClaimController::class, 'reject'])->name('claims.reject');
     Route::post('/claims/{claim}/cancel', [ClaimController::class, 'cancel'])->name('claims.cancel');

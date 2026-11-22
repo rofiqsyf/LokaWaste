@@ -1,6 +1,6 @@
 <x-layouts.app title="Dashboard — Locabite">
 
-<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6" x-data="{ tab: '{{ $tab }}' }">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6" x-data="{ tab: '{{ $tab }}', ...qrHandover() }">
 
     <!-- User Welcome & Actions -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-[#D5E0D9] shadow-card">
@@ -17,11 +17,19 @@
             <p class="text-xs text-[#4E6157] mt-1">Satu akun untuk membagikan dan mengambil makanan berlebih.</p>
         </div>
 
-        <div class="flex items-center gap-3">
-            <a href="{{ route('listings.create') }}" class="btn-primary text-xs">
+        <div class="flex flex-wrap items-center gap-2.5">
+            <!-- Camera QR Scanner Button for Seller / Donor -->
+            <button type="button"
+                    @click="openScanner()"
+                    class="btn-secondary text-xs flex items-center gap-1.5 shadow-2xs py-2 px-3.5 bg-emerald-50/60 hover:bg-emerald-100/80 border-emerald-300">
+                <svg class="w-4 h-4 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
+                <span>Scan QR Serah Terima</span>
+            </button>
+
+            <a href="{{ route('listings.create') }}" class="btn-primary text-xs py-2 px-3.5">
                 + Bagikan makanan
             </a>
-            <a href="{{ route('home') }}" class="btn-secondary text-xs">
+            <a href="{{ route('home') }}" class="btn-secondary text-xs py-2 px-3.5">
                 Cari makanan
             </a>
         </div>
@@ -84,26 +92,143 @@
         @endif
     </div>
 
-    <!-- TAB 1: RINGKASAN -->
-    <div x-show="tab === 'ringkasan'" class="space-y-6">
-        <!-- Stats Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div class="bg-white p-5 rounded-3xl border border-[#D5E0D9] shadow-xs">
-                <span class="text-xs text-[#4E6157] block">Porsi Makanan Dibagikan</span>
-                <div class="font-display font-bold text-3xl text-[#1E7A4C] mt-1">{{ $portionsShared }}</div>
-                <span class="text-[11px] text-[#4E6157]">dari {{ $myListings->count() }} postingan</span>
+    <!-- TAB 1: RINGKASAN & ANALITIK DINAMIS REAL-TIME -->
+    <div x-show="tab === 'ringkasan'" x-data="dashboardAnalytics(@json($analyticsData))" class="space-y-6">
+        <!-- Date Filter Control Bar -->
+        <div class="bg-white p-4 sm:p-5 rounded-3xl border border-[#D5E0D9] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-[#1E7A4C] animate-pulse"></span>
+                    <h2 class="font-display font-bold text-base text-[#16251D]">Analitik & Jejak Penyelamatan Pangan</h2>
+                </div>
+                <p class="text-xs text-[#4E6157] mt-0.5">Filter data analitik secara interaktif dan real-time sesuai rentang tanggal.</p>
             </div>
 
-            <div class="bg-white p-5 rounded-3xl border border-[#D5E0D9] shadow-xs">
-                <span class="text-xs text-[#4E6157] block">Porsi Makanan Diambil</span>
-                <div class="font-display font-bold text-3xl text-[#2A6F97] mt-1">{{ $portionsTaken }}</div>
-                <span class="text-[11px] text-[#4E6157]">berhasil diselamatkan</span>
+            <!-- Preset Filter Buttons -->
+            <div class="flex flex-wrap items-center gap-1.5 bg-gray-50 p-1.5 rounded-2xl border border-gray-200/80">
+                <button type="button"
+                        @click="setFilter('7d')"
+                        :class="filter === '7d' ? 'bg-[#1E7A4C] text-white shadow-2xs font-bold' : 'text-[#4E6157] hover:text-[#16251D] hover:bg-white/80 font-medium'"
+                        class="px-3 py-1.5 text-xs rounded-xl transition cursor-pointer">
+                    7 Hari
+                </button>
+                <button type="button"
+                        @click="setFilter('30d')"
+                        :class="filter === '30d' ? 'bg-[#1E7A4C] text-white shadow-2xs font-bold' : 'text-[#4E6157] hover:text-[#16251D] hover:bg-white/80 font-medium'"
+                        class="px-3 py-1.5 text-xs rounded-xl transition cursor-pointer">
+                    30 Hari
+                </button>
+                <button type="button"
+                        @click="setFilter('month')"
+                        :class="filter === 'month' ? 'bg-[#1E7A4C] text-white shadow-2xs font-bold' : 'text-[#4E6157] hover:text-[#16251D] hover:bg-white/80 font-medium'"
+                        class="px-3 py-1.5 text-xs rounded-xl transition cursor-pointer">
+                    Bulan Ini
+                </button>
+                <button type="button"
+                        @click="setFilter('all')"
+                        :class="filter === 'all' ? 'bg-[#1E7A4C] text-white shadow-2xs font-bold' : 'text-[#4E6157] hover:text-[#16251D] hover:bg-white/80 font-medium'"
+                        class="px-3 py-1.5 text-xs rounded-xl transition cursor-pointer">
+                    Semua Waktu
+                </button>
+                <button type="button"
+                        @click="setFilter('custom')"
+                        :class="filter === 'custom' ? 'bg-[#2A6F97] text-white shadow-2xs font-bold' : 'text-[#4E6157] hover:text-[#16251D] hover:bg-white/80 font-medium'"
+                        class="px-3 py-1.5 text-xs rounded-xl transition flex items-center gap-1 cursor-pointer">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    <span>Kustom</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Custom Date Range Picker Sub-bar -->
+        <div x-show="showCustomInputs"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 -translate-y-2"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             class="bg-blue-50/80 p-4 rounded-2xl border border-blue-200/70 flex flex-wrap items-center gap-3">
+            <span class="text-xs font-bold text-[#2A6F97]">Rentang Tanggal Kustom:</span>
+            <div class="flex items-center gap-2 text-xs">
+                <label class="text-[#4E6157]">Dari:</label>
+                <input type="date" x-model="customStart" class="px-2.5 py-1 rounded-lg border border-gray-300 bg-white text-xs font-bold text-[#16251D]">
+            </div>
+            <div class="flex items-center gap-2 text-xs">
+                <label class="text-[#4E6157]">Sampai:</label>
+                <input type="date" x-model="customEnd" class="px-2.5 py-1 rounded-lg border border-gray-300 bg-white text-xs font-bold text-[#16251D]">
+            </div>
+            <button type="button"
+                    @click="applyCustomDates()"
+                    class="px-3 py-1.5 bg-[#2A6F97] hover:bg-[#1E4D6B] text-white rounded-lg text-xs font-bold shadow-2xs transition active:scale-95 cursor-pointer">
+                Terapkan Tanggal
+            </button>
+        </div>
+
+        <!-- Dynamic Responsive Stats Strip -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white p-4 sm:p-5 rounded-3xl border border-[#D5E0D9] shadow-xs">
+                <div class="flex items-center justify-between text-[#4E6157] text-xs mb-1">
+                    <span>Porsi Dibagikan</span>
+                    <svg class="w-4 h-4 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                </div>
+                <div class="font-display font-black text-2xl sm:text-3xl text-[#1E7A4C]" x-text="metrics.portionsShared"></div>
+                <span class="text-[11px] text-[#4E6157]" x-text="`${metrics.totalListings} postingan pada periode ini`"></span>
             </div>
 
-            <div class="bg-white p-5 rounded-3xl border border-[#D5E0D9] shadow-xs">
-                <span class="text-xs text-[#4E6157] block">Klaim Masuk Menunggu</span>
-                <div class="font-display font-bold text-3xl text-[#B45309] mt-1">{{ $incomingPendingClaims->count() }}</div>
-                <span class="text-[11px] text-[#4E6157]">membutuhkan keputusan Anda</span>
+            <div class="bg-white p-4 sm:p-5 rounded-3xl border border-[#D5E0D9] shadow-xs">
+                <div class="flex items-center justify-between text-[#4E6157] text-xs mb-1">
+                    <span>Porsi Diselamatkan</span>
+                    <svg class="w-4 h-4 text-[#2A6F97]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <div class="font-display font-black text-2xl sm:text-3xl text-[#2A6F97]" x-text="metrics.portionsTaken"></div>
+                <span class="text-[11px] text-[#4E6157]">berhasil diambil pemohon</span>
+            </div>
+
+            <div class="bg-white p-4 sm:p-5 rounded-3xl border border-[#D5E0D9] shadow-xs">
+                <div class="flex items-center justify-between text-[#4E6157] text-xs mb-1">
+                    <span>Emisi Karbon Dicegah</span>
+                    <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <div class="font-display font-black text-2xl sm:text-3xl text-emerald-800">
+                    <span x-text="metrics.co2Avoided"></span> <span class="text-xs font-normal text-[#4E6157]">kg CO₂e</span>
+                </div>
+                <span class="text-[11px] text-[#4E6157]">setara mencegah timbunan TPA</span>
+            </div>
+
+            <div class="bg-white p-4 sm:p-5 rounded-3xl border border-[#D5E0D9] shadow-xs">
+                <div class="flex items-center justify-between text-[#4E6157] text-xs mb-1">
+                    <span>Tingkat Keberhasilan</span>
+                    <svg class="w-4 h-4 text-[#B45309]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <div class="font-display font-black text-2xl sm:text-3xl text-[#B45309]">
+                    <span x-text="metrics.completionRate"></span>%
+                </div>
+                <span class="text-[11px] text-[#4E6157]">rasio serah terima sukses</span>
+            </div>
+        </div>
+
+        <!-- Professional Dual Charts Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Chart 1: Daily Trend Line Chart (Wide) -->
+            <div class="lg:col-span-2 bg-white p-5 sm:p-6 rounded-3xl border border-[#D5E0D9] shadow-card space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="font-display font-bold text-base text-[#16251D]">Tren Penyelamatan Pangan Harian</h3>
+                        <p class="text-xs text-[#4E6157] mt-0.5">Perbandingan porsi makanan yang dibagikan dan yang diselamatkan.</p>
+                    </div>
+                </div>
+                <div class="relative h-64 sm:h-72 w-full">
+                    <canvas id="analytics-trend-chart"></canvas>
+                </div>
+            </div>
+
+            <!-- Chart 2: Category Donut Chart -->
+            <div class="bg-white p-5 sm:p-6 rounded-3xl border border-[#D5E0D9] shadow-card space-y-4">
+                <div>
+                    <h3 class="font-display font-bold text-base text-[#16251D]">Distribusi Kategori Pangan</h3>
+                    <p class="text-xs text-[#4E6157] mt-0.5">Proporsi jenis pangan pada periode terpilih.</p>
+                </div>
+                <div class="relative h-64 sm:h-72 w-full flex items-center justify-center">
+                    <canvas id="analytics-category-chart"></canvas>
+                </div>
             </div>
         </div>
 
@@ -114,7 +239,7 @@
                     <span class="text-[10px] font-bold uppercase tracking-wider text-[#1E7A4C] bg-emerald-100 px-2.5 py-0.5 rounded-full inline-block mb-1">
                         Personal Impact Engine & ESG
                     </span>
-                    <h3 class="font-display font-bold text-lg text-[#16251D]">Dampak Penyelamatan Pangan Anda</h3>
+                    <h3 class="font-display font-bold text-lg text-[#16251D]">Dampak Kumulatif Penyelamatan Pangan</h3>
                     <p class="text-xs text-[#4E6157]">Kontribusi nyata Anda terhadap pencegahan emisi karbon dan pelestarian sumber daya bumi.</p>
                 </div>
                 <div class="text-left sm:text-right">
@@ -130,7 +255,7 @@
                         <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         <span class="text-xs font-semibold text-[#4E6157]">Emisi CO₂e Tercegah</span>
                     </div>
-                    <div class="font-display font-bold text-2xl text-[#1E7A4C]">{{ $co2Avoided }} <span class="text-xs font-normal text-[#4E6157]">kg CO₂e</span></div>
+                    <div class="font-display font-bold text-2xl text-[#1E7A4C]"><span x-text="metrics.co2Avoided"></span> <span class="text-xs font-normal text-[#4E6157]">kg CO₂e</span></div>
                     <p class="text-[11px] text-[#4E6157] mt-1">Estimasi 0.85 kg emisi per porsi makanan terbuang.</p>
                 </div>
 
@@ -139,7 +264,7 @@
                         <svg class="w-4 h-4 text-[#2A6F97]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
                         <span class="text-xs font-semibold text-[#4E6157]">Air Bersih Terhemat</span>
                     </div>
-                    <div class="font-display font-bold text-2xl text-[#2A6F97]">{{ number_format($waterSaved, 0, ',', '.') }} <span class="text-xs font-normal text-[#4E6157]">Liter</span></div>
+                    <div class="font-display font-bold text-2xl text-[#2A6F97]"><span x-text="metrics.waterSaved.toLocaleString('id-ID')"></span> <span class="text-xs font-normal text-[#4E6157]">Liter</span></div>
                     <p class="text-[11px] text-[#4E6157] mt-1">Estimasi 320L jejak air pada rantai pasok pangan.</p>
                 </div>
 
@@ -148,7 +273,7 @@
                         <svg class="w-4 h-4 text-[#B45309]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         <span class="text-xs font-semibold text-[#4E6157]">Nilai Ekonomi Pangan</span>
                     </div>
-                    <div class="font-display font-bold text-2xl text-[#B45309]">Rp {{ number_format($economicValue, 0, ',', '.') }}</div>
+                    <div class="font-display font-bold text-2xl text-[#B45309]">Rp <span x-text="metrics.economicValue.toLocaleString('id-ID')"></span></div>
                     <p class="text-[11px] text-[#4E6157] mt-1">Nilai makanan layak yang teralokasikan.</p>
                 </div>
             </div>
@@ -272,13 +397,33 @@
                         </div>
 
                         @if($claim->status === 'approved')
-                            <!-- Big Pickup Code Box -->
-                            <div class="p-4 bg-emerald-50 rounded-2xl border-2 border-[#1E7A4C] text-center">
-                                <span class="text-[11px] text-[#14573A] font-bold block">Tunjukkan kode ini saat mengambil makanan:</span>
-                                <div class="font-mono font-bold text-3xl tracking-widest text-[#14573A] my-1">
-                                    {{ $claim->pickup_code }}
+                            <!-- Smart QR Code & Pickup Code Handover Box -->
+                            <div class="p-4 bg-emerald-50/70 rounded-2xl border-2 border-[#1E7A4C] flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+                                <div class="w-28 h-28 shrink-0 bg-white p-1.5 rounded-2xl border border-emerald-200/80 shadow-2xs flex items-center justify-center cursor-pointer group hover:scale-105 transition-transform"
+                                     @click="openQrEnlarged({{ $claim->id }}, '{{ $claim->pickup_code }}', '{{ addslashes($claim->listing->title) }}', {{ $claim->portions_approved ?? $claim->portions_requested }})"
+                                     title="Ketuk untuk perbesar QR Code">
+                                    <div data-locabite-qr="LOCABITE:CLAIM:{{ $claim->id }}:{{ $claim->pickup_code }}" class="w-full h-full flex items-center justify-center">
+                                        <div class="w-5 h-5 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
+                                    </div>
                                 </div>
-                                <span class="text-xs text-[#4E6157] block">{{ $claim->listing->pickup_address }}</span>
+                                <div class="flex-1 min-w-0 space-y-1.5">
+                                    <span class="text-[11px] font-bold text-[#14573A] block">Tunjukkan QR atau Kode kepada Pemberi:</span>
+                                    <div class="flex items-center justify-center sm:justify-start gap-2">
+                                        <div class="font-mono font-black text-2xl tracking-widest text-[#14573A] bg-white px-3 py-0.5 rounded-lg border border-emerald-200/80">
+                                            {{ $claim->pickup_code }}
+                                        </div>
+                                        <button type="button" @click="navigator.clipboard.writeText('{{ $claim->pickup_code }}'); alert('Kode pengambilan disalin!')" class="p-1.5 rounded-lg text-[#1E7A4C] bg-white hover:bg-emerald-100 border border-emerald-200 transition cursor-pointer" title="Salin kode">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                                        </button>
+                                    </div>
+                                    <button type="button"
+                                            @click="openQrEnlarged({{ $claim->id }}, '{{ $claim->pickup_code }}', '{{ addslashes($claim->listing->title) }}', {{ $claim->portions_approved ?? $claim->portions_requested }})"
+                                            class="text-xs font-bold text-[#1E7A4C] hover:text-[#14573A] flex items-center justify-center sm:justify-start gap-1 cursor-pointer">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+                                        <span>Perbesar QR Layar Penuh</span>
+                                    </button>
+                                    <span class="text-[11px] text-[#4E6157] block truncate">{{ $claim->listing->pickup_address }}</span>
+                                </div>
                             </div>
                         @endif
 
@@ -309,11 +454,11 @@
                             <div>
                                 <label class="text-xs font-semibold block mb-1">Rating (1-5)</label>
                                 <select name="rating" class="input-field text-xs" required>
-                                    <option value="5">⭐⭐⭐⭐⭐ Sangat Baik & Bersih</option>
-                                    <option value="4">⭐⭐⭐⭐ Baik</option>
-                                    <option value="3">⭐⭐⭐ Cukup</option>
-                                    <option value="2">⭐⭐ Kurang</option>
-                                    <option value="1">⭐ Buruk</option>
+                                    <option value="5">5 Bintang - Sangat Baik & Bersih</option>
+                                    <option value="4">4 Bintang - Baik</option>
+                                    <option value="3">3 Bintang - Cukup</option>
+                                    <option value="2">2 Bintang - Kurang</option>
+                                    <option value="1">1 Bintang - Buruk</option>
                                 </select>
                             </div>
                             <div>
@@ -391,6 +536,148 @@
             @endif
         </div>
     @endif
+
+    <!-- SMART CAMERA QR SCANNER MODAL SHEET -->
+    <div x-show="scannerOpen"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+         style="display: none;">
+        
+        <div @click.away="closeScanner()"
+             class="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-gray-100 overflow-hidden flex flex-col max-h-[90vh]">
+            
+            <!-- Header -->
+            <div class="p-4 sm:p-5 border-b border-gray-100 flex items-center justify-between bg-gray-50/70">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-xl bg-emerald-100 text-[#1E7A4C] flex items-center justify-center">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="font-display font-bold text-sm text-[#16251D]">Scan QR Pengambilan Makanan</h3>
+                        <p class="text-[11px] text-[#4E6157]">Arahkan kamera ke QR Code di layar pemohon</p>
+                    </div>
+                </div>
+
+                <button type="button" @click="closeScanner()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-black flex items-center justify-center transition cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <!-- Scanner Viewport Body -->
+            <div class="p-4 sm:p-5 space-y-4 overflow-y-auto">
+                <!-- Camera Box -->
+                <div class="relative w-full aspect-square bg-gray-900 rounded-2xl overflow-hidden border-2 border-emerald-500/40 shadow-inner flex items-center justify-center">
+                    <div id="qr-camera-stream" class="w-full h-full"></div>
+
+                    <!-- Scanning Reticle Overlay -->
+                    <div class="absolute inset-0 pointer-events-none flex items-center justify-center">
+                        <div class="w-52 h-52 border-2 border-emerald-400 rounded-2xl relative shadow-[0_0_0_9999px_rgba(0,0,0,0.35)]">
+                            <div class="absolute -top-1 -left-1 w-5 h-5 border-t-4 border-l-4 border-emerald-400 rounded-tl-lg"></div>
+                            <div class="absolute -top-1 -right-1 w-5 h-5 border-t-4 border-r-4 border-emerald-400 rounded-tr-lg"></div>
+                            <div class="absolute -bottom-1 -left-1 w-5 h-5 border-b-4 border-l-4 border-emerald-400 rounded-bl-lg"></div>
+                            <div class="absolute -bottom-1 -right-1 w-5 h-5 border-b-4 border-r-4 border-emerald-400 rounded-br-lg"></div>
+                            <div class="w-full h-0.5 bg-emerald-400/80 shadow-[0_0_8px_#34d399] absolute top-1/2 -translate-y-1/2 animate-pulse"></div>
+                        </div>
+                    </div>
+
+                    <!-- Loading / Processing indicator -->
+                    <div x-show="scanningLoading" class="absolute inset-0 bg-black/75 flex flex-col items-center justify-center text-white space-y-2 z-10">
+                        <div class="w-8 h-8 border-3 border-emerald-400 border-t-transparent rounded-full animate-spin"></div>
+                        <span class="text-xs font-bold">Memverifikasi Serah Terima...</span>
+                    </div>
+                </div>
+
+                <!-- Success Message Banner -->
+                <div x-show="scanSuccessMessage" class="p-3.5 bg-emerald-50 border border-emerald-300 rounded-xl text-emerald-900 text-xs font-bold flex items-center gap-2">
+                    <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                    <span x-text="scanSuccessMessage"></span>
+                </div>
+
+                <!-- Error Message Banner -->
+                <div x-show="scanErrorMessage" class="p-3.5 bg-red-50 border border-red-200 rounded-xl text-red-800 text-xs flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-red-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <span x-text="scanErrorMessage"></span>
+                    </div>
+                    <button type="button" @click="scanErrorMessage = null" class="text-red-700 font-bold">&times;</button>
+                </div>
+
+                <!-- Manual Code Input Section (Fallback / Alternative) -->
+                <div class="bg-gray-50 rounded-2xl p-3.5 border border-gray-200/80 space-y-2">
+                    <span class="text-xs font-bold text-[#16251D] block">Atau Masukkan Kode 6-Digit Manual:</span>
+                    <div class="flex items-center gap-2">
+                        <input type="text"
+                               x-model="manualCode"
+                               @keydown.enter.prevent="submitManualVerification()"
+                               maxlength="10"
+                               placeholder="Contoh: AB12CD"
+                               class="input-field text-center font-mono font-bold uppercase tracking-widest text-sm flex-1">
+                        <button type="button"
+                                @click="submitManualVerification()"
+                                :disabled="scanningLoading"
+                                class="btn-primary text-xs px-4 py-2.5 shrink-0 cursor-pointer">
+                            Verifikasi
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ENLARGED QR CODE MODAL SHEET -->
+    <div x-show="qrModalOpen"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-95"
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+         style="display: none;">
+        
+        <div @click.away="closeQrEnlarged()"
+             class="bg-white w-full max-w-sm rounded-3xl shadow-2xl border border-gray-100 p-6 text-center space-y-4">
+            
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold uppercase tracking-wider text-[#1E7A4C] bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                    QR Serah Terima
+                </span>
+                <button type="button" @click="closeQrEnlarged()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-black flex items-center justify-center transition cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <div>
+                <h3 class="font-display font-black text-lg text-[#16251D] leading-snug" x-text="activeQr.title"></h3>
+                <p class="text-xs text-[#1E7A4C] font-semibold mt-1" x-text="`${activeQr.portions} Porsi Disetujui`"></p>
+            </div>
+
+            <!-- Big QR Image -->
+            <div class="p-3 bg-white rounded-2xl border-2 border-[#1E7A4C] shadow-sm flex items-center justify-center">
+                <template x-if="activeQr.dataUrl">
+                    <img :src="activeQr.dataUrl" alt="QR Code Pengambilan" class="w-64 h-64 mx-auto rounded-xl">
+                </template>
+                <template x-if="!activeQr.dataUrl">
+                    <div class="w-64 h-64 flex items-center justify-center text-xs text-[#4E6157]">Membuat QR...</div>
+                </template>
+            </div>
+
+            <!-- Code Readout -->
+            <div class="bg-gray-50 p-2.5 rounded-xl border border-gray-200 text-xs">
+                <span class="text-[#4E6157] block text-[11px]">Kode Manual:</span>
+                <span class="font-mono font-black text-xl tracking-widest text-[#14573A]" x-text="activeQr.code"></span>
+            </div>
+
+            <p class="text-[11px] text-[#4E6157] leading-relaxed">
+                Tunjukkan layar ini kepada pemberi makanan. Pemberi makanan akan memindai QR ini atau memasukkan kode di atas untuk menyelesaikan serah terima.
+            </p>
+        </div>
+    </div>
 
 </div>
 

@@ -62,6 +62,32 @@ class DashboardController extends Controller
                 ->get();
         }
 
+        // Granular dataset for real-time dynamic date-filtered analytics charts
+        $analyticsData = [
+            'listings' => $myListings->map(fn($l) => [
+                'id' => $l->id,
+                'title' => $l->title,
+                'category' => $l->category?->name ?? 'Lainnya',
+                'portions_total' => (int) $l->portions_total,
+                'portions_left' => (int) $l->portions_left,
+                'portions_shared' => (int) $l->portions_total,
+                'portions_taken' => (int) max(0, $l->portions_total - $l->portions_left),
+                'date' => $l->created_at->format('Y-m-d'),
+                'created_at' => $l->created_at->toIso8601String(),
+                'status' => $l->status,
+            ])->values(),
+            'claims' => $myClaims->map(fn($c) => [
+                'id' => $c->id,
+                'listing_title' => $c->listing?->title ?? 'Makanan',
+                'category' => $c->listing?->category?->name ?? 'Lainnya',
+                'portions' => (int) ($c->portions_approved ?? $c->portions_requested),
+                'status' => $c->status,
+                'date' => $c->created_at->format('Y-m-d'),
+                'created_at' => $c->created_at->toIso8601String(),
+                'picked_up_at' => $c->picked_up_at?->toIso8601String(),
+            ])->values(),
+        ];
+
         return view('dashboard.index', compact(
             'user',
             'tab',
@@ -74,7 +100,8 @@ class DashboardController extends Controller
             'incomingPendingClaims',
             'myListings',
             'myClaims',
-            'myCampaigns'
+            'myCampaigns',
+            'analyticsData'
         ));
     }
 }

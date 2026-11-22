@@ -1,6 +1,6 @@
 <x-layouts.app title="Locabite — Peta Makanan Berlebih & Penyelamat Pangan">
 
-<div x-data="homeMap()" x-init="init()" class="relative flex-1 flex flex-col lg:flex-row h-[calc(100vh-4rem)] w-full max-w-full overflow-hidden">
+<div x-data="homeMap()" x-init="init()" class="relative flex-1 flex flex-col lg:flex-row h-[calc(100dvh-4rem)] lg:h-[calc(100vh-4rem)] w-full max-w-full overflow-hidden">
 
     <!-- Top Floating Filter & Search Bar on Map (Google Maps / Apple Maps Class) -->
     <div class="absolute top-3 inset-x-3 md:inset-x-6 z-20 pointer-events-none flex flex-col gap-2 max-w-2xl mx-auto">
@@ -347,7 +347,7 @@
         </div>
 
         <!-- LIST CONTAINER -->
-        <div class="flex-1 overflow-y-auto p-3 space-y-3">
+        <div id="sidebar-cards-container" class="flex-1 overflow-y-auto p-3 space-y-3">
             <!-- Loading Skeleton -->
             <template x-if="loading">
                 <div class="space-y-3">
@@ -880,12 +880,21 @@
                                          x-text="activePlace.my_claim.pickup_code || '---'"></div>
                                     <button type="button"
                                             @click="copyAddress(activePlace.my_claim.pickup_code)"
-                                            class="p-1.5 rounded-lg bg-gray-100 hover:bg-emerald-100 text-[#1E7A4C] transition"
+                                            class="p-1.5 rounded-lg bg-gray-100 hover:bg-emerald-100 text-[#1E7A4C] transition cursor-pointer"
                                             title="Salin Kode Pengambilan">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                                     </button>
                                 </div>
-                                <span class="text-xs text-[#1E7A4C] font-bold block" x-text="`Disetujui: ${activePlace.my_claim.portions_approved} porsi`"></span>
+                                <div class="flex items-center justify-center gap-2 pt-1">
+                                    <span class="text-xs text-[#1E7A4C] font-bold" x-text="`Disetujui: ${activePlace.my_claim.portions_approved} porsi`"></span>
+                                    <span class="text-[#88998F]">&bull;</span>
+                                    <button type="button"
+                                            @click="showClaimQr(activePlace.my_claim.id, activePlace.my_claim.pickup_code, activePlace.title, activePlace.my_claim.portions_approved)"
+                                            class="text-xs font-bold text-[#2A6F97] hover:underline flex items-center gap-1 cursor-pointer">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
+                                        Buka QR Cerdas
+                                    </button>
+                                </div>
                             </div>
                         </template>
                     </div>
@@ -1266,6 +1275,56 @@
         </div>
     </div>
 
+    <!-- ENLARGED SMART QR CODE MODAL SHEET FOR MAP VIEW -->
+    <div x-show="claimQrModalOpen"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-95"
+         class="fixed inset-0 z-[1300] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+         style="display: none;">
+        
+        <div @click.away="closeClaimQr()"
+             class="bg-white w-full max-w-sm rounded-3xl shadow-2xl border border-gray-100 p-6 text-center space-y-4">
+            
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold uppercase tracking-wider text-[#1E7A4C] bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                    QR Serah Terima
+                </span>
+                <button type="button" @click="closeClaimQr()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-black flex items-center justify-center transition cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <div>
+                <h3 class="font-display font-black text-lg text-[#16251D] leading-snug" x-text="activeClaimQr.title"></h3>
+                <p class="text-xs text-[#1E7A4C] font-semibold mt-1" x-text="`${activeClaimQr.portions} Porsi Disetujui`"></p>
+            </div>
+
+            <!-- Big QR Image -->
+            <div class="p-3 bg-white rounded-2xl border-2 border-[#1E7A4C] shadow-sm flex items-center justify-center">
+                <template x-if="activeClaimQr.dataUrl">
+                    <img :src="activeClaimQr.dataUrl" alt="QR Code Pengambilan" class="w-64 h-64 mx-auto rounded-xl">
+                </template>
+                <template x-if="!activeClaimQr.dataUrl">
+                    <div class="w-64 h-64 flex items-center justify-center text-xs text-[#4E6157]">Membuat QR...</div>
+                </template>
+            </div>
+
+            <!-- Code Readout -->
+            <div class="bg-gray-50 p-2.5 rounded-xl border border-gray-200 text-xs">
+                <span class="text-[#4E6157] block text-[11px]">Kode Manual:</span>
+                <span class="font-mono font-black text-xl tracking-widest text-[#14573A]" x-text="activeClaimQr.code"></span>
+            </div>
+
+            <p class="text-[11px] text-[#4E6157] leading-relaxed">
+                Tunjukkan layar ini kepada pemberi makanan untuk dipindai atau diverifikasi kodenya di lokasi penjemputan.
+            </p>
+        </div>
+    </div>
+
 </div>
 
 @push('scripts')
@@ -1319,6 +1378,8 @@ document.addEventListener('alpine:init', () => {
         navSteps: [],
         navStepIndex: 0,
         lastNavUpdateCoord: null,
+        claimQrModalOpen: false,
+        activeClaimQr: { title: '', code: '', portions: 1, dataUrl: null },
 
         get activePlaceEstimate() {
             const place = this.activePlace || this.searchedPlace;
@@ -1391,6 +1452,7 @@ document.addEventListener('alpine:init', () => {
         resizeObserver: null,
 
         init() {
+            window.scrollTo(0, 0);
             this.initMap();
             this.loadData();
             this.reverseGeocodeLabel(this.userLat, this.userLng);
@@ -1797,9 +1859,11 @@ document.addEventListener('alpine:init', () => {
             if (this.markersById && this.markersById[item.id]) {
                 this.markersById[item.id].openPopup();
             }
+            const container = document.getElementById('sidebar-cards-container');
             const card = document.getElementById(`card-${item.id}`);
-            if (card) {
-                card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            if (container && card) {
+                const cardTop = card.offsetTop - container.offsetTop;
+                container.scrollTo({ top: Math.max(0, cardTop - 12), behavior: 'smooth' });
             }
         },
 
@@ -2216,6 +2280,39 @@ document.addEventListener('alpine:init', () => {
             const nextIdx = (steps.indexOf(this.radius) + 1) % steps.length;
             this.radius = steps[nextIdx];
             this.loadData();
+        },
+
+        async showClaimQr(claimId, code, title, portions) {
+            if (!code) return;
+            this.activeClaimQr = {
+                id: claimId,
+                code: code,
+                title: title || 'Pengambilan Makanan',
+                portions: portions || 1,
+                dataUrl: null
+            };
+            this.claimQrModalOpen = true;
+
+            if (window.QRCode) {
+                try {
+                    const text = `LOCABITE:CLAIM:${claimId}:${code}`;
+                    this.activeClaimQr.dataUrl = await window.QRCode.toDataURL(text, {
+                        width: 260,
+                        margin: 1,
+                        color: {
+                            dark: '#14573A',
+                            light: '#FFFFFF'
+                        }
+                    });
+                } catch (e) {
+                    console.error('QR generation error:', e);
+                }
+            }
+        },
+
+        closeClaimQr() {
+            this.claimQrModalOpen = false;
+            this.activeClaimQr = { title: '', code: '', portions: 1, dataUrl: null };
         },
 
         async copyAddress(address) {
