@@ -519,8 +519,86 @@
     <div class="flex-1 min-w-0 order-1 lg:order-2 h-full relative z-0 overflow-hidden">
         <div id="locabite-map" class="h-full w-full relative z-0 isolate"></div>
 
+        <!-- GOOGLE MAPS LIVE TURN-BY-TURN NAVIGATION HUD (Like Google Maps) -->
+        <div x-show="isNavigating"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 -translate-y-full"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 -translate-y-full"
+             class="absolute top-0 inset-x-0 z-[1200] pointer-events-auto bg-[#14573A] text-white shadow-2xl border-b border-emerald-400/30">
+            <div class="max-w-3xl mx-auto p-3.5 sm:p-4 flex items-center justify-between gap-3 sm:gap-4">
+                <!-- Maneuver Direction Icon -->
+                <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white/15 flex items-center justify-center shrink-0 border border-white/20">
+                    <template x-if="navCurrentManeuver.modifier.includes('right')">
+                        <svg class="w-6 h-6 sm:w-7 sm:h-7 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7M16 12H3"/>
+                        </svg>
+                    </template>
+                    <template x-if="navCurrentManeuver.modifier.includes('left')">
+                        <svg class="w-6 h-6 sm:w-7 sm:h-7 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7M8 12h13"/>
+                        </svg>
+                    </template>
+                    <template x-if="!navCurrentManeuver.modifier.includes('left') && !navCurrentManeuver.modifier.includes('right')">
+                        <svg class="w-6 h-6 sm:w-7 sm:h-7 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+                        </svg>
+                    </template>
+                </div>
+
+                <!-- Maneuver Text & Distance -->
+                <div class="min-w-0 flex-1">
+                    <div class="flex items-baseline gap-1.5 sm:gap-2">
+                        <span class="font-display font-black text-xl sm:text-2xl tracking-tight text-white" x-text="navCurrentManeuver.distLabel"></span>
+                        <span class="text-xs text-emerald-200 uppercase tracking-wider font-bold">lagi</span>
+                    </div>
+                    <p class="font-bold text-xs sm:text-sm text-emerald-100 truncate mt-0.5" x-text="navCurrentManeuver.instruction"></p>
+                </div>
+
+                <!-- Live Speed Meter -->
+                <div class="text-right shrink-0">
+                    <div class="text-[10px] sm:text-[11px] font-semibold text-emerald-200">Kecepatan</div>
+                    <div class="font-mono font-bold text-base sm:text-lg text-white" x-text="`${navSpeedKmh} km/h`"></div>
+                </div>
+            </div>
+
+            <!-- Bottom Sub-bar: Remaining Stats & Exit -->
+            <div class="bg-[#0F3B24] px-4 py-2 flex items-center justify-between text-xs">
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <div class="flex items-center gap-1.5 font-bold text-emerald-300">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                        <span x-text="`${routeInfo?.durationMin || 1} mnt`"></span>
+                    </div>
+                    <span class="text-emerald-400/50">•</span>
+                    <span class="text-emerald-100" x-text="`${routeInfo?.distanceKm || 0} km`"></span>
+                    <span class="text-emerald-400/50">•</span>
+                    <span class="text-emerald-200 text-[11px]" x-text="`Tiba ~${navEtaFormatted}`"></span>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <button type="button"
+                            @click="centerNavCamera()"
+                            class="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white text-[11px] font-bold transition flex items-center gap-1 cursor-pointer">
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <circle cx="12" cy="12" r="7" stroke-width="2"/>
+                            <circle cx="12" cy="12" r="3" fill="currentColor"/>
+                        </svg>
+                        <span class="hidden sm:inline">Pusatkan</span>
+                    </button>
+                    <button type="button"
+                            @click="stopNavigation()"
+                            class="px-3 py-1 rounded-lg bg-red-600/90 hover:bg-red-600 text-white text-xs font-bold shadow-sm transition active:scale-95 flex items-center gap-1 cursor-pointer">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                        <span>Selesai</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- Floating Active Route HUD (Navigation like Google Maps) -->
-        <div x-show="routeInfo"
+        <div x-show="routeInfo && !isNavigating"
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0 -translate-y-4 scale-95"
              x-transition:enter-end="opacity-100 translate-y-0 scale-100"
@@ -579,19 +657,27 @@
                 </div>
             </div>
 
-            <!-- Route Actions Bar -->
+            <!-- Route Actions Bar: Mulai Tracking + External Navigation -->
             <div class="flex items-center gap-2 pt-1">
+                <button type="button"
+                        @click="startNavigation(routeTarget, routeMode)"
+                        class="flex-1 py-2.5 px-4 rounded-xl bg-[#1E7A4C] hover:bg-[#14573A] text-white text-xs font-black flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition active:scale-95 cursor-pointer">
+                    <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24">
+                        <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/>
+                    </svg>
+                    <span>Mulai</span>
+                </button>
                 <a :href="'https://www.google.com/maps/dir/?api=1&origin=' + userLat + ',' + userLng + '&destination=' + (routeTarget?.lat || '') + ',' + (routeTarget?.lng || '') + '&travelmode=' + (routeMode === 'walking' ? 'walking' : 'driving')"
                    target="_blank"
-                   class="flex-1 btn-primary py-2 text-xs flex items-center justify-center gap-1.5 shadow-xs">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-                    </svg>
-                    <span>Buka Suara di Google Maps</span>
+                   class="px-3 py-2.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-[#2A6F97] font-bold text-xs flex items-center gap-1.5 border border-blue-200 transition active:scale-95"
+                   title="Buka Aplikasi Google Maps Eksternal">
+                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                    <span>Google Maps</span>
                 </a>
                 <button @click="openPlaceDetail(routeTarget)"
-                        class="px-3 py-2 rounded-xl text-xs font-bold text-[#16251D] bg-gray-100 hover:bg-gray-200 transition">
-                    Lihat Alamat
+                        class="px-3 py-2.5 rounded-xl text-xs font-bold text-[#16251D] bg-gray-100 hover:bg-gray-200 transition"
+                        title="Lihat Detail Alamat">
+                    Detail
                 </button>
             </div>
         </div>
@@ -694,6 +780,49 @@
                     </div>
                 </template>
 
+                <!-- Google Maps Vehicle & Travel Estimates Card (Google Maps Style) -->
+                <div class="bg-linear-to-r from-emerald-50/80 via-emerald-50/50 to-white rounded-2xl p-3.5 border border-emerald-200/80 space-y-2.5">
+                    <div class="flex items-center justify-between text-xs">
+                        <!-- Driving Estimate -->
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <div class="w-8 h-8 rounded-xl bg-[#1E7A4C] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h8m-9 4h10M5 16h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v7a2 2 0 002 2zm2 0v2m10-2v2"/>
+                                </svg>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="flex items-baseline gap-1.5">
+                                    <span class="font-display font-black text-sm sm:text-base text-[#14573A]" x-text="activePlaceEstimate.drivingTime"></span>
+                                    <span class="text-xs font-bold text-[#4E6157]" x-text="`(${activePlaceEstimate.distanceKm} km)`"></span>
+                                </div>
+                                <span class="text-[10px] text-emerald-800 font-semibold flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    <span>Rute Tercepat • Kendaraan</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Walking Estimate -->
+                        <div class="text-right border-l border-emerald-200/60 pl-3 shrink-0">
+                            <span class="text-[10px] text-[#4E6157] font-medium block">Jalan Kaki</span>
+                            <div class="text-xs font-bold text-[#2A6F97] flex items-center justify-end gap-1">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7a2 2 0 11-4 0 2 2 0 014 0zM9 14l2-4 3 2 1 4m-4-2v6m-2 0h4"/></svg>
+                                <span x-text="activePlaceEstimate.walkingTime"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Direct "Mulai" Button (Auto Follows Movement) -->
+                    <button type="button"
+                            @click="startNavigation(activePlace, 'driving')"
+                            class="w-full py-2.5 px-3 rounded-xl bg-[#1E7A4C] hover:bg-[#14573A] text-white text-xs font-black flex items-center justify-center gap-2 shadow-xs hover:shadow-md transition active:scale-95 cursor-pointer">
+                        <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24">
+                            <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/>
+                        </svg>
+                        <span>Mulai Navigasi (Ikuti Pergerakan Saya)</span>
+                    </button>
+                </div>
+
                 <!-- Grid Feature Action Buttons (Google Maps Class) -->
                 <div class="grid grid-cols-2 gap-2 pt-1">
                     <!-- 1. Road Routing Polyline in Leaflet OSM -->
@@ -779,6 +908,44 @@
                 <div>
                     <h2 class="font-display font-black text-lg text-[#16251D] leading-snug" x-text="searchedPlace?.title"></h2>
                     <p class="text-xs text-[#4E6157] mt-1 leading-relaxed" x-text="searchedPlace?.subtitle"></p>
+                </div>
+
+                <!-- Google Maps Vehicle & Travel Estimates Card (Google Maps Style) -->
+                <div class="bg-linear-to-r from-emerald-50/80 via-emerald-50/50 to-white rounded-2xl p-3.5 border border-emerald-200/80 space-y-2.5">
+                    <div class="flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <div class="w-8 h-8 rounded-xl bg-[#1E7A4C] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h8m-9 4h10M5 16h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v7a2 2 0 002 2zm2 0v2m10-2v2"/>
+                                </svg>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="flex items-baseline gap-1.5">
+                                    <span class="font-display font-black text-sm sm:text-base text-[#14573A]" x-text="activePlaceEstimate.drivingTime"></span>
+                                    <span class="text-xs font-bold text-[#4E6157]" x-text="`(${activePlaceEstimate.distanceKm} km)`"></span>
+                                </div>
+                                <span class="text-[10px] text-emerald-800 font-semibold flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    <span>Rute Tercepat • Kendaraan</span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="text-right border-l border-emerald-200/60 pl-3 shrink-0">
+                            <span class="text-[10px] text-[#4E6157] font-medium block">Jalan Kaki</span>
+                            <div class="text-xs font-bold text-[#2A6F97] flex items-center justify-end gap-1">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7a2 2 0 11-4 0 2 2 0 014 0zM9 14l2-4 3 2 1 4m-4-2v6m-2 0h4"/></svg>
+                                <span x-text="activePlaceEstimate.walkingTime"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button"
+                            @click="startNavigation(searchedPlace, 'driving')"
+                            class="w-full py-2.5 px-3 rounded-xl bg-[#1E7A4C] hover:bg-[#14573A] text-white text-xs font-black flex items-center justify-center gap-2 shadow-xs hover:shadow-md transition active:scale-95 cursor-pointer">
+                        <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24">
+                            <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/>
+                        </svg>
+                        <span>Mulai Navigasi Langsung</span>
+                    </button>
                 </div>
 
                 <!-- Google Maps Actions Grid -->
@@ -994,6 +1161,79 @@ document.addEventListener('alpine:init', () => {
         routeInfo: null,
         routeTarget: null,
         routeMode: 'driving', // 'driving' or 'walking'
+        isNavigating: false,
+        navWatchId: null,
+        navSpeedKmh: 0,
+        navHeading: 0,
+        navSteps: [],
+        navStepIndex: 0,
+        lastNavUpdateCoord: null,
+
+        get activePlaceEstimate() {
+            const place = this.activePlace || this.searchedPlace;
+            if (!place) return { distanceKm: '0.0', drivingTime: '~0 mnt', walkingTime: '~0 mnt' };
+
+            let dist = 1.0;
+            if (this.userLat && this.userLng && place.lat && place.lng) {
+                const dLat = (place.lat - this.userLat) * (Math.PI / 180);
+                const dLng = (place.lng - this.userLng) * (Math.PI / 180);
+                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                          Math.cos(this.userLat * (Math.PI / 180)) * Math.cos(place.lat * (Math.PI / 180)) *
+                          Math.sin(dLng / 2) * Math.sin(dLng / 2);
+                dist = 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            } else if (place.distance_km) {
+                dist = Number(place.distance_km);
+            }
+
+            const roadDistKm = Math.max(0.2, dist * 1.3);
+            const drivingMin = Math.max(1, Math.round((roadDistKm / 28) * 60));
+            const walkingMin = Math.max(1, Math.round((roadDistKm / 4.5) * 60));
+
+            return {
+                distanceKm: roadDistKm < 10 ? roadDistKm.toFixed(1) : Math.round(roadDistKm),
+                drivingTime: `~${drivingMin} mnt`,
+                walkingTime: `~${walkingMin} mnt`,
+                rawDistKm: dist
+            };
+        },
+
+        get navCurrentManeuver() {
+            if (this.navSteps && this.navSteps.length > 0 && this.navSteps[this.navStepIndex]) {
+                const s = this.navSteps[this.navStepIndex];
+                const modifier = s.maneuver?.modifier || 'straight';
+                const type = s.maneuver?.type || 'turn';
+                const street = s.name ? `ke ${s.name}` : (this.routeTarget?.title ? `ke ${this.routeTarget.title}` : 'menuju tujuan');
+                
+                let distMeters = Math.round(s.distance || 50);
+                let distLabel = distMeters >= 1000 ? `${(distMeters / 1000).toFixed(1)} km` : `${distMeters} m`;
+                
+                let instruction = 'Lurus terus ' + street;
+                if (type === 'depart') instruction = 'Mulai perjalanan ' + street;
+                else if (type === 'arrive') instruction = 'Tiba di lokasi tujuan ' + (this.routeTarget?.title || '');
+                else if (modifier.includes('right')) instruction = 'Belok kanan ' + street;
+                else if (modifier.includes('left')) instruction = 'Belok kiri ' + street;
+                else if (modifier.includes('straight')) instruction = 'Lurus terus ' + street;
+
+                return {
+                    modifier: modifier,
+                    type: type,
+                    distLabel: distLabel,
+                    instruction: instruction
+                };
+            }
+            return {
+                modifier: 'straight',
+                type: 'turn',
+                distLabel: '50 m',
+                instruction: 'Lurus terus menuju titik penjemputan ' + (this.routeTarget?.title || '')
+            };
+        },
+
+        get navEtaFormatted() {
+            const minutes = this.routeInfo?.durationMin || 5;
+            const eta = new Date(Date.now() + minutes * 60 * 1000);
+            return eta.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
+        },
         toastMessage: null,
         toastTimer: null,
         pollTimer: null,
@@ -1119,17 +1359,26 @@ document.addEventListener('alpine:init', () => {
             if (this.userMarker) this.map.removeLayer(this.userMarker);
             if (this.userRadiusCircle) this.map.removeLayer(this.userRadiusCircle);
 
-            // Draggable custom center marker
+            // Draggable custom center marker / Navigation puck
             const userIcon = L.divIcon({
-                className: 'custom-user-marker',
-                html: `
+                className: this.isNavigating ? 'custom-nav-puck' : 'custom-user-marker',
+                html: this.isNavigating ? `
+                    <div style="position:relative; width: 32px; height: 32px; display:flex; align-items:center; justify-content:center;">
+                        <span style="position:absolute; width: 100%; height: 100%; border-radius: 50%; background: #1E7A4C; opacity: 0.35; animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;"></span>
+                        <div style="width: 22px; height: 22px; border-radius: 50%; background: #1E7A4C; border: 3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.35); display:flex; align-items:center; justify-content:center; color: white;">
+                            <svg style="width: 12px; height: 12px; transform: rotate(${this.navHeading || 0}deg); transition: transform 0.3s ease;" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/>
+                            </svg>
+                        </div>
+                    </div>
+                ` : `
                     <div style="position:relative; width: 22px; height: 22px; display:flex; align-items:center; justify-content:center;">
                         <span style="position:absolute; width: 100%; height: 100%; border-radius: 50%; background: #2A6F97; opacity: 0.4; animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;"></span>
                         <div style="width: 14px; height: 14px; border-radius: 50%; background: #2A6F97; border: 3px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.3);"></div>
                     </div>
                 `,
-                iconSize: [22, 22],
-                iconAnchor: [11, 11]
+                iconSize: this.isNavigating ? [32, 32] : [22, 22],
+                iconAnchor: this.isNavigating ? [16, 16] : [11, 11]
             });
 
             this.userMarker = L.marker([this.userLat, this.userLng], {
@@ -1376,7 +1625,7 @@ document.addEventListener('alpine:init', () => {
             try {
                 // Query OpenStreetMap OSRM routing engine API
                 const osrmProfile = mode === 'walking' ? 'walking' : 'driving';
-                const osrmUrl = `https://router.project-osrm.org/route/v1/${osrmProfile}/${startLng},${startLat};${endLng},${endLat}?overview=full&geometries=geojson`;
+                const osrmUrl = `https://router.project-osrm.org/route/v1/${osrmProfile}/${startLng},${startLat};${endLng},${endLat}?overview=full&geometries=geojson&steps=true`;
 
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 6000);
@@ -1399,6 +1648,10 @@ document.addEventListener('alpine:init', () => {
                             durationMin: durationMin,
                             mode: mode
                         };
+
+                        if (r.legs && r.legs[0] && r.legs[0].steps) {
+                            this.navSteps = r.legs[0].steps;
+                        }
 
                         // Draw outer casing shadow line for high contrast
                         const casing = L.polyline(coords, {
@@ -1463,6 +1716,136 @@ document.addEventListener('alpine:init', () => {
             }
         },
 
+        async startNavigation(target = null, mode = 'driving') {
+            const item = target || this.routeTarget || this.activePlace || this.searchedPlace;
+            if (!item) return;
+
+            // Close sheet popups
+            this.activePlace = null;
+            this.searchedPlace = null;
+
+            // Draw route first if not already drawn
+            if (!this.routeInfo || this.routeTarget?.lat !== item.lat || this.routeTarget?.lng !== item.lng) {
+                await this.drawRoute(item, mode);
+            }
+
+            this.isNavigating = true;
+            this.navStepIndex = 0;
+            this.updateUserMarker();
+
+            // Zoom in on user for navigation
+            this.map.setView([this.userLat, this.userLng], 17, { animate: true });
+
+            // Start Geolocation watchPosition
+            if (navigator.geolocation) {
+                this.navWatchId = navigator.geolocation.watchPosition(
+                    (pos) => this.onNavPositionUpdate(pos),
+                    (err) => console.warn("Nav watch position warning:", err),
+                    { enableHighAccuracy: true, maximumAge: 1000, timeout: 10000 }
+                );
+            }
+
+            this.showToast("Navigasi aktif! Peta otomatis mengikuti pergerakan Anda.");
+        },
+
+        onNavPositionUpdate(pos) {
+            if (!this.isNavigating) return;
+
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
+            const speed = pos.coords.speed ? Math.round(pos.coords.speed * 3.6) : 0;
+            const heading = pos.coords.heading || 0;
+
+            this.userLat = lat;
+            this.userLng = lng;
+            this.navSpeedKmh = speed;
+            this.navHeading = heading;
+
+            // Update user marker position and puck icon
+            if (this.userMarker) {
+                this.userMarker.setLatLng([lat, lng]);
+            }
+
+            // Auto-follow user camera
+            this.map.panTo([lat, lng], { animate: true });
+
+            // Check distance to destination
+            if (this.routeTarget) {
+                const distMeters = this.getDistanceMeters(lat, lng, this.routeTarget.lat, this.routeTarget.lng);
+
+                if (distMeters <= 30) {
+                    this.showToast("Anda telah tiba di titik penjemputan makanan!");
+                    this.stopNavigation();
+                    return;
+                }
+
+                // If user moved significantly (> 40 meters), refresh route polyline
+                if (!this.lastNavUpdateCoord || this.getDistanceMeters(this.lastNavUpdateCoord.lat, this.lastNavUpdateCoord.lng, lat, lng) > 40) {
+                    this.lastNavUpdateCoord = { lat, lng };
+                    this.updateNavRoute(lat, lng);
+                }
+            }
+        },
+
+        getDistanceMeters(lat1, lng1, lat2, lng2) {
+            const dLat = (lat2 - lat1) * (Math.PI / 180);
+            const dLng = (lng2 - lng1) * (Math.PI / 180);
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                      Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+                      Math.sin(dLng / 2) * Math.sin(dLng / 2);
+            return 6371000 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        },
+
+        async updateNavRoute(fromLat, fromLng) {
+            if (!this.routeTarget) return;
+            const osrmProfile = this.routeMode === 'walking' ? 'walking' : 'driving';
+            const osrmUrl = `https://router.project-osrm.org/route/v1/${osrmProfile}/${fromLng},${fromLat};${this.routeTarget.lng},${this.routeTarget.lat}?overview=full&geometries=geojson&steps=true`;
+            try {
+                const res = await fetch(osrmUrl);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
+                        const r = data.routes[0];
+                        const coords = r.geometry.coordinates.map(pt => [pt[1], pt[0]]);
+                        if (this.routeLayer) {
+                            this.routeLayer.clearLayers();
+                            const roadLine = L.polyline(coords, {
+                                color: this.routeMode === 'walking' ? '#2A6F97' : '#1E7A4C',
+                                weight: 6,
+                                opacity: 0.95,
+                                lineCap: 'round',
+                                lineJoin: 'round'
+                            });
+                            this.routeLayer.addLayer(roadLine);
+                        }
+                        if (this.routeInfo) {
+                            this.routeInfo.distanceKm = (r.distance / 1000).toFixed(1);
+                            this.routeInfo.durationMin = Math.max(1, Math.round(r.duration / 60));
+                        }
+                        if (r.legs && r.legs[0] && r.legs[0].steps) {
+                            this.navSteps = r.legs[0].steps;
+                        }
+                    }
+                }
+            } catch (e) {
+                // Ignore transient network errors
+            }
+        },
+
+        centerNavCamera() {
+            this.map.setView([this.userLat, this.userLng], 17, { animate: true });
+        },
+
+        stopNavigation() {
+            if (this.navWatchId !== null) {
+                navigator.geolocation.clearWatch(this.navWatchId);
+                this.navWatchId = null;
+            }
+            this.isNavigating = false;
+            this.updateUserMarker();
+            this.showToast("Navigasi selesai.");
+        },
+
         switchRouteMode(newMode) {
             if (this.routeTarget) {
                 this.drawRoute(this.routeTarget, newMode);
@@ -1470,6 +1853,9 @@ document.addEventListener('alpine:init', () => {
         },
 
         clearRoute() {
+            if (this.isNavigating) {
+                this.stopNavigation();
+            }
             if (this.routeLayer) {
                 this.routeLayer.clearLayers();
             }
