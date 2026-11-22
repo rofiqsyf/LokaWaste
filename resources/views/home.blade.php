@@ -47,14 +47,16 @@
                     <span>Cari</span>
                 </button>
 
-                <!-- Current Location GPS Button (Button 3: GPS) -->
+                <!-- Current Location GPS Button (Google Maps "My Location" Crosshair) -->
                 <button type="button"
                         @click="useCurrentLocation()"
                         :disabled="locating"
-                        class="w-9 h-9 rounded-xl bg-gray-50/80 hover:bg-emerald-50 text-[#1E7A4C] hover:text-[#14573A] border border-[#D5E0D9] hover:border-emerald-300 flex items-center justify-center transition-all shadow-2xs active:scale-95 shrink-0 group cursor-pointer"
+                        class="w-9 h-9 rounded-xl bg-gray-50/80 hover:bg-emerald-50 text-[#16251D] hover:text-[#1E7A4C] border border-[#D5E0D9] hover:border-emerald-300 flex items-center justify-center transition-all shadow-2xs active:scale-95 shrink-0 group cursor-pointer"
                         title="Gunakan lokasi GPS saya saat ini">
-                    <svg :class="locating ? 'animate-spin' : 'group-hover:scale-110'" class="w-4.5 h-4.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 2v2m0 16v2m10-10h-2M4 12H2m15.071-7.071l-1.414 1.414M8.343 15.657l-1.414 1.414m12.142 0l-1.414-1.414M8.343 8.343L6.929 6.929M12 8a4 4 0 100 8 4 4 0 000-8z" />
+                    <svg :class="locating ? 'animate-spin' : 'group-hover:scale-110'" class="w-4.5 h-4.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <circle cx="12" cy="12" r="7" stroke-width="2" />
+                        <circle cx="12" cy="12" r="3" fill="currentColor" stroke="none" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v3m0 14v3M2 12h3m14 0h3" />
                     </svg>
                 </button>
             </div>
@@ -906,14 +908,16 @@
                 </svg>
             </button>
 
-            <!-- GPS Recenter Button -->
+            <!-- GPS Recenter Button (Google Maps "My Location" Crosshair) -->
             <button type="button"
                     @click="useCurrentLocation()"
                     :disabled="locating"
-                    class="w-10 h-10 rounded-2xl bg-white/95 backdrop-blur-md hover:bg-white text-[#1E7A4C] border border-[#D5E0D9] shadow-card flex items-center justify-center transition active:scale-95"
+                    class="w-10 h-10 rounded-2xl bg-white/95 backdrop-blur-md hover:bg-white text-[#16251D] hover:text-[#1E7A4C] border border-[#D5E0D9] shadow-card flex items-center justify-center transition active:scale-95 group cursor-pointer"
                     title="Pusatkan ke lokasi saya (GPS)">
-                <svg :class="locating ? 'animate-spin' : ''" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v2m0 16v2m10-10h-2M4 12H2m15.071-7.071l-1.414 1.414M8.343 15.657l-1.414 1.414m12.142 0l-1.414-1.414M8.343 8.343L6.929 6.929M12 8a4 4 0 100 8 4 4 0 000-8z" />
+                <svg :class="locating ? 'animate-spin' : 'group-hover:scale-110'" class="w-5 h-5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <circle cx="12" cy="12" r="7" stroke-width="2" />
+                    <circle cx="12" cy="12" r="3" fill="currentColor" stroke="none" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v3m0 14v3M2 12h3m14 0h3" />
                 </svg>
             </button>
 

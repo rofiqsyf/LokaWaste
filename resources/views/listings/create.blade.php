@@ -436,9 +436,13 @@
                             </button>
                             <button type="button"
                                     @click="detectLocation()"
-                                    class="text-[11px] font-bold text-[#1E7A4C] bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 px-2.5 py-1 rounded-lg transition flex items-center gap-1 shadow-2xs active:scale-95"
-                                    title="Pusatkan ke GPS Saya">
-                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 2v2m0 16v2m10-10h-2M4 12H2m15.071-7.071l-1.414 1.414M8.343 15.657l-1.414 1.414m12.142 0l-1.414-1.414M8.343 8.343L6.929 6.929M12 8a4 4 0 100 8 4 4 0 000-8z"/></svg>
+                                    class="text-[11px] font-bold text-[#16251D] hover:text-[#1E7A4C] bg-white hover:bg-emerald-50 border border-gray-200 hover:border-emerald-300 px-2.5 py-1 rounded-lg transition flex items-center gap-1.5 shadow-2xs active:scale-95 group"
+                                    title="Pusatkan ke GPS Saya (Google Maps Style)">
+                                <svg class="w-3.5 h-3.5 group-hover:scale-110 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <circle cx="12" cy="12" r="7" stroke-width="2" />
+                                    <circle cx="12" cy="12" r="3" fill="currentColor" stroke="none" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v3m0 14v3M2 12h3m14 0h3" />
+                                </svg>
                                 <span>GPS Saya</span>
                             </button>
                         </div>
