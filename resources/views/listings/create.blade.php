@@ -16,15 +16,17 @@
         </div>
 
         <div class="flex items-center gap-2 self-start sm:self-auto flex-wrap">
-            <div class="px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-[#14573A] flex items-center gap-1.5 shadow-2xs">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span class="text-xs font-bold">Target 30 Detik</span>
+            <div class="px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-[#14573A] flex items-center gap-1.5 shadow-2xs text-xs font-bold">
+                <svg class="w-3.5 h-3.5 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                </svg>
+                <span>100% Bebas Biaya</span>
             </div>
             <div class="px-3 py-1.5 rounded-full bg-white border border-[#D5E0D9] text-[#4E6157] flex items-center gap-1.5 shadow-2xs text-xs font-medium">
                 <svg class="w-3.5 h-3.5 text-[#2A6F97]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                 </svg>
-                <span>Privasi ~200m Terjaga</span>
+                <span>Privasi Alamat Terlindungi</span>
             </div>
         </div>
     </div>
@@ -580,49 +582,124 @@
                     </div>
                 </div>
 
-                <!-- CARD: Ringkasan Live & Tombol Aksi Utama -->
-                <div class="bg-linear-to-br from-[#16251D] to-[#14573A] text-white rounded-3xl p-5 sm:p-6 shadow-xl space-y-4">
-                    <div class="flex items-center justify-between border-b border-white/10 pb-3">
-                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-300">Ringkasan Donasi</span>
-                        <span class="text-[11px] font-bold bg-white/15 px-2.5 py-0.5 rounded-full text-white" x-text="`${portions} Porsi`"></span>
+                <!-- CARD: Pratinjau Listing Makanan (Live Feed Preview — Gaya Too Good To Go & Olio) -->
+                <div class="bg-white rounded-3xl border border-[#D5E0D9] shadow-card overflow-hidden space-y-0">
+                    <!-- Preview Card Header -->
+                    <div class="px-5 py-3.5 border-b border-gray-100 bg-gray-50/70 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                            <span class="font-display font-bold text-xs text-[#16251D] uppercase tracking-wider">Pratinjau Listing</span>
+                        </div>
+                        <span class="text-[11px] text-[#4E6157]">Tampilan di feed tetangga</span>
                     </div>
 
-                    <div>
-                        <h3 class="font-display font-black text-lg text-white line-clamp-1 leading-snug" x-text="title || 'Nama Makanan Belum Diisi'"></h3>
-                        <div class="flex items-center gap-2 mt-2 text-xs text-emerald-100 flex-wrap">
-                            <span class="px-2 py-0.5 rounded-md bg-white/10 text-white font-medium" x-text="foodTypeLabel"></span>
-                            <template x-if="halal">
-                                <span class="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-400/30">Halal</span>
+                    <!-- Live Card Body -->
+                    <div class="p-5 sm:p-6 space-y-4">
+                        <!-- Photo / Category Visual Banner -->
+                        <div class="relative rounded-2xl overflow-hidden border border-gray-100 bg-gray-50 h-44 sm:h-48 group">
+                            <template x-if="photoPreview">
+                                <img :src="photoPreview" class="w-full h-full object-cover">
                             </template>
-                            <template x-if="vegetarian">
-                                <span class="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-400/30">Vegetarian</span>
+                            <template x-if="!photoPreview">
+                                <div class="w-full h-full bg-gradient-to-br from-emerald-50/80 via-white to-gray-50 flex flex-col items-center justify-center p-4 text-center">
+                                    <div class="w-12 h-12 rounded-2xl bg-white border border-emerald-100 shadow-2xs text-[#1E7A4C] flex items-center justify-center mb-2">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3v3m-4-3v3m8-3v3M4 11h16a8 8 0 01-16 0z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-xs font-bold text-[#16251D]" x-text="categoryName"></span>
+                                    <span class="text-[10px] text-[#4E6157] mt-0.5">Foto akan tampil di sini saat diunggah</span>
+                                </div>
                             </template>
-                        </div>
-                    </div>
 
-                    <div class="pt-2 border-t border-white/10 text-xs text-gray-300 space-y-1.5">
-                        <div class="flex items-center justify-between">
-                            <span>Batas Waktu Ambil:</span>
-                            <strong class="text-white" x-text="deadlineFormatted"></strong>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <span>Titik Penjemputan:</span>
-                            <strong class="text-white truncate max-w-[180px]" x-text="address || 'Belum ditentukan'"></strong>
-                        </div>
-                    </div>
+                            <!-- Floating Top Pills on Image -->
+                            <div class="absolute top-2.5 inset-x-2.5 flex items-center justify-between gap-1 pointer-events-none">
+                                <span class="px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-md shadow-2xs text-[11px] font-bold text-[#14573A] border border-emerald-200/80"
+                                      x-text="`${portions} Porsi Tersedia`"></span>
 
-                    <div class="pt-2">
-                        <button type="submit"
-                                class="w-full py-3.5 px-5 rounded-2xl bg-white hover:bg-emerald-50 active:scale-98 text-[#14573A] font-extrabold text-sm sm:text-base flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all duration-150">
-                            <svg class="w-5 h-5 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                                <span class="px-2.5 py-1 rounded-full bg-[#16251D]/90 backdrop-blur-md shadow-2xs text-[11px] font-bold text-white flex items-center gap-1">
+                                    <svg class="w-3 h-3 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <span x-text="`Sisa ${hours} Jam`"></span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Title & Tags -->
+                        <div>
+                            <div class="flex items-center gap-1.5 flex-wrap mb-1.5">
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-gray-100 text-[#4E6157]" x-text="categoryName"></span>
+                                <span class="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-emerald-50 text-[#14573A] border border-emerald-200/60" x-text="foodTypeLabel"></span>
+                                <template x-if="halal">
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 border border-emerald-300/80">Halal</span>
+                                </template>
+                                <template x-if="vegetarian">
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-teal-50 text-teal-800 border border-teal-200">Vegetarian</span>
+                                </template>
+                            </div>
+
+                            <h3 class="font-display font-bold text-base sm:text-lg text-[#16251D] leading-snug line-clamp-2"
+                                x-text="title || 'Nama Makanan Belum Diisi'"></h3>
+                            
+                            <div class="flex items-center gap-2 mt-1.5 text-xs text-[#4E6157]">
+                                <span class="font-medium text-[#16251D]">{{ $user->name }}</span>
+                                @if($user->is_verified)
+                                    <span class="text-xs text-[#2A6F97] font-bold flex items-center gap-0.5">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                        Terverifikasi
+                                    </span>
+                                @endif
+                                <span class="text-gray-300">•</span>
+                                <span class="text-[#4E6157]" x-text="selectedDistrictName"></span>
+                            </div>
+                        </div>
+
+                        <!-- Schedule & Meeting Spot Info Box -->
+                        <div class="p-3.5 bg-gray-50/80 rounded-2xl border border-gray-100 text-xs space-y-2">
+                            <div class="flex items-start gap-2.5">
+                                <svg class="w-4 h-4 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <div class="min-w-0 flex-1">
+                                    <span class="text-[11px] text-[#4E6157] block">Batas Waktu Pengambilan:</span>
+                                    <strong class="font-bold text-[#16251D]" x-text="deadlineFormatted"></strong>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-2.5 pt-2 border-t border-gray-200/60">
+                                <svg class="w-4 h-4 text-[#1E7A4C] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                                <div class="min-w-0 flex-1">
+                                    <span class="text-[11px] text-[#4E6157] block">Titik Penjemputan:</span>
+                                    <strong class="font-bold text-[#16251D] line-clamp-1" x-text="address || 'Belum diisi (Wajib)'"></strong>
+                                    <span class="text-[10px] text-[#4E6157]">Alamat presisi aman terlindungi</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Primary Action Button -->
+                        <div class="pt-2">
+                            <button type="submit"
+                                    class="w-full py-3.5 px-5 rounded-2xl bg-[#1E7A4C] hover:bg-[#14573A] active:scale-[0.98] text-white font-extrabold text-sm sm:text-base flex items-center justify-center gap-2 shadow-xs hover:shadow-md transition-all duration-150 cursor-pointer group">
+                                <svg class="w-5 h-5 text-emerald-200 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span>Bagikan Makanan Sekarang</span>
+                            </button>
+                        </div>
+
+                        <!-- Human Safety Reassurance -->
+                        <div class="p-3 bg-emerald-50/60 rounded-2xl border border-emerald-100/80 text-[11px] text-[#14573A] flex items-start gap-2">
+                            <svg class="w-4 h-4 text-[#1E7A4C] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                             </svg>
-                            <span>Bagikan Makanan Sekarang</span>
-                        </button>
-                    </div>
-
-                    <div class="text-center text-[11px] text-gray-300 pt-1">
-                        100% Bebas Biaya • Membantu Penyelamatan Pangan
+                            <div class="leading-relaxed">
+                                <strong>Anda Memegang Kendali:</strong> Setiap pemohon harus meminta porsi dan Anda berhak menyetujui atau menolak sebelum alamat lengkap diberikan.
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -666,6 +743,26 @@ document.addEventListener('alpine:init', () => {
             { h: 4, label: 'Sore (4 jam)' },
             { h: 8, label: 'Malam (8 jam)' },
         ],
+
+        categoriesMap: {
+            @foreach($categories as $cat)
+                '{{ $cat->id }}': '{{ addslashes($cat->name) }}',
+            @endforeach
+        },
+
+        districtsMap: {
+            @foreach($districts as $d)
+                '{{ $d->id }}': 'Kec. {{ addslashes($d->name) }}',
+            @endforeach
+        },
+
+        get categoryName() {
+            return this.categoriesMap[this.categoryId] || 'Makanan';
+        },
+
+        get selectedDistrictName() {
+            return this.districtsMap[this.selectedDistrict] || 'Area Terdekat';
+        },
 
         get foodTypeLabel() {
             if (this.foodType === 'cooked') return 'Siap Santap';
