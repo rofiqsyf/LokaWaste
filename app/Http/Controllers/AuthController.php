@@ -85,7 +85,7 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('home')->with('success', 'Pendaftaran berhasil! Selamat datang di Locabite.');
+        return redirect()->route('home')->with('success', 'Pendaftaran berhasil! Selamat datang di LokaWaste.');
     }
 
     public function logout(Request $request)

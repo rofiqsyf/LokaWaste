@@ -37,7 +37,7 @@
 
     <!-- Invitation Card to become Volunteer (for non-volunteers) -->
     @if(!$user->isVolunteer())
-        <div x-data="{ dismissed: localStorage.getItem('locabite_vol_invite_dismissed') === '1' }"
+        <div x-data="{ dismissed: localStorage.getItem('lokawaste_vol_invite_dismissed') === '1' || localStorage.getItem('locabite_vol_invite_dismissed') === '1' }"
              x-show="!dismissed"
              class="p-5 rounded-3xl bg-linear-to-r from-emerald-50 to-teal-50 border border-[#1E7A4C]/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div class="flex items-start gap-3">
@@ -53,7 +53,7 @@
                 <a href="{{ route('volunteer.apply') }}" class="btn-primary text-xs py-2 px-3">
                     Ajukan diri sebagai Relawan
                 </a>
-                <button type="button" @click="dismissed = true; localStorage.setItem('locabite_vol_invite_dismissed', '1')" class="text-xs text-[#4E6157] hover:text-[#16251D] px-2 py-1">
+                <button type="button" @click="dismissed = true; localStorage.setItem('lokawaste_vol_invite_dismissed', '1'); localStorage.setItem('locabite_vol_invite_dismissed', '1')" class="text-xs text-[#4E6157] hover:text-[#16251D] px-2 py-1">
                     Tutup
                 </button>
             </div>
@@ -402,7 +402,7 @@
                                 <div class="w-28 h-28 shrink-0 bg-white p-1.5 rounded-2xl border border-emerald-200/80 shadow-2xs flex items-center justify-center cursor-pointer group hover:scale-105 transition-transform"
                                      @click="openQrEnlarged({{ $claim->id }}, '{{ $claim->pickup_code }}', '{{ addslashes($claim->listing->title) }}', {{ $claim->portions_approved ?? $claim->portions_requested }})"
                                      title="Ketuk untuk perbesar QR Code">
-                                    <div data-locabite-qr="LOCABITE:CLAIM:{{ $claim->id }}:{{ $claim->pickup_code }}" class="w-full h-full flex items-center justify-center">
+                                    <div data-lokawaste-qr="LOKAWASTE:CLAIM:{{ $claim->id }}:{{ $claim->pickup_code }}" data-locabite-qr="LOCABITE:CLAIM:{{ $claim->id }}:{{ $claim->pickup_code }}" class="w-full h-full flex items-center justify-center">
                                         <div class="w-5 h-5 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
                                     </div>
                                 </div>

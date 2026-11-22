@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
-class LocabiteCoreTest extends TestCase
+class LokaWasteCoreTest extends TestCase
 {
     use RefreshDatabase;
 

@@ -47,7 +47,7 @@ class WilayahEmsifaTest extends TestCase
     {
         $payload = [
             'name' => 'Budi Santoso',
-            'email' => 'budi.santoso@locabite.test',
+            'email' => 'budi.santoso@lokawaste.test',
             'password' => 'password123',
             'password_confirmation' => 'password123',
             'phone' => '081234567890',
@@ -66,7 +66,7 @@ class WilayahEmsifaTest extends TestCase
         $response->assertRedirect(route('home'));
         $this->assertAuthenticated();
 
-        $user = User::where('email', 'budi.santoso@locabite.test')->first();
+        $user = User::where('email', 'budi.santoso@lokawaste.test')->first();
         $this->assertNotNull($user);
         $this->assertNotNull($user->district_id);
 

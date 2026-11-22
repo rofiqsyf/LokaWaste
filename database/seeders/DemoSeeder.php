@@ -34,47 +34,64 @@ class DemoSeeder extends Seeder
         $catRoti = Category::where('slug', 'roti-kue')->first();
 
         // 1. Admin
-        $admin = User::firstOrCreate(['email' => 'admin@locabite.test'], [
-            'name' => 'Admin LokaWaste',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
-            'phone' => '081200000001',
-            'email_verified_at' => now(),
-            'district_id' => $tembalang->id,
-            'is_verified' => true,
-        ]);
+        $admin = User::whereIn('email', ['admin@lokawaste.test', 'admin@locabite.test'])->first();
+        if ($admin) {
+            $admin->update(['email' => 'admin@lokawaste.test', 'name' => 'Admin LokaWaste']);
+        } else {
+            $admin = User::create([
+                'name' => 'Admin LokaWaste',
+                'email' => 'admin@lokawaste.test',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+                'phone' => '081200000001',
+                'email_verified_at' => now(),
+                'district_id' => $tembalang->id,
+                'is_verified' => true,
+            ]);
+        }
         $admin->role = 'admin';
         $admin->save();
 
         // 2. Verified Business User (Warung Bu Sari)
-        $warung = User::firstOrCreate(['email' => 'warung@locabite.test'], [
-            'name' => 'Warung Bu Sari',
-            'password' => Hash::make('password'),
-            'role' => 'user',
-            'phone' => '081234567890',
-            'organization_name' => 'Warung Bu Sari & Katering',
-            'district_id' => $tembalang->id,
-            'default_latitude' => -7.0520,
-            'default_longitude' => 110.4380,
-            'is_verified' => true,
-            'email_verified_at' => now(),
-        ]);
+        $warung = User::whereIn('email', ['warung@lokawaste.test', 'warung@locabite.test'])->first();
+        if ($warung) {
+            $warung->update(['email' => 'warung@lokawaste.test']);
+        } else {
+            $warung = User::create([
+                'name' => 'Warung Bu Sari',
+                'email' => 'warung@lokawaste.test',
+                'password' => Hash::make('password'),
+                'role' => 'user',
+                'phone' => '081234567890',
+                'organization_name' => 'Warung Bu Sari & Katering',
+                'district_id' => $tembalang->id,
+                'default_latitude' => -7.0520,
+                'default_longitude' => 110.4380,
+                'is_verified' => true,
+                'email_verified_at' => now(),
+            ]);
+        }
         $warung->is_verified = true;
         $warung->save();
 
         // 3. Volunteer User (Rina)
-        $relawan = User::firstOrCreate(['email' => 'relawan@locabite.test'], [
-            'name' => 'Rina Relawan',
-            'password' => Hash::make('password'),
-            'role' => 'user',
-            'phone' => '081298765432',
-            'district_id' => $tembalang->id,
-            'email_verified_at' => now(),
-        ]);
+        $relawan = User::whereIn('email', ['relawan@lokawaste.test', 'relawan@locabite.test'])->first();
+        if ($relawan) {
+            $relawan->update(['email' => 'relawan@lokawaste.test']);
+        } else {
+            $relawan = User::create([
+                'name' => 'Rina Relawan',
+                'email' => 'relawan@lokawaste.test',
+                'password' => Hash::make('password'),
+                'role' => 'user',
+                'phone' => '081298765432',
+                'district_id' => $tembalang->id,
+                'email_verified_at' => now(),
+            ]);
+        }
 
         // Volunteer application & approved areas for Rina
-        $app = VolunteerApplication::create([
-            'user_id' => $relawan->id,
+        $app = VolunteerApplication::firstOrCreate(['user_id' => $relawan->id], [
             'regency_id' => $kotaSmg->id,
             'motivation' => 'Aktif di komunitas peduli pangan Tembalang dan ingin membantu menyalurkan makanan ke panti asuhan sekitar.',
         ]);
@@ -104,16 +121,22 @@ class DemoSeeder extends Seeder
         ]);
 
         // 4. Regular Citizen (Budi)
-        $warga = User::firstOrCreate(['email' => 'warga@locabite.test'], [
-            'name' => 'Budi Santoso',
-            'password' => Hash::make('password'),
-            'role' => 'user',
-            'phone' => '081311223344',
-            'district_id' => $tembalang->id,
-            'default_latitude' => -7.0540,
-            'default_longitude' => 110.4350,
-            'email_verified_at' => now(),
-        ]);
+        $warga = User::whereIn('email', ['warga@lokawaste.test', 'warga@locabite.test'])->first();
+        if ($warga) {
+            $warga->update(['email' => 'warga@lokawaste.test']);
+        } else {
+            $warga = User::create([
+                'name' => 'Budi Santoso',
+                'email' => 'warga@lokawaste.test',
+                'password' => Hash::make('password'),
+                'role' => 'user',
+                'phone' => '081311223344',
+                'district_id' => $tembalang->id,
+                'default_latitude' => -7.0540,
+                'default_longitude' => 110.4350,
+                'email_verified_at' => now(),
+            ]);
+        }
 
         // 5. Food Campaign by Rina
         $campaignLat = -7.05350;

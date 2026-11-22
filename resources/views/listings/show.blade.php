@@ -342,7 +342,7 @@
                                         <div class="w-28 h-28 shrink-0 bg-white p-1.5 rounded-2xl border border-emerald-200/80 shadow-2xs flex items-center justify-center cursor-pointer group hover:scale-105 transition-transform"
                                              @click="openQrEnlarged({{ $userActiveClaim->id }}, '{{ $userActiveClaim->pickup_code }}', '{{ addslashes($listing->title) }}', {{ $userActiveClaim->portions_approved ?? $userActiveClaim->portions_requested }})"
                                              title="Ketuk untuk perbesar QR Code">
-                                            <div data-locabite-qr="LOCABITE:CLAIM:{{ $userActiveClaim->id }}:{{ $userActiveClaim->pickup_code }}" class="w-full h-full flex items-center justify-center">
+                                            <div data-lokawaste-qr="LOKAWASTE:CLAIM:{{ $userActiveClaim->id }}:{{ $userActiveClaim->pickup_code }}" data-locabite-qr="LOCABITE:CLAIM:{{ $userActiveClaim->id }}:{{ $userActiveClaim->pickup_code }}" class="w-full h-full flex items-center justify-center">
                                                 <div class="w-5 h-5 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
                                             </div>
                                         </div>

@@ -30,9 +30,9 @@ export default function qrHandover() {
         renderAllPageQrs() {
             if (!window.QRCode) return;
 
-            const qrHolders = document.querySelectorAll('[data-locabite-qr]');
+            const qrHolders = document.querySelectorAll('[data-lokawaste-qr], [data-locabite-qr]');
             qrHolders.forEach(el => {
-                const payload = el.getAttribute('data-locabite-qr');
+                const payload = el.getAttribute('data-lokawaste-qr') || el.getAttribute('data-locabite-qr');
                 if (payload) {
                     window.QRCode.toDataURL(payload, {
                         width: 180,
@@ -51,7 +51,7 @@ export default function qrHandover() {
         },
 
         openQrEnlarged(claimId, code, title, portions) {
-            const payload = `LOCABITE:CLAIM:${claimId}:${code}`;
+            const payload = `LOKAWASTE:CLAIM:${claimId}:${code}`;
             this.activeQr = {
                 claimId,
                 code,

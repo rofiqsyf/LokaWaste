@@ -115,9 +115,9 @@ class ClaimController extends Controller
         $rawInput = trim((string) ($request->input('qr_payload') ?? $request->input('pickup_code') ?? ''));
         $claimId = $request->input('claim_id');
 
-        // Parse LOCABITE:CLAIM:{id}:{code} if scanned from smart QR code
+        // Parse LOKAWASTE:CLAIM:{id}:{code} or LOCABITE:CLAIM:{id}:{code} if scanned from smart QR code
         $code = $rawInput;
-        if (preg_match('/(?:LOCABITE:CLAIM:)?(\d+):([A-Za-z0-9]+)/i', $rawInput, $matches)) {
+        if (preg_match('/(?:(?:LOCABITE|LOKAWASTE):CLAIM:)?(\d+):([A-Za-z0-9]+)/i', $rawInput, $matches)) {
             $claimId = (int) $matches[1];
             $code = strtoupper($matches[2]);
         } else {

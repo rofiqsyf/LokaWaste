@@ -31,7 +31,7 @@ class GeocodingController extends Controller
                 $response = Http::withoutVerifying()
                     ->timeout(6)
                     ->withHeaders([
-                        'User-Agent' => 'Locabite/1.0 (contact@locabite.test)',
+                        'User-Agent' => 'LokaWaste/1.0 (contact@lokawaste.test)',
                         'Accept-Language' => 'id,en;q=0.9',
                     ])
                     ->get('https://nominatim.openstreetmap.org/search', [
@@ -126,7 +126,7 @@ class GeocodingController extends Controller
                 $response = Http::withoutVerifying()
                     ->timeout(6)
                     ->withHeaders([
-                        'User-Agent' => 'Locabite/1.0 (contact@locabite.test)',
+                        'User-Agent' => 'LokaWaste/1.0 (contact@lokawaste.test)',
                         'Accept-Language' => 'id,en;q=0.9',
                     ])
                     ->get('https://nominatim.openstreetmap.org/reverse', [

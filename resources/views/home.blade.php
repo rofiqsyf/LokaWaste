@@ -613,7 +613,7 @@
 
     <!-- MAP CONTAINER -->
     <div class="flex-1 min-w-0 order-1 lg:order-2 h-full relative z-0 overflow-hidden">
-        <div id="locabite-map" class="h-full w-full relative z-0 isolate"></div>
+        <div id="lokawaste-map" class="h-full w-full relative z-0 isolate"></div>
 
         <!-- GOOGLE MAPS LIVE TURN-BY-TURN NAVIGATION HUD (Like Google Maps) -->
         <div x-show="isNavigating"
@@ -1632,7 +1632,7 @@ document.addEventListener('alpine:init', () => {
         },
 
         initMap() {
-            this.map = L.map('locabite-map', {
+            this.map = L.map('lokawaste-map', {
                 zoomControl: false,
             }).setView([this.userLat, this.userLng], 14);
 
@@ -1661,7 +1661,7 @@ document.addEventListener('alpine:init', () => {
                         this.map.invalidateSize();
                     }
                 });
-                const mapEl = document.getElementById('locabite-map');
+                const mapEl = document.getElementById('lokawaste-map');
                 if (mapEl) this.resizeObserver.observe(mapEl);
             }
 
@@ -1905,17 +1905,17 @@ document.addEventListener('alpine:init', () => {
                         <div style="font-size:10px; font-weight:bold; color:#1E7A4C; text-transform:uppercase; margin-bottom:2px;">${l.category_name || 'Makanan'}</div>
                         <h4 style="font-weight:bold; font-size:13px; margin:0 0 4px 0; color:#16251D; line-height:1.3;">${l.title}</h4>
                         ${claimBadgeHtml}
-                        <div class="locabite-dist-meta" style="font-size:11px; color:#4E6157; margin-bottom:6px;">
+                        <div class="lokawaste-dist-meta locabite-dist-meta" style="font-size:11px; color:#4E6157; margin-bottom:6px;">
                             ${l.portions_left} porsi • ${this.routeInfo && this.routeTarget?.id === l.id ? `Rute jalan ${this.routeInfo.distanceKm} km (garis lurus ${l.distance_km} km)` : `${l.distance_km} km`}
                         </div>
                         <div style="font-size:11px; font-weight:bold; color:${color}; margin-bottom:8px;">
                             Sisa waktu: ${shortTime}
                         </div>
                         <div style="display:flex; gap:4px; align-items:center; flex-wrap:wrap;">
-                            <button type="button" onclick="window.__locabiteDrawRoute(${l.id})" style="background:#1E7A4C; color:white; border:none; padding:4px 8px; border-radius:8px; font-size:10px; font-weight:bold; cursor:pointer;">
+                            <button type="button" onclick="window.__lokawasteDrawRoute(${l.id})" style="background:#1E7A4C; color:white; border:none; padding:4px 8px; border-radius:8px; font-size:10px; font-weight:bold; cursor:pointer;">
                                 Rute Peta
                             </button>
-                            <button type="button" onclick="window.__locabiteOpenDetail(${l.id})" style="background:#2A6F97; color:white; border:none; padding:4px 8px; border-radius:8px; font-size:10px; font-weight:bold; cursor:pointer;">
+                            <button type="button" onclick="window.__lokawasteOpenDetail(${l.id})" style="background:#2A6F97; color:white; border:none; padding:4px 8px; border-radius:8px; font-size:10px; font-weight:bold; cursor:pointer;">
                                 Alamat & Info
                             </button>
                             <a href="${l.detail_url}" style="background:#16251D; color:white; padding:4px 8px; border-radius:8px; font-size:10px; text-decoration:none; font-weight:bold;">
@@ -1936,11 +1936,11 @@ document.addEventListener('alpine:init', () => {
             });
 
             // Global bridge for popup buttons
-            window.__locabiteDrawRoute = (id) => {
+            window.__lokawasteDrawRoute = window.__locabiteDrawRoute = (id) => {
                 const item = this.items.find(x => x.id === id);
                 if (item) this.drawRoute(item, 'driving');
             };
-            window.__locabiteOpenDetail = (id) => {
+            window.__lokawasteOpenDetail = window.__locabiteOpenDetail = (id) => {
                 const item = this.items.find(x => x.id === id);
                 if (item) this.openPlaceDetail(item);
             };
@@ -2116,7 +2116,7 @@ document.addEventListener('alpine:init', () => {
                             const m = this.markersById[item.id];
                             const popupEl = m.getPopup()?.getElement();
                             if (popupEl) {
-                                const metaEl = popupEl.querySelector('.locabite-dist-meta');
+                                const metaEl = popupEl.querySelector('.lokawaste-dist-meta') || popupEl.querySelector('.locabite-dist-meta');
                                 if (metaEl) {
                                     metaEl.innerText = `${item.portions_left} porsi • Rute jalan ${distanceKm} km (garis lurus ${item.distance_km} km)`;
                                 }
@@ -2339,7 +2339,7 @@ document.addEventListener('alpine:init', () => {
                 const m = this.markersById[this.routeTarget.id];
                 const popupEl = m.getPopup()?.getElement();
                 if (popupEl) {
-                    const metaEl = popupEl.querySelector('.locabite-dist-meta');
+                    const metaEl = popupEl.querySelector('.lokawaste-dist-meta') || popupEl.querySelector('.locabite-dist-meta');
                     if (metaEl) {
                         metaEl.innerText = `${this.routeTarget.portions_left} porsi • ${this.routeTarget.distance_km} km`;
                     }
@@ -2501,7 +2501,7 @@ document.addEventListener('alpine:init', () => {
 
             if (window.QRCode) {
                 try {
-                    const text = `LOCABITE:CLAIM:${claimId}:${code}`;
+                    const text = `LOKAWASTE:CLAIM:${claimId}:${code}`;
                     this.activeClaimQr.dataUrl = await window.QRCode.toDataURL(text, {
                         width: 260,
                         margin: 1,
