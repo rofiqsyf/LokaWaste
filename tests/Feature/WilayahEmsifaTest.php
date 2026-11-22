@@ -28,6 +28,11 @@ class WilayahEmsifaTest extends TestCase
 
     public function test_wilayah_api_regencies_and_districts_endpoints()
     {
+        // Ensure local fallback records exist if external EMSIFA network is unavailable/slow
+        $prov = Province::firstOrCreate(['code' => '33'], ['name' => 'Jawa Tengah', 'timezone' => 'Asia/Jakarta']);
+        $reg = Regency::firstOrCreate(['code' => '3374'], ['province_id' => $prov->id, 'name' => 'Kota Semarang', 'type' => 'kota']);
+        District::firstOrCreate(['code' => '3374010'], ['regency_id' => $reg->id, 'name' => 'Tembalang']);
+
         // Central Java (code: 33)
         $regResponse = $this->getJson(route('api.wilayah.regencies', ['provinceId' => '33']));
         $regResponse->assertStatus(200);
