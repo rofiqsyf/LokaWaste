@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="overflow-x-hidden">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,7 +19,7 @@
 
     @stack('styles')
 </head>
-<body class="bg-[#F2F6F3] text-[#16251D] min-h-screen flex flex-col font-sans antialiased pb-20 md:pb-0">
+<body class="bg-[#F2F6F3] text-[#16251D] min-h-screen flex flex-col font-sans antialiased pb-20 md:pb-0 overflow-x-hidden">
 
     <!-- Accessibility Skip Link -->
     <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#1E7A4C] focus:text-white focus:rounded-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#2A6F97]">
@@ -183,7 +183,7 @@
     </div>
 
     <!-- Main Content -->
-    <main id="main-content" class="flex-1">
+    <main id="main-content" class="flex-1 w-full max-w-full overflow-hidden">
         {{ $slot }}
     </main>
 
@@ -223,13 +223,24 @@
             <span class="text-[10px] font-medium mt-0.5">Galang</span>
         </a>
 
-        <!-- Aktivitas / Dashboard -->
-        <a href="{{ route('dashboard') }}" class="flex flex-col items-center justify-center flex-1 py-1 {{ request()->routeIs('dashboard') ? 'text-[#1E7A4C]' : 'text-[#4E6157]' }}">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-            </svg>
-            <span class="text-[10px] font-medium mt-0.5">Aktivitas</span>
-        </a>
+        @auth
+            <!-- Aktivitas / Dashboard -->
+            <a href="{{ route('dashboard') }}" class="flex flex-col items-center justify-center flex-1 py-1 {{ request()->routeIs('dashboard') ? 'text-[#1E7A4C]' : 'text-[#4E6157]' }}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                <span class="text-[10px] font-medium mt-0.5">Aktivitas</span>
+            </a>
+        @else
+            <!-- Masuk -->
+            <a href="{{ route('login') }}" class="flex flex-col items-center justify-center flex-1 py-1 {{ request()->routeIs('login') ? 'text-[#1E7A4C]' : 'text-[#4E6157]' }}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                </svg>
+                <span class="text-[10px] font-medium mt-0.5">Masuk</span>
+            </a>
+        @endauth
+    </nav>
 
     @stack('scripts')
 </body>

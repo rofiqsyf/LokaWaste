@@ -1,6 +1,6 @@
 <x-layouts.app title="Locabite — Peta Makanan Berlebih & Penyelamat Pangan">
 
-<div x-data="homeMap()" x-init="init()" class="relative flex-1 flex flex-col lg:flex-row h-[calc(100vh-4rem)] overflow-hidden">
+<div x-data="homeMap()" x-init="init()" class="relative flex-1 flex flex-col lg:flex-row h-[calc(100vh-4rem)] w-full max-w-full overflow-hidden">
 
     <!-- Top Floating Filter & Search Bar on Map (Google Maps / Apple Maps Class) -->
     <div class="absolute top-3 inset-x-3 md:inset-x-6 z-20 pointer-events-none flex flex-col gap-2 max-w-2xl mx-auto">
@@ -140,7 +140,7 @@
                  x-transition:leave-start="opacity-100 translate-y-0 scale-100"
                  x-transition:leave-end="opacity-0 translate-y-2 scale-98"
                  @click.away="showSuggestions = false"
-                 class="absolute top-full left-0 right-0 mt-2 bg-white/95 backdrop-blur-2xl rounded-3xl shadow-[0_24px_54px_-8px_rgba(22,37,29,0.22),0_8px_18px_rgba(22,37,29,0.08)] border border-[#D5E0D9]/70 overflow-hidden z-50 p-2 space-y-1 max-h-[400px] overflow-y-auto">
+                 class="absolute top-full left-0 right-0 mt-2 bg-white/95 backdrop-blur-2xl rounded-3xl shadow-[0_24px_54px_-8px_rgba(22,37,29,0.22),0_8px_18px_rgba(22,37,29,0.08)] border border-[#D5E0D9]/70 overflow-hidden z-[1100] p-2 space-y-1 max-h-[400px] overflow-y-auto">
                 
                 <div class="px-3 py-2 flex items-center justify-between border-b border-gray-100/80 mb-1">
                     <div class="flex items-center gap-2">
@@ -283,13 +283,13 @@
     <!-- SIDEBAR LIST (Desktop) / BOTTOM SHEET (Mobile) -->
     <div :class="[
             sheetExpanded ? 'h-[75vh]' : 'h-48 lg:h-full',
-            desktopSidebarOpen ? 'lg:w-[420px]' : 'lg:w-0 lg:overflow-hidden lg:border-r-0'
+            desktopSidebarOpen ? 'lg:w-[420px] lg:min-w-[420px] lg:max-w-[420px]' : 'lg:w-0 lg:min-w-0 lg:max-w-0 lg:overflow-hidden lg:border-r-0'
          ]"
          class="relative w-full bg-white border-t lg:border-t-0 lg:border-r border-[#D5E0D9] flex flex-col order-2 lg:order-1 transition-all duration-300 z-10 shrink-0">
 
         <!-- Desktop Collapse / Expand Handle Button (Google Maps Style) -->
         <button type="button"
-                @click="desktopSidebarOpen = !desktopSidebarOpen"
+                @click="toggleDesktopSidebar()"
                 class="hidden lg:flex absolute -right-3.5 top-1/2 -translate-y-1/2 z-30 w-7 h-12 bg-white rounded-r-xl border border-l-0 border-[#D5E0D9] shadow-md items-center justify-center text-[#4E6157] hover:text-[#16251D] hover:bg-gray-50 transition active:scale-95"
                 :title="desktopSidebarOpen ? 'Ciutkan panel daftar' : 'Buka panel daftar'">
             <svg :class="desktopSidebarOpen ? '' : 'rotate-180'" class="w-3.5 h-3.5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -489,7 +489,7 @@
     </div>
 
     <!-- MAP CONTAINER -->
-    <div class="flex-1 order-1 lg:order-2 h-full w-full relative z-0">
+    <div class="flex-1 min-w-0 order-1 lg:order-2 h-full relative z-0 overflow-hidden">
         <div id="locabite-map" class="h-full w-full"></div>
 
         <!-- Floating Active Route HUD (Navigation like Google Maps) -->
@@ -500,7 +500,7 @@
              x-transition:leave="transition ease-in duration-200"
              x-transition:leave-start="opacity-100 translate-y-0 scale-100"
              x-transition:leave-end="opacity-0 -translate-y-4 scale-95"
-             class="absolute top-20 sm:top-24 inset-x-3 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-[460px] z-30 pointer-events-auto bg-white/95 backdrop-blur-2xl rounded-3xl shadow-[0_20px_50px_-10px_rgba(22,37,29,0.25),0_4px_12px_rgba(22,37,29,0.08)] border border-emerald-500/40 p-4 space-y-3">
+             class="absolute top-20 sm:top-24 inset-x-3 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-[460px] z-[1000] pointer-events-auto bg-white/95 backdrop-blur-2xl rounded-3xl shadow-[0_20px_50px_-10px_rgba(22,37,29,0.25),0_4px_12px_rgba(22,37,29,0.08)] border border-emerald-500/40 p-4 space-y-3">
             
             <div class="flex items-start justify-between gap-3">
                 <div class="min-w-0 flex-1">
@@ -577,7 +577,7 @@
              x-transition:leave="transition ease-in duration-200"
              x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
              x-transition:leave-end="opacity-0 translate-y-8 sm:translate-y-0 sm:scale-95"
-             class="fixed sm:absolute inset-x-0 bottom-0 sm:bottom-6 sm:left-6 sm:inset-x-auto sm:w-[420px] max-h-[85vh] sm:max-h-[640px] z-40 bg-white/98 backdrop-blur-2xl rounded-t-3xl sm:rounded-3xl shadow-[0_25px_60px_-12px_rgba(22,37,29,0.35),0_6px_20px_rgba(22,37,29,0.12)] border border-[#D5E0D9] overflow-hidden flex flex-col pointer-events-auto">
+             class="fixed sm:absolute inset-x-0 bottom-0 sm:bottom-6 sm:left-6 sm:inset-x-auto sm:w-[420px] max-h-[85vh] sm:max-h-[640px] z-[1000] bg-white/98 backdrop-blur-2xl rounded-t-3xl sm:rounded-3xl shadow-[0_25px_60px_-12px_rgba(22,37,29,0.35),0_6px_20px_rgba(22,37,29,0.12)] border border-[#D5E0D9] overflow-hidden flex flex-col pointer-events-auto">
             
             <!-- Mobile pull handle -->
             <div class="sm:hidden pt-2 pb-1 flex justify-center">
@@ -719,7 +719,7 @@
              x-transition:leave="transition ease-in duration-200"
              x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
              x-transition:leave-end="opacity-0 translate-y-8 sm:translate-y-0 sm:scale-95"
-             class="fixed sm:absolute inset-x-0 bottom-0 sm:bottom-6 sm:left-6 sm:inset-x-auto sm:w-[420px] max-h-[85vh] sm:max-h-[640px] z-40 bg-white/98 backdrop-blur-2xl rounded-t-3xl sm:rounded-3xl shadow-[0_25px_60px_-12px_rgba(22,37,29,0.35),0_6px_20px_rgba(22,37,29,0.12)] border border-[#D5E0D9] overflow-hidden flex flex-col pointer-events-auto">
+             class="fixed sm:absolute inset-x-0 bottom-0 sm:bottom-6 sm:left-6 sm:inset-x-auto sm:w-[420px] max-h-[85vh] sm:max-h-[640px] z-[1000] bg-white/98 backdrop-blur-2xl rounded-t-3xl sm:rounded-3xl shadow-[0_25px_60px_-12px_rgba(22,37,29,0.35),0_6px_20px_rgba(22,37,29,0.12)] border border-[#D5E0D9] overflow-hidden flex flex-col pointer-events-auto">
             
             <!-- Mobile pull handle -->
             <div class="sm:hidden pt-2 pb-1 flex justify-center">
@@ -801,7 +801,7 @@
 
         <!-- Floating Re-open Sidebar Button (When sidebar is collapsed on desktop) -->
         <button x-show="!desktopSidebarOpen"
-                @click="desktopSidebarOpen = true"
+                @click="toggleDesktopSidebar(true)"
                 class="hidden lg:flex items-center gap-2 absolute top-4 left-4 z-20 bg-white/95 backdrop-blur-md px-3.5 py-2.5 rounded-2xl shadow-card border border-[#D5E0D9] text-xs font-bold text-[#16251D] hover:border-[#1E7A4C] hover:text-[#1E7A4C] transition active:scale-95">
             <svg class="w-4 h-4 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
@@ -904,7 +904,7 @@
              x-transition:leave="transition ease-in duration-150"
              x-transition:leave-start="opacity-100 translate-y-0 scale-100"
              x-transition:leave-end="opacity-0 translate-y-3 scale-95"
-             class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none bg-[#16251D]/95 text-white px-4 py-2.5 rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs font-bold border border-white/10 backdrop-blur-md">
+             class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[1200] pointer-events-none bg-[#16251D]/95 text-white px-4 py-2.5 rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs font-bold border border-white/10 backdrop-blur-md">
             <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
             </svg>
@@ -961,11 +961,24 @@ document.addEventListener('alpine:init', () => {
         toastMessage: null,
         toastTimer: null,
         pollTimer: null,
+        resizeObserver: null,
 
         init() {
             this.initMap();
             this.loadData();
             this.reverseGeocodeLabel(this.userLat, this.userLng);
+
+            // Invalidate Leaflet size as flex layout settles to avoid grey tile boxes
+            this.$nextTick(() => {
+                if (this.map) this.map.invalidateSize();
+                setTimeout(() => { if (this.map) this.map.invalidateSize(); }, 250);
+                setTimeout(() => { if (this.map) this.map.invalidateSize(); }, 600);
+            });
+
+            // Window resize handler
+            window.addEventListener('resize', () => {
+                if (this.map) this.map.invalidateSize();
+            });
 
             // 60-second periodic poll when tab is visible
             this.pollTimer = setInterval(() => {
@@ -1000,10 +1013,32 @@ document.addEventListener('alpine:init', () => {
             // Render Center User Pin & Radius Circle
             this.updateUserMarker();
 
+            // Observe map container dimensions dynamically so tiles always fit 100% of the screen
+            if (window.ResizeObserver) {
+                this.resizeObserver = new ResizeObserver(() => {
+                    if (this.map) {
+                        this.map.invalidateSize();
+                    }
+                });
+                const mapEl = document.getElementById('locabite-map');
+                if (mapEl) this.resizeObserver.observe(mapEl);
+            }
+
             // Click anywhere on map to set fixed search center (Google Maps style)
             this.map.on('click', (e) => {
                 this.setCenterLocation(e.latlng.lat, e.latlng.lng);
             });
+        },
+
+        toggleDesktopSidebar(forcedState) {
+            if (typeof forcedState === 'boolean') {
+                this.desktopSidebarOpen = forcedState;
+            } else {
+                this.desktopSidebarOpen = !this.desktopSidebarOpen;
+            }
+            setTimeout(() => {
+                if (this.map) this.map.invalidateSize();
+            }, 320);
         },
 
         toggleBasemap() {
@@ -1016,6 +1051,7 @@ document.addEventListener('alpine:init', () => {
                 this.osmLayer.addTo(this.map);
                 this.basemap = 'standard';
             }
+            if (this.map) this.map.invalidateSize();
         },
 
         setCenterLocation(lat, lng) {
