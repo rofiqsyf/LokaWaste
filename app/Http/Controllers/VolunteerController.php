@@ -38,6 +38,7 @@ class VolunteerController extends Controller
             'transportation' => ['nullable', 'string', 'max:100'],
             'experience' => ['nullable', 'string', 'max:1000'],
             'target_beneficiaries' => ['nullable'],
+            'custom_target_beneficiaries' => ['nullable', 'string', 'max:1000'],
             'has_food_safety_commitment' => ['nullable'],
         ]);
 
@@ -126,16 +127,33 @@ class VolunteerController extends Controller
         }
 
         $targetBeneficiaries = $validated['target_beneficiaries'] ?? [];
+        $customTargets = $validated['custom_target_beneficiaries'] ?? null;
+
+        $allTargets = [];
         if (is_array($targetBeneficiaries)) {
-            $targetBeneficiaries = implode(', ', $targetBeneficiaries);
+            $allTargets = array_filter(array_map('trim', $targetBeneficiaries));
+        } elseif (is_string($targetBeneficiaries) && trim($targetBeneficiaries) !== '') {
+            $allTargets[] = trim($targetBeneficiaries);
         }
+
+        if (!empty($customTargets)) {
+            $customItems = explode(',', $customTargets);
+            foreach ($customItems as $c) {
+                $trimmed = trim($c);
+                if ($trimmed !== '' && !in_array($trimmed, $allTargets)) {
+                    $allTargets[] = $trimmed;
+                }
+            }
+        }
+
+        $targetBeneficiariesString = !empty($allTargets) ? implode(', ', $allTargets) : null;
 
         $details = [
             'phone' => $validated['phone'] ?? $user->phone,
             'availability' => $validated['availability'] ?? null,
             'transportation' => $validated['transportation'] ?? null,
             'experience' => $validated['experience'] ?? null,
-            'target_beneficiaries' => $targetBeneficiaries,
+            'target_beneficiaries' => $targetBeneficiariesString,
             'has_food_safety_commitment' => (bool) $request->has('has_food_safety_commitment'),
         ];
 

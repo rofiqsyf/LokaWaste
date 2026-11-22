@@ -121,4 +121,36 @@ class VolunteerApplicationEmsifaTest extends TestCase
             'status' => 'pending',
         ]);
     }
+
+    public function test_volunteer_can_apply_with_custom_typed_beneficiaries(): void
+    {
+        $volunteer = \App\Models\User::factory()->create(['role' => 'user']);
+
+        $response = $this->actingAs($volunteer)->post(route('volunteer.apply.submit'), [
+            'province_id' => '33',
+            'province_name' => 'Jawa Tengah',
+            'regency_id' => '3374',
+            'regency_name' => 'Kota Semarang',
+            'district_ids' => ['3374010'],
+            'district_names' => [
+                '3374010' => 'Tembalang',
+            ],
+            'phone' => '08987654321',
+            'transportation' => 'Mobil Pickup / Blind Van',
+            'availability' => 'Akhir Pekan (Sabtu-Minggu)',
+            'experience' => 'Pengurus Sedekah Nasi Bungkus',
+            'target_beneficiaries' => ['Panti Asuhan & Yatim Piatu'],
+            'custom_target_beneficiaries' => 'Panti Al-Ikhlas, Warga RT 04 RW 02',
+            'has_food_safety_commitment' => '1',
+            'motivation' => 'Saya ingin menyalurkan surplus makanan secara tepat sasaran ke panti dan warga prasejahtera.',
+        ]);
+
+        $response->assertRedirect(route('volunteer.areas'));
+        $response->assertSessionHas('success');
+
+        $this->assertDatabaseHas('volunteer_applications', [
+            'user_id' => $volunteer->id,
+            'target_beneficiaries' => 'Panti Asuhan & Yatim Piatu, Panti Al-Ikhlas, Warga RT 04 RW 02',
+        ]);
+    }
 }
