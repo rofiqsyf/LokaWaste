@@ -934,11 +934,80 @@ document.addEventListener('alpine:init', () => {
             });
         },
 
-        previewImage(e) {
+        async previewImage(e) {
             const file = e.target.files[0];
-            if (file) {
-                this.photoPreview = URL.createObjectURL(file);
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                alert('File yang dipilih bukan berkas gambar yang valid.');
+                e.target.value = '';
+                return;
             }
+
+            // Immediate preview for instant user feedback
+            this.photoPreview = URL.createObjectURL(file);
+
+            // Auto-compress large photos (from mobile cameras) client-side
+            // This prevents PostTooLargeException and strips camera EXIF before upload
+            try {
+                const compressedBlob = await this.compressImage(file, 1600, 1600, 0.82);
+                
+                // Replace file in input with the compressed version
+                const dt = new DataTransfer();
+                const optimizedFile = new File([compressedBlob], file.name.replace(/\.[^/.]+$/, "") + ".jpg", {
+                    type: 'image/jpeg',
+                    lastModified: Date.now()
+                });
+                dt.items.add(optimizedFile);
+                e.target.files = dt.files;
+                
+                this.photoPreview = URL.createObjectURL(optimizedFile);
+            } catch (err) {
+                console.warn('Kompresi browser dilewati:', err);
+            }
+        },
+
+        compressImage(file, maxWidth, maxHeight, quality) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > height) {
+                            if (width > maxWidth) {
+                                height = Math.round((height * maxWidth) / width);
+                                width = maxWidth;
+                            }
+                        } else {
+                            if (height > maxHeight) {
+                                width = Math.round((width * maxHeight) / height);
+                                height = maxHeight;
+                            }
+                        }
+
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        canvas.toBlob((blob) => {
+                            if (blob) {
+                                resolve(blob);
+                            } else {
+                                reject(new Error('Gagal mengompres gambar'));
+                            }
+                        }, 'image/jpeg', quality);
+                    };
+                    img.onerror = reject;
+                    img.src = e.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
         },
 
         removePhoto() {
