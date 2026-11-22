@@ -173,7 +173,7 @@ class ListingController extends Controller
             'pickup_address' => ['required', 'string'],
             'latitude' => ['required', 'numeric', 'between:-11.5,6.5'],
             'longitude' => ['required', 'numeric', 'between:94.5,141.5'],
-            'district_id' => ['required', 'exists:districts,id'],
+            'district_id' => ['nullable', 'exists:districts,id'],
             'photo' => ['nullable', 'image', 'max:2048'],
             'allergens' => ['nullable', 'array'],
             'storage_note' => ['nullable', 'string', 'max:255'],
@@ -219,11 +219,36 @@ class ListingController extends Controller
             [$publicLat, $publicLng] = $this->privacyService->publicPoint($lat, $lng);
         }
 
+        // Resolve district automatically in background (user district, closest district, or default)
+        $districtId = $validated['district_id'] ?? null;
+        if (!$districtId && $user->district_id) {
+            $districtId = $user->district_id;
+        }
+        if (!$districtId) {
+            $districts = District::whereNotNull('latitude')->whereNotNull('longitude')->get();
+            $bestDist = PHP_FLOAT_MAX;
+            foreach ($districts as $d) {
+                $dLat = deg2rad($d->latitude - $lat);
+                $dLng = deg2rad($d->longitude - $lng);
+                $a = sin($dLat / 2) * sin($dLat / 2) +
+                     cos(deg2rad($lat)) * cos(deg2rad($d->latitude)) *
+                     sin($dLng / 2) * sin($dLng / 2);
+                $dist = 2 * atan2(sqrt($a), sqrt(1 - $a));
+                if ($dist < $bestDist) {
+                    $bestDist = $dist;
+                    $districtId = $d->id;
+                }
+            }
+        }
+        if (!$districtId) {
+            $districtId = District::first()?->id ?? 1;
+        }
+
         $listing = FoodListing::create([
             'user_id' => $user->id,
             'category_id' => $validated['category_id'],
             'campaign_id' => $validated['campaign_id'] ?? null,
-            'district_id' => $validated['district_id'],
+            'district_id' => $districtId,
             'title' => $validated['title'],
             'description' => $validated['description'] ?? 'Surplus makanan layak dan bersih siap dibagikan.',
             'photo_path' => $photoPath,

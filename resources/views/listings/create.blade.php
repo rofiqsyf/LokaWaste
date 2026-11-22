@@ -564,7 +564,7 @@
                         </div>
                     </template>
 
-                    <!-- Address Input & District Selector -->
+                    <!-- Address Input & Hidden District Sync -->
                     <div class="space-y-2.5">
                         <div>
                             <label class="font-bold text-xs text-[#16251D] block mb-1">Patokan / Detail Alamat <span class="text-red-500">*</span></label>
@@ -575,29 +575,7 @@
                                    class="input-field text-xs font-medium"
                                    required>
                         </div>
-
-                        <!-- Wilayah Kecamatan Otomatis (Tanpa Dropdown Manual) -->
-                        <div class="p-3 bg-emerald-50/70 rounded-2xl border border-emerald-200/80 flex items-center justify-between text-xs">
-                            <div class="flex items-center gap-2.5 min-w-0">
-                                <div class="w-7 h-7 rounded-xl bg-emerald-100 text-[#1E7A4C] flex items-center justify-center shrink-0 shadow-2xs">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                    </svg>
-                                </div>
-                                <div class="min-w-0">
-                                    <span class="text-[10px] text-[#4E6157] font-medium block">Wilayah Kecamatan (Sinkron dari Peta):</span>
-                                    <span class="font-bold text-[#14573A] truncate block text-xs" x-text="selectedDistrictName"></span>
-                                </div>
-                            </div>
-                            <span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-white text-[#14573A] border border-emerald-200 shadow-2xs shrink-0 flex items-center gap-1">
-                                <svg class="w-3 h-3 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
-                                </svg>
-                                <span>Otomatis Sinkron</span>
-                            </span>
-                        </div>
-                        <input type="hidden" name="district_id" :value="selectedDistrict" required>
+                        <input type="hidden" name="district_id" :value="selectedDistrict">
                     </div>
 
                     <!-- Rekomendasi Titik Temu Aman (Safe Zones) -->
@@ -705,7 +683,7 @@
                                     </span>
                                 @endif
                                 <span class="text-gray-300">•</span>
-                                <span class="text-[#4E6157]" x-text="selectedDistrictName"></span>
+                                <span class="text-[#4E6157] truncate max-w-[150px]" x-text="address ? address.split(',')[0] : (detectedAddress ? detectedAddress.split(',')[0] : 'Lokasi Terpilih')"></span>
                             </div>
                         </div>
 
