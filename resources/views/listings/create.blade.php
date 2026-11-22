@@ -245,7 +245,7 @@
                             <div class="flex items-center gap-1.5 flex-wrap">
                                 <template x-for="p in [5, 10, 20, 50]" :key="p">
                                     <button type="button"
-                                            @click="portions = p"
+                                            @click="portions = p; if (customMaxPortions > portions) customMaxPortions = portions;"
                                             :class="portions === p ? 'bg-[#1E7A4C] text-white font-bold border-transparent shadow-xs' : 'bg-gray-100 hover:bg-gray-200 text-[#4E6157] border-gray-200'"
                                             class="px-3 py-2 rounded-xl text-xs font-semibold border transition active:scale-95"
                                             x-text="`${p} porsi`">
@@ -255,35 +255,169 @@
                         </div>
                     </div>
 
-                    <!-- Expiration Time Selector (Interactive Chips) -->
+                    <!-- Max Portions Per Claim Setting (SD 3.7 Rule) -->
                     <div class="pt-4 border-t border-gray-100">
                         <label class="font-bold text-xs text-[#16251D] flex items-center justify-between mb-2">
-                            <span>Batas Waktu Ambil <span class="text-red-500">*</span></span>
-                            <span class="text-[11px] text-[#4E6157]">Dihitung dari sekarang</span>
+                            <span>Batas Ajuan Porsi per Pengambil</span>
+                            <span class="text-[11px] font-semibold text-[#1E7A4C] bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200"
+                                  x-text="hasPortionLimit ? `Maks. ${customMaxPortions} porsi / akun` : 'Bebas (Tanpa Batas)'"></span>
                         </label>
 
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <!-- Segmented Switcher: Bebas vs Batasi -->
+                        <div class="grid grid-cols-2 gap-2 p-1 bg-gray-100 rounded-2xl border border-gray-200">
+                            <button type="button"
+                                    @click="hasPortionLimit = false"
+                                    :class="!hasPortionLimit ? 'bg-white text-[#16251D] font-bold shadow-xs' : 'text-[#4E6157] hover:text-[#16251D] font-medium'"
+                                    class="py-2 px-3 rounded-xl text-xs transition flex items-center justify-center gap-1.5 cursor-pointer">
+                                <svg class="w-3.5 h-3.5 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                <span>Bebas (Tanpa Batas)</span>
+                            </button>
+                            <button type="button"
+                                    @click="hasPortionLimit = true; if (!customMaxPortions || customMaxPortions > portions) customMaxPortions = Math.min(2, portions);"
+                                    :class="hasPortionLimit ? 'bg-[#1E7A4C] text-white font-bold shadow-xs' : 'text-[#4E6157] hover:text-[#16251D] font-medium'"
+                                    class="py-2 px-3 rounded-xl text-xs transition flex items-center justify-center gap-1.5 cursor-pointer">
+                                <svg class="w-3.5 h-3.5 fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                                <span>Batasi per Pengambil</span>
+                            </button>
+                        </div>
+
+                        <!-- Limit Details (Visible when hasPortionLimit is true) -->
+                        <div x-show="hasPortionLimit" x-transition class="mt-3 p-3.5 bg-emerald-50/60 rounded-2xl border border-emerald-200/80 space-y-3">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div>
+                                    <span class="text-xs font-bold text-[#16251D] block">Maksimal Porsi per Permintaan:</span>
+                                    <span class="text-[11px] text-[#4E6157] block">Berapa porsi yang boleh diajukan oleh satu orang penerima?</span>
+                                </div>
+                                <div class="inline-flex items-center bg-white p-1 rounded-xl border border-gray-200 shadow-2xs self-start sm:self-auto">
+                                    <button type="button"
+                                            @click="customMaxPortions = Math.max(1, customMaxPortions - 1)"
+                                            class="w-8 h-8 rounded-lg bg-gray-50 hover:bg-gray-100 active:scale-95 text-[#16251D] font-bold text-base flex items-center justify-center transition cursor-pointer"
+                                            title="Kurangi batas porsi">
+                                        -
+                                    </button>
+                                    <input type="number"
+                                           x-model.number="customMaxPortions"
+                                           min="1"
+                                           :max="portions"
+                                           @input="if (customMaxPortions > portions) customMaxPortions = portions; if (customMaxPortions < 1) customMaxPortions = 1"
+                                           class="w-14 text-center font-bold text-base text-[#16251D] bg-transparent border-0 focus:ring-0 p-0">
+                                    <button type="button"
+                                            @click="customMaxPortions = Math.min(portions, customMaxPortions + 1)"
+                                            class="w-8 h-8 rounded-lg bg-gray-50 hover:bg-gray-100 active:scale-95 text-[#16251D] font-bold text-base flex items-center justify-center transition cursor-pointer"
+                                            title="Tambah batas porsi">
+                                        +
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Quick Portion Limit Chips -->
+                            <div class="flex items-center gap-1.5 flex-wrap pt-1 border-t border-emerald-200/60">
+                                <span class="text-[10px] font-bold text-[#4E6157] mr-1">Pilihan Cepat:</span>
+                                <template x-for="p in [1, 2, 3, 5]" :key="p">
+                                    <button type="button"
+                                            x-show="p <= portions"
+                                            @click="customMaxPortions = p"
+                                            :class="customMaxPortions === p ? 'bg-[#1E7A4C] text-white font-bold' : 'bg-white hover:bg-emerald-100/60 text-[#4E6157] border-gray-200'"
+                                            class="px-2.5 py-1 rounded-lg text-xs font-semibold border transition active:scale-95 cursor-pointer"
+                                            x-text="`${p} porsi / orang`">
+                                    </button>
+                                </template>
+                            </div>
+
+                            <p class="text-[11px] text-[#4E6157] leading-relaxed">
+                                Dengan batas <strong class="text-[#16251D]" x-text="`${customMaxPortions} porsi/orang`"></strong>, total <strong class="text-[#16251D]" x-text="`${portions} porsi`"></strong> ini akan menjangkau minimal <strong class="text-[#1E7A4C]" x-text="`~${Math.ceil(portions / Math.max(1, customMaxPortions))} orang`"></strong> penerima berbeda.
+                            </p>
+                        </div>
+
+                        <!-- Explanatory text for Unlimited -->
+                        <div x-show="!hasPortionLimit" x-transition class="mt-2 text-[11px] text-[#4E6157] flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 text-[#1E7A4C] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                            <span>Pemohon bebas meminta jumlah porsi berapa saja sesuai sisa stok tersedia (hingga <span class="font-bold text-[#16251D]" x-text="`${portions} porsi`"></span>).</span>
+                        </div>
+
+                        <input type="hidden" name="max_portions_per_claim" :value="hasPortionLimit ? customMaxPortions : portions">
+                    </div>
+
+                    <!-- Expiration Time Selector (Clock Time & Preset Duration) -->
+                    <div class="pt-4 border-t border-gray-100">
+                        <label class="font-bold text-xs text-[#16251D] flex items-center justify-between mb-2">
+                            <span>Batas Waktu Pengambilan <span class="text-red-500">*</span></span>
+                            <span class="text-[11px] font-semibold text-[#1E7A4C]" x-text="timeMode === 'clock' ? 'Berdasarkan Jam / Pukul' : 'Berdasarkan Durasi Cepat'"></span>
+                        </label>
+
+                        <!-- Tab switcher between Clock Time and Quick Duration -->
+                        <div class="flex items-center gap-1 p-1 bg-gray-100 rounded-2xl border border-gray-200 mb-3">
+                            <button type="button"
+                                    @click="timeMode = 'clock'"
+                                    :class="timeMode === 'clock' ? 'bg-white text-[#16251D] font-bold shadow-xs' : 'text-[#4E6157] hover:text-[#16251D] font-medium'"
+                                    class="flex-1 py-1.5 px-3 rounded-xl text-xs transition flex items-center justify-center gap-1.5 cursor-pointer">
+                                <svg class="w-3.5 h-3.5 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <span>Jam / Pukul Pengambilan</span>
+                            </button>
+                            <button type="button"
+                                    @click="timeMode = 'duration'"
+                                    :class="timeMode === 'duration' ? 'bg-white text-[#16251D] font-bold shadow-xs' : 'text-[#4E6157] hover:text-[#16251D] font-medium'"
+                                    class="flex-1 py-1.5 px-3 rounded-xl text-xs transition flex items-center justify-center gap-1.5 cursor-pointer">
+                                <svg class="w-3.5 h-3.5 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                <span>Pilihan Durasi Cepat</span>
+                            </button>
+                        </div>
+
+                        <!-- MODE 1: CLOCK TIME INPUT & PRESETS -->
+                        <div x-show="timeMode === 'clock'" class="space-y-3">
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                                <div class="relative flex-1">
+                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#4E6157]">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    </div>
+                                    <input type="time"
+                                           x-model="clockTime"
+                                           @change="onClockTimeChange()"
+                                           class="w-full pl-10 pr-4 py-2.5 bg-gray-50 hover:bg-white focus:bg-white rounded-xl border border-gray-200 focus:border-[#1E7A4C] focus:ring-2 focus:ring-[#1E7A4C]/20 font-bold text-sm text-[#16251D] transition cursor-pointer">
+                                </div>
+                                <span class="text-xs font-bold text-[#4E6157] px-3 py-2 rounded-xl bg-gray-100 shrink-0" x-text="clockIsTomorrow ? 'Besok Hari' : 'Hari Ini'"></span>
+                            </div>
+
+                            <!-- Fast Clock Hour Presets -->
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span class="text-[10px] font-bold text-[#4E6157] mr-1">Rekomendasi Waktu:</span>
+                                <template x-for="preset in clockPresets" :key="preset.time">
+                                    <button type="button"
+                                            @click="selectClockPreset(preset.time)"
+                                            :class="clockTime === preset.time ? 'bg-[#1E7A4C] text-white font-bold' : 'bg-gray-100 hover:bg-gray-200 text-[#4E6157] border-gray-200'"
+                                            class="px-2.5 py-1 rounded-lg text-xs font-semibold border transition active:scale-95 cursor-pointer"
+                                            x-text="preset.label">
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- MODE 2: DURATION PRESETS -->
+                        <div x-show="timeMode === 'duration'" class="grid grid-cols-2 sm:grid-cols-4 gap-2">
                             <template x-for="item in timePresets" :key="item.h">
                                 <button type="button"
-                                        @click="hours = item.h"
+                                        @click="selectPresetHours(item.h)"
                                         :class="hours === item.h ? 'bg-[#1E7A4C] text-white ring-2 ring-[#1E7A4C]/30 font-bold shadow-xs' : 'bg-gray-50 hover:bg-gray-100 text-[#4E6157] border-gray-200'"
-                                        class="p-3 rounded-2xl border text-left transition-all duration-200 active:scale-95">
+                                        class="p-3 rounded-2xl border text-left transition-all duration-200 active:scale-95 cursor-pointer">
                                     <div class="text-xs font-bold" x-text="`+${item.h} Jam`"></div>
                                     <div class="text-[10px] opacity-80 mt-0.5" x-text="item.label"></div>
                                 </button>
                             </template>
                         </div>
+
+                        <!-- Hidden Inputs for Form Submission -->
                         <input type="hidden" name="hours_valid" :value="hours">
+                        <input type="hidden" name="expires_time" :value="clockTime">
 
                         <!-- Live Expiration Deadline Indicator -->
                         <div class="mt-3.5 p-3 rounded-2xl bg-amber-50/70 border border-amber-200/80 flex items-center justify-between gap-3 text-xs text-amber-900">
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-2 min-w-0">
                                 <svg class="w-4 h-4 text-amber-700 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
-                                <span>Kedaluwarsa maksimal: <strong class="font-black text-[#16251D]" x-text="deadlineFormatted"></strong></span>
+                                <span class="truncate">Batas klaim: <strong class="font-black text-[#16251D]" x-text="deadlineFormatted"></strong></span>
                             </div>
-                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-amber-800 border border-amber-300 shrink-0">Otomatis Ditutup</span>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-amber-800 border border-amber-300 shrink-0 shadow-2xs">Otomatis Ditutup</span>
                         </div>
                     </div>
                 </div>
@@ -368,43 +502,6 @@
                                       class="input-field text-xs"></textarea>
                         </div>
 
-                        <!-- Max portions per claim (Default: Bebas / Tanpa Batas) -->
-                        <div class="space-y-3 p-4 rounded-2xl bg-gray-50/80 border border-gray-200/80">
-                            <div class="flex items-center justify-between gap-3">
-                                <div class="min-w-0">
-                                    <span class="font-bold text-xs text-[#16251D] block">Batasi Porsi per Pengambil?</span>
-                                    <span class="text-[11px] text-[#4E6157] block">Secara default bebas diambil siapa saja sesuai sisa porsi tersedia.</span>
-                                </div>
-                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                    <input type="checkbox" x-model="hasPortionLimit" class="sr-only peer">
-                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1E7A4C]"></div>
-                                </label>
-                            </div>
-
-                            <template x-if="hasPortionLimit">
-                                <div class="pt-2 border-t border-gray-200/60 flex items-center gap-3">
-                                    <div class="w-28 shrink-0">
-                                        <label class="text-[10px] font-bold text-[#4E6157] block mb-1">Maks. Porsi</label>
-                                        <input type="number"
-                                               x-model="customMaxPortions"
-                                               min="1"
-                                               :max="portions"
-                                               class="input-field text-xs font-bold text-center">
-                                    </div>
-                                    <p class="text-[11px] text-[#4E6157] leading-tight pt-3">
-                                        Setiap pemohon hanya boleh meminta maksimal <strong class="text-[#16251D]" x-text="`${customMaxPortions} porsi`"></strong> per klaim.
-                                    </p>
-                                </div>
-                            </template>
-                            <template x-if="!hasPortionLimit">
-                                <div class="text-[11px] font-semibold text-[#1E7A4C] flex items-center gap-1.5 pt-1">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-                                    <span>Bebas (Pemohon dapat meminta hingga seluruh <span x-text="`${portions} porsi`"></span>).</span>
-                                </div>
-                            </template>
-
-                            <input type="hidden" name="max_portions_per_claim" :value="hasPortionLimit ? customMaxPortions : portions">
-                        </div>
 
                         <!-- Campaign Priority Selector -->
                         <div>
@@ -600,6 +697,26 @@
                         </div>
                     </template>
 
+                    <!-- Wilayah Kecamatan (Sinkron Otomatis dari Peta Spasial) -->
+                    <div class="p-3 bg-emerald-50/70 rounded-2xl border border-emerald-200/80 flex items-center justify-between gap-3 text-xs">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <div class="w-7 h-7 rounded-xl bg-emerald-100 text-[#1E7A4C] flex items-center justify-center shrink-0">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                            </div>
+                            <div class="min-w-0">
+                                <span class="text-[10px] font-bold text-[#4E6157] block">Wilayah Kecamatan (Sinkron dari Peta):</span>
+                                <span class="font-extrabold text-[#16251D] truncate block text-xs" x-text="selectedDistrictName"></span>
+                            </div>
+                        </div>
+                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white text-[#1E7A4C] border border-emerald-200 text-[10px] font-bold shrink-0 shadow-2xs">
+                            <svg class="w-3 h-3 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                            Otomatis Sinkron
+                        </span>
+                    </div>
+
                     <!-- Address Input & Hidden District Sync -->
                     <div class="space-y-2.5">
                         <div>
@@ -689,7 +806,7 @@
                                     <svg class="w-3 h-3 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
-                                    <span x-text="`Sisa ${hours} Jam`"></span>
+                                    <span x-text="deadlineBadgeText"></span>
                                 </span>
                             </div>
                         </div>
@@ -732,6 +849,16 @@
                                 <div class="min-w-0 flex-1">
                                     <span class="text-[11px] text-[#4E6157] block">Batas Waktu Pengambilan:</span>
                                     <strong class="font-bold text-[#16251D]" x-text="deadlineFormatted"></strong>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-2.5 pt-2 border-t border-gray-200/60">
+                                <svg class="w-4 h-4 text-[#1E7A4C] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                </svg>
+                                <div class="min-w-0 flex-1">
+                                    <span class="text-[11px] text-[#4E6157] block">Batas per Pengambil:</span>
+                                    <strong class="font-bold text-[#16251D]" x-text="hasPortionLimit ? `Maksimal ${customMaxPortions} Porsi / Akun` : 'Bebas (Tanpa Batasan Porsi)'"></strong>
                                 </div>
                             </div>
 
@@ -791,6 +918,10 @@ document.addEventListener('alpine:init', () => {
         hasPortionLimit: {{ old('max_portions_per_claim') && old('max_portions_per_claim') < old('portions_total', 5) ? 'true' : 'false' }},
         customMaxPortions: {{ old('max_portions_per_claim', 2) }},
         hours: {{ old('hours_valid', 2) }},
+        timeMode: 'clock',
+        clockTime: '{{ old('expires_time', '') }}',
+        clockIsTomorrow: false,
+        clockPresets: [],
         lat: {{ old('latitude', $user->default_latitude ?? -7.05194) }},
         lng: {{ old('longitude', $user->default_longitude ?? 110.43778) }},
         address: '{{ old('pickup_address', $duplicate->pickup_address ?? '') }}',
@@ -904,16 +1035,121 @@ document.addEventListener('alpine:init', () => {
             return 'Bahan Mentah';
         },
 
+        generateClockPresets() {
+            const now = new Date();
+            const presets = [];
+
+            // Add +1h, +2h, +3h, +5h from now rounded to next half hour
+            for (let addH of [1, 2, 4, 6]) {
+                const target = new Date(now.getTime() + addH * 3600 * 1000);
+                const h = String(target.getHours()).padStart(2, '0');
+                const m = String(target.getMinutes() < 30 ? 0 : 30).padStart(2, '0');
+                const isTmrw = target.getDate() !== now.getDate();
+                const label = `${isTmrw ? 'Besok ' : 'Pukul '}${h}:${m}`;
+                const timeKey = `${h}:${m}`;
+                if (!presets.some(p => p.time === timeKey)) {
+                    presets.push({ time: timeKey, label });
+                }
+            }
+
+            // Also standard evening / tomorrow benchmarks
+            const benchmarks = [
+                { h: 21, m: '00', label: 'Malam 21:00' },
+                { h: 22, m: '30', label: 'Malam 22:30' },
+                { h: 23, m: '59', label: 'Tengah Malam 23:59' },
+                { h: 8, m: '00', label: 'Besok Pagi 08:00' },
+                { h: 12, m: '00', label: 'Besok Siang 12:00' }
+            ];
+
+            for (const b of benchmarks) {
+                const bTime = `${String(b.h).padStart(2, '0')}:${b.m}`;
+                if (presets.length < 6 && !presets.some(p => p.time === bTime)) {
+                    presets.push({ time: bTime, label: b.label });
+                }
+            }
+
+            this.clockPresets = presets;
+        },
+
+        onClockTimeChange() {
+            if (!this.clockTime) return;
+            const [hStr, mStr] = this.clockTime.split(':');
+            const h = parseInt(hStr, 10);
+            const m = parseInt(mStr, 10);
+
+            const now = new Date();
+            let target = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0);
+
+            if (target.getTime() - now.getTime() < 10 * 60 * 1000) {
+                target.setDate(target.getDate() + 1);
+                this.clockIsTomorrow = true;
+            } else {
+                this.clockIsTomorrow = target.getDate() !== now.getDate();
+            }
+
+            const diffMs = target.getTime() - now.getTime();
+            const diffHours = Math.max(1, Math.min(24, Math.round(diffMs / (3600 * 1000))));
+            this.hours = diffHours;
+        },
+
+        selectClockPreset(timeStr) {
+            this.clockTime = timeStr;
+            this.onClockTimeChange();
+        },
+
+        selectPresetHours(h) {
+            this.hours = h;
+            const now = new Date();
+            const target = new Date(now.getTime() + h * 3600 * 1000);
+            const hStr = String(target.getHours()).padStart(2, '0');
+            const mStr = String(target.getMinutes()).padStart(2, '0');
+            this.clockTime = `${hStr}:${mStr}`;
+            this.clockIsTomorrow = target.getDate() !== now.getDate();
+        },
+
+        get deadlineBadgeText() {
+            if (this.timeMode === 'clock' && this.clockTime) {
+                return `Batas: ${this.clockTime} WIB`;
+            }
+            return `Sisa ${this.hours} Jam`;
+        },
+
         get deadlineFormatted() {
+            if (this.timeMode === 'clock' && this.clockTime) {
+                const [hStr, mStr] = this.clockTime.split(':');
+                const now = new Date();
+                let target = new Date(now.getFullYear(), now.getMonth(), now.getDate(), parseInt(hStr, 10), parseInt(mStr, 10), 0);
+                if (target.getTime() - now.getTime() < 10 * 60 * 1000) {
+                    target.setDate(target.getDate() + 1);
+                }
+                const isToday = target.getDate() === now.getDate();
+                const diffMs = Math.max(0, target.getTime() - now.getTime());
+                const remainHours = Math.floor(diffMs / (3600 * 1000));
+                const remainMins = Math.floor((diffMs % (3600 * 1000)) / (60 * 1000));
+                const remainText = remainHours > 0 ? `${remainHours} jam ${remainMins} mnt` : `${remainMins} menit`;
+
+                return `Pukul ${this.clockTime} WIB (${isToday ? 'Hari ini' : 'Besok'} • sisa ~${remainText})`;
+            }
+
             const d = new Date(Date.now() + this.hours * 3600 * 1000);
             const hoursStr = String(d.getHours()).padStart(2, '0');
             const minsStr = String(d.getMinutes()).padStart(2, '0');
             const isToday = d.getDate() === (new Date()).getDate();
-            return `Pukul ${hoursStr}:${minsStr} WIB (${isToday ? 'Hari ini' : 'Besok'})`;
+            return `Pukul ${hoursStr}:${minsStr} WIB (${isToday ? 'Hari ini' : 'Besok'} • sisa ${this.hours} jam)`;
         },
 
         init() {
             this.findNearestDistrict(this.lat, this.lng);
+            this.generateClockPresets();
+
+            if (!this.clockTime) {
+                const defaultTarget = new Date(Date.now() + this.hours * 3600 * 1000);
+                this.clockTime = `${String(defaultTarget.getHours()).padStart(2, '0')}:${String(defaultTarget.getMinutes()).padStart(2, '0')}`;
+                this.clockIsTomorrow = defaultTarget.getDate() !== (new Date()).getDate();
+            } else {
+                this.onClockTimeChange();
+            }
+
             this.$nextTick(() => {
                 this.initPickerMap();
                 this.reverseGeocode();

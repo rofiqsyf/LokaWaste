@@ -170,6 +170,7 @@ class ListingController extends Controller
             'food_type' => ['required', 'in:cooked,packaged,raw'],
             'prepared_at' => ['nullable', 'date'],
             'hours_valid' => ['required', 'integer', 'min:1', 'max:24'],
+            'expires_time' => ['nullable', 'date_format:H:i'],
             'pickup_address' => ['required', 'string'],
             'latitude' => ['required', 'numeric', 'between:-11.5,6.5'],
             'longitude' => ['required', 'numeric', 'between:94.5,141.5'],
@@ -194,6 +195,23 @@ class ListingController extends Controller
 
         $now = now();
         $expiresAt = $now->copy()->addHours((int) $validated['hours_valid']);
+
+        if ($request->filled('expires_time') && preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $request->input('expires_time'))) {
+            $tz = $user->district?->regency?->province?->timezone ?? 'Asia/Jakarta';
+            $nowInTz = $now->copy()->setTimezone($tz);
+            [$targetH, $targetM] = explode(':', $request->input('expires_time'));
+            $targetTime = $nowInTz->copy()->setTime((int) $targetH, (int) $targetM, 0);
+
+            // If selected time today is already in the past or within next 10 minutes, it applies to tomorrow
+            if ($targetTime->isPast() || $nowInTz->diffInMinutes($targetTime, false) < 10) {
+                $targetTime->addDay();
+            }
+
+            // Expiration cannot be more than 24 hours into the future for surplus food safety
+            if ($nowInTz->diffInHours($targetTime) <= 24) {
+                $expiresAt = $targetTime->setTimezone('UTC');
+            }
+        }
 
         // SDD 3.7 Rule 26: Campaign priority calculation
         $priorityUntil = null;
