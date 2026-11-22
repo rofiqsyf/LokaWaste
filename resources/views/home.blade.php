@@ -627,28 +627,35 @@
             <div class="max-w-3xl mx-auto p-3.5 sm:p-4 flex items-center justify-between gap-3 sm:gap-4">
                 <!-- Maneuver Direction Icon -->
                 <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white/15 flex items-center justify-center shrink-0 border border-white/20">
-                    <template x-if="navCurrentManeuver.modifier.includes('right')">
+                    <template x-if="navCurrentManeuver.type === 'arrive'">
                         <svg class="w-6 h-6 sm:w-7 sm:h-7 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7M16 12H3"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 11l-3 3-2-2"/>
                         </svg>
                     </template>
-                    <template x-if="navCurrentManeuver.modifier.includes('left')">
+                    <template x-if="navCurrentManeuver.type !== 'arrive' && navCurrentManeuver.modifier.includes('right')">
                         <svg class="w-6 h-6 sm:w-7 sm:h-7 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7M8 12h13"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.8" d="M9 5l7 7-7 7M16 12H3"/>
                         </svg>
                     </template>
-                    <template x-if="!navCurrentManeuver.modifier.includes('left') && !navCurrentManeuver.modifier.includes('right')">
+                    <template x-if="navCurrentManeuver.type !== 'arrive' && navCurrentManeuver.modifier.includes('left')">
                         <svg class="w-6 h-6 sm:w-7 sm:h-7 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.8" d="M15 19l-7-7 7-7M8 12h13"/>
+                        </svg>
+                    </template>
+                    <template x-if="navCurrentManeuver.type !== 'arrive' && !navCurrentManeuver.modifier.includes('left') && !navCurrentManeuver.modifier.includes('right')">
+                        <svg class="w-6 h-6 sm:w-7 sm:h-7 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.8" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
                         </svg>
                     </template>
                 </div>
 
                 <!-- Maneuver Text & Distance -->
                 <div class="min-w-0 flex-1">
+                    <div class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-emerald-200" x-text="navCurrentManeuver.distContext || 'Belokan Berikutnya'"></div>
                     <div class="flex items-baseline gap-1.5 sm:gap-2">
                         <span class="font-display font-black text-xl sm:text-2xl tracking-tight text-white" x-text="navCurrentManeuver.distLabel"></span>
-                        <span class="text-xs text-emerald-200 uppercase tracking-wider font-bold">lagi</span>
+                        <span class="text-xs text-emerald-200 uppercase tracking-wider font-bold" x-text="navCurrentManeuver.distSuffix || ''"></span>
                     </div>
                     <p class="font-bold text-xs sm:text-sm text-emerald-100 truncate mt-0.5" x-text="navCurrentManeuver.instruction"></p>
                 </div>
@@ -662,18 +669,18 @@
 
             <!-- Bottom Sub-bar: Remaining Stats & Exit -->
             <div class="bg-[#0F3B24] px-4 py-2 flex items-center justify-between text-xs">
-                <div class="flex items-center gap-2 sm:gap-3">
-                    <div class="flex items-center gap-1.5 font-bold text-emerald-300">
+                <div class="flex items-center gap-2 sm:gap-3 min-w-0">
+                    <div class="flex items-center gap-1.5 font-bold text-emerald-300 shrink-0">
                         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                        <span x-text="`${routeInfo?.durationMin || 1} mnt`"></span>
+                        <span x-text="`${routeInfo?.durationMin || 2} mnt`"></span>
                     </div>
                     <span class="text-emerald-400/50">•</span>
-                    <span class="text-emerald-100" x-text="`${routeInfo?.distanceKm || 0} km`"></span>
-                    <span class="text-emerald-400/50">•</span>
-                    <span class="text-emerald-200 text-[11px]" x-text="`Tiba ~${navEtaFormatted}`"></span>
+                    <span class="text-emerald-100 font-semibold truncate" x-text="`Sisa ${routeInfo?.distanceKm || 0} km ke ${routeTarget?.title || 'tujuan'}`"></span>
+                    <span class="text-emerald-400/50 hidden md:inline">•</span>
+                    <span class="text-emerald-200 text-[11px] hidden md:inline shrink-0" x-text="`Tiba ~${navEtaFormatted}`"></span>
                 </div>
 
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 shrink-0">
                     <button type="button"
                             @click="centerNavCamera()"
                             class="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white text-[11px] font-bold transition flex items-center gap-1 cursor-pointer">
@@ -1463,34 +1470,112 @@ document.addEventListener('alpine:init', () => {
         },
 
         get navCurrentManeuver() {
-            if (this.navSteps && this.navSteps.length > 0 && this.navSteps[this.navStepIndex]) {
-                const s = this.navSteps[this.navStepIndex];
-                const modifier = s.maneuver?.modifier || 'straight';
-                const type = s.maneuver?.type || 'turn';
-                const street = s.name ? `ke ${s.name}` : (this.routeTarget?.title ? `ke ${this.routeTarget.title}` : 'menuju tujuan');
-                
-                let distMeters = Math.round(s.distance || 50);
-                let distLabel = distMeters >= 1000 ? `${(distMeters / 1000).toFixed(1)} km` : `${distMeters} m`;
-                
-                let instruction = 'Lurus terus ' + street;
-                if (type === 'depart') instruction = 'Mulai perjalanan ' + street;
-                else if (type === 'arrive') instruction = 'Tiba di lokasi tujuan ' + (this.routeTarget?.title || '');
-                else if (modifier.includes('right')) instruction = 'Belok kanan ' + street;
-                else if (modifier.includes('left')) instruction = 'Belok kiri ' + street;
-                else if (modifier.includes('straight')) instruction = 'Lurus terus ' + street;
+            if (!this.routeTarget) {
+                return {
+                    modifier: 'straight',
+                    type: 'turn',
+                    distLabel: '—',
+                    distContext: 'Menuju Lokasi',
+                    distSuffix: '',
+                    instruction: 'Menuju titik penjemputan'
+                };
+            }
+
+            const totalDistM = this.getDistanceMeters(this.userLat, this.userLng, this.routeTarget.lat, this.routeTarget.lng);
+
+            // If user is within 35 meters of destination, display arrival
+            if (totalDistM <= 35) {
+                return {
+                    modifier: 'arrive',
+                    type: 'arrive',
+                    distLabel: `${Math.round(totalDistM)} m`,
+                    distContext: 'Tiba di Lokasi',
+                    distSuffix: 'lagi',
+                    instruction: `Tiba di tujuan: ${this.routeTarget.title}`
+                };
+            }
+
+            if (this.navSteps && this.navSteps.length > 0) {
+                const idx = Math.min(this.navStepIndex, this.navSteps.length - 1);
+                const currStep = this.navSteps[idx];
+                const nextStep = (idx + 1 < this.navSteps.length) ? this.navSteps[idx + 1] : null;
+
+                // If on final step or next step is arrival
+                if (!nextStep || nextStep.maneuver?.type === 'arrive') {
+                    const distRemaining = Math.max(Math.round(currStep.distance || totalDistM), 5);
+                    const label = distRemaining >= 1000 ? `${(distRemaining / 1000).toFixed(1)} km` : `${distRemaining} m`;
+                    return {
+                        modifier: 'arrive',
+                        type: 'arrive',
+                        distLabel: label,
+                        distContext: 'Tiba di Lokasi',
+                        distSuffix: 'ke tujuan',
+                        instruction: `Tiba di tujuan: ${this.routeTarget.title}`
+                    };
+                }
+
+                // In OSRM, nextStep holds the upcoming turn/maneuver and the street turned onto
+                const targetManeuver = nextStep.maneuver || {};
+                const modifier = targetManeuver.modifier || 'straight';
+                const type = targetManeuver.type || 'turn';
+                const nextRoadName = nextStep.name ? nextStep.name.trim() : '';
+                const currRoadName = currStep.name ? currStep.name.trim() : '';
+
+                // Calculate distance to this upcoming maneuver (live if location coordinate is available)
+                let distMeters = Math.round(currStep.distance || 50);
+                if (targetManeuver.location && Array.isArray(targetManeuver.location) && targetManeuver.location.length >= 2) {
+                    const mLat = targetManeuver.location[1];
+                    const mLng = targetManeuver.location[0];
+                    const liveDist = this.getDistanceMeters(this.userLat, this.userLng, mLat, mLng);
+                    if (!isNaN(liveDist) && liveDist > 0 && liveDist < (currStep.distance * 2 + 100)) {
+                        distMeters = Math.round(liveDist);
+                    }
+                }
+
+                const distLabel = distMeters >= 1000 ? `${(distMeters / 1000).toFixed(1)} km` : `${distMeters} m`;
+
+                let action = 'Lurus terus';
+                let distContext = 'Belokan Berikutnya';
+                let distSuffix = 'ke belokan';
+
+                if (modifier.includes('right')) {
+                    action = modifier.includes('slight') ? 'Serong kanan' : (modifier.includes('sharp') ? 'Belok tajam ke kanan' : 'Belok kanan');
+                } else if (modifier.includes('left')) {
+                    action = modifier.includes('slight') ? 'Serong kiri' : (modifier.includes('sharp') ? 'Belok tajam ke kiri' : 'Belok kiri');
+                } else if (modifier.includes('uturn')) {
+                    action = 'Putar balik';
+                } else if (modifier.includes('straight') || type === 'continue' || type === 'new name') {
+                    action = 'Lurus terus';
+                    distContext = 'Ikuti Jalur';
+                    distSuffix = 'lagi';
+                }
+
+                let instruction = action;
+                if (nextRoadName) {
+                    instruction = `${action} ke ${nextRoadName}`;
+                } else if (currRoadName && (modifier.includes('straight') || type === 'continue')) {
+                    instruction = `${action} di ${currRoadName}`;
+                }
 
                 return {
                     modifier: modifier,
                     type: type,
                     distLabel: distLabel,
+                    distContext: distContext,
+                    distSuffix: distSuffix,
                     instruction: instruction
                 };
             }
+
+            // Fallback when no OSRM steps are present (e.g. geodetic fallback line)
+            const fallbackDist = totalDistM >= 1000 ? `${(totalDistM / 1000).toFixed(1)} km` : `${Math.round(totalDistM)} m`;
             return {
                 modifier: 'straight',
                 type: 'turn',
-                distLabel: '50 m',
-                instruction: 'Lurus terus menuju titik penjemputan ' + (this.routeTarget?.title || '')
+                distLabel: fallbackDist,
+                distContext: 'Jarak ke Tujuan',
+                distSuffix: 'ke tujuan',
+                instruction: `Lurus terus menuju ${this.routeTarget.title}`
             };
         },
 
@@ -1820,8 +1905,8 @@ document.addEventListener('alpine:init', () => {
                         <div style="font-size:10px; font-weight:bold; color:#1E7A4C; text-transform:uppercase; margin-bottom:2px;">${l.category_name || 'Makanan'}</div>
                         <h4 style="font-weight:bold; font-size:13px; margin:0 0 4px 0; color:#16251D; line-height:1.3;">${l.title}</h4>
                         ${claimBadgeHtml}
-                        <div style="font-size:11px; color:#4E6157; margin-bottom:6px;">
-                            ${l.portions_left} porsi • ${l.distance_km} km
+                        <div class="locabite-dist-meta" style="font-size:11px; color:#4E6157; margin-bottom:6px;">
+                            ${l.portions_left} porsi • ${this.routeInfo && this.routeTarget?.id === l.id ? `Rute jalan ${this.routeInfo.distanceKm} km (garis lurus ${l.distance_km} km)` : `${l.distance_km} km`}
                         </div>
                         <div style="font-size:11px; font-weight:bold; color:${color}; margin-bottom:8px;">
                             Sisa waktu: ${shortTime}
@@ -1978,7 +2063,14 @@ document.addEventListener('alpine:init', () => {
                         const coords = r.geometry.coordinates.map(pt => [pt[1], pt[0]]);
 
                         const distanceKm = (r.distance / 1000).toFixed(1);
-                        const durationMin = Math.max(1, Math.round(r.duration / 60));
+                        let durationMin = 1;
+                        if (mode === 'walking') {
+                            durationMin = Math.max(1, Math.round((r.distance / 1000 / 4.5) * 60));
+                        } else {
+                            // Realistic urban speed in Indonesian town streets ~22 km/h
+                            const urbanMin = Math.round((r.distance / 1000 / 22) * 60);
+                            durationMin = Math.max(2, Math.max(Math.round(r.duration / 60), urbanMin));
+                        }
 
                         this.routeInfo = {
                             distanceKm: distanceKm,
@@ -1988,6 +2080,7 @@ document.addEventListener('alpine:init', () => {
 
                         if (r.legs && r.legs[0] && r.legs[0].steps) {
                             this.navSteps = r.legs[0].steps;
+                            this.navStepIndex = 0;
                         }
 
                         // Draw outer casing shadow line for high contrast
@@ -2017,6 +2110,18 @@ document.addEventListener('alpine:init', () => {
                             padding: [80, 80],
                             maxZoom: 16
                         });
+
+                        // Update marker popup live if open
+                        if (this.markersById && this.markersById[item.id]) {
+                            const m = this.markersById[item.id];
+                            const popupEl = m.getPopup()?.getElement();
+                            if (popupEl) {
+                                const metaEl = popupEl.querySelector('.locabite-dist-meta');
+                                if (metaEl) {
+                                    metaEl.innerText = `${item.portions_left} porsi • Rute jalan ${distanceKm} km (garis lurus ${item.distance_km} km)`;
+                                }
+                            }
+                        }
 
                         this.showToast(`Rute jalan ${mode === 'walking' ? 'jalan kaki' : 'berkendara'} (${distanceKm} km, ~${durationMin} mnt) siap!`);
                         return;
@@ -2116,10 +2221,32 @@ document.addEventListener('alpine:init', () => {
                     return;
                 }
 
+                // Advance maneuver step if user reached the turn
+                this.updateNavStepProgress(lat, lng);
+
                 // If user moved significantly (> 40 meters), refresh route polyline
                 if (!this.lastNavUpdateCoord || this.getDistanceMeters(this.lastNavUpdateCoord.lat, this.lastNavUpdateCoord.lng, lat, lng) > 40) {
                     this.lastNavUpdateCoord = { lat, lng };
                     this.updateNavRoute(lat, lng);
+                }
+            }
+        },
+
+        updateNavStepProgress(lat, lng) {
+            if (!this.navSteps || this.navSteps.length <= 1) return;
+
+            const nextIdx = this.navStepIndex + 1;
+            if (nextIdx < this.navSteps.length) {
+                const nextStep = this.navSteps[nextIdx];
+                if (nextStep && nextStep.maneuver && Array.isArray(nextStep.maneuver.location) && nextStep.maneuver.location.length >= 2) {
+                    const mLat = nextStep.maneuver.location[1];
+                    const mLng = nextStep.maneuver.location[0];
+                    const distToManeuver = this.getDistanceMeters(lat, lng, mLat, mLng);
+
+                    // When user is within 25 meters of the turn coordinate, advance to next step
+                    if (distToManeuver <= 25) {
+                        this.navStepIndex = nextIdx;
+                    }
                 }
             }
         },
@@ -2157,10 +2284,18 @@ document.addEventListener('alpine:init', () => {
                         }
                         if (this.routeInfo) {
                             this.routeInfo.distanceKm = (r.distance / 1000).toFixed(1);
-                            this.routeInfo.durationMin = Math.max(1, Math.round(r.duration / 60));
+                            let durMin = 1;
+                            if (this.routeMode === 'walking') {
+                                durMin = Math.max(1, Math.round((r.distance / 1000 / 4.5) * 60));
+                            } else {
+                                const urbanMin = Math.round((r.distance / 1000 / 22) * 60);
+                                durMin = Math.max(2, Math.max(Math.round(r.duration / 60), urbanMin));
+                            }
+                            this.routeInfo.durationMin = durMin;
                         }
                         if (r.legs && r.legs[0] && r.legs[0].steps) {
                             this.navSteps = r.legs[0].steps;
+                            this.navStepIndex = 0;
                         }
                     }
                 }
@@ -2199,6 +2334,16 @@ document.addEventListener('alpine:init', () => {
             if (this.searchMarker && !this.searchedPlace) {
                 this.map.removeLayer(this.searchMarker);
                 this.searchMarker = null;
+            }
+            if (this.routeTarget && this.markersById && this.markersById[this.routeTarget.id]) {
+                const m = this.markersById[this.routeTarget.id];
+                const popupEl = m.getPopup()?.getElement();
+                if (popupEl) {
+                    const metaEl = popupEl.querySelector('.locabite-dist-meta');
+                    if (metaEl) {
+                        metaEl.innerText = `${this.routeTarget.portions_left} porsi • ${this.routeTarget.distance_km} km`;
+                    }
+                }
             }
             this.routeInfo = null;
             this.routeTarget = null;
