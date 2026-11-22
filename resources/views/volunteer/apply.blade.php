@@ -294,68 +294,35 @@
             </div>
 
             <!-- 3.1 Target Komunitas Penerima Manfaat -->
-            <div class="space-y-3">
-                <div class="flex items-center justify-between gap-2">
-                    <label class="text-xs font-bold text-[#16251D] block">
-                        Sasaran Penyaluran Pangan di Kecamatan Terpilih:
+            <div class="space-y-2">
+                <label class="text-xs font-bold text-[#16251D] block">
+                    Sasaran Penerima Manfaat di Kecamatan Terpilih (Pilih yang relevan):
+                </label>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                    <label class="flex items-center gap-2.5 p-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+                        <input type="checkbox" name="target_beneficiaries[]" value="Panti Asuhan & Yatim Piatu" checked class="rounded border-[#74877B] text-[#1E7A4C] focus:ring-[#1E7A4C]">
+                        <span class="font-medium text-[#16251D]">Panti Asuhan & Yatim Piatu</span>
                     </label>
-                    <span class="text-[10px] font-semibold text-[#1E7A4C] bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                        Bisa Diketik Sendiri & Pilih Cepat
-                    </span>
-                </div>
 
-                <!-- Input Ketik Sendiri Sasaran Penyaluran (Utama & Fleksibel) -->
-                <div class="p-3.5 bg-emerald-50/60 rounded-2xl border border-emerald-200/80 space-y-2">
-                    <div class="flex items-center justify-between gap-2">
-                        <label class="text-xs font-bold text-[#16251D] flex items-center gap-1.5">
-                            <svg class="w-4 h-4 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                            </svg>
-                            <span>Ketik Sasaran Penyaluran Sendiri / Nama Lembaga Spesifik:</span>
-                        </label>
-                        <span class="text-[10px] text-[#4E6157] font-semibold">Bisa ketik bebas</span>
-                    </div>
+                    <label class="flex items-center gap-2.5 p-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+                        <input type="checkbox" name="target_beneficiaries[]" value="Pondok Pesantren & Santri" checked class="rounded border-[#74877B] text-[#1E7A4C] focus:ring-[#1E7A4C]">
+                        <span class="font-medium text-[#16251D]">Pondok Pesantren & Santri</span>
+                    </label>
 
-                    <input type="text"
-                           name="custom_target_beneficiaries"
-                           value="{{ old('custom_target_beneficiaries') }}"
-                           placeholder="Contoh: Panti Asuhan Al-Hidayah Tembalang, Yayasan Kasih Ibu, Lansia RW 04, Paguyuban Difabel..."
-                           class="input-field text-xs font-medium bg-white">
+                    <label class="flex items-center gap-2.5 p-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+                        <input type="checkbox" name="target_beneficiaries[]" value="Tunawisma & Pekerja Jalanan" class="rounded border-[#74877B] text-[#1E7A4C] focus:ring-[#1E7A4C]">
+                        <span class="font-medium text-[#16251D]">Tunawisma & Pekerja Jalanan</span>
+                    </label>
 
-                    <p class="text-[11px] text-[#4E6157] leading-relaxed">
-                        Tuliskan nama panti asuhan, pondok pesantren, yayasan, paguyuban, atau kelompok warga yang menjadi target Anda. Pisahkan dengan tanda koma jika lebih dari satu.
-                    </p>
-                </div>
+                    <label class="flex items-center gap-2.5 p-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+                        <input type="checkbox" name="target_beneficiaries[]" value="Lansia Dhuafa & Keluarga Prasejahtera" class="rounded border-[#74877B] text-[#1E7A4C] focus:ring-[#1E7A4C]">
+                        <span class="font-medium text-[#16251D]">Lansia Dhuafa & Warga Prasejahtera</span>
+                    </label>
 
-                <!-- Rekomendasi Pilihan Cepat Kategori Sasaran -->
-                <div class="space-y-1.5 pt-1">
-                    <span class="text-[11px] font-bold text-[#4E6157] block">Atau pilih dari kategori umum berikut:</span>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                        <label class="flex items-center gap-2.5 p-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
-                            <input type="checkbox" name="target_beneficiaries[]" value="Panti Asuhan & Yatim Piatu" checked class="rounded border-[#74877B] text-[#1E7A4C] focus:ring-[#1E7A4C]">
-                            <span class="font-medium text-[#16251D]">Panti Asuhan & Yatim Piatu</span>
-                        </label>
-
-                        <label class="flex items-center gap-2.5 p-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
-                            <input type="checkbox" name="target_beneficiaries[]" value="Pondok Pesantren & Santri" checked class="rounded border-[#74877B] text-[#1E7A4C] focus:ring-[#1E7A4C]">
-                            <span class="font-medium text-[#16251D]">Pondok Pesantren & Santri</span>
-                        </label>
-
-                        <label class="flex items-center gap-2.5 p-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
-                            <input type="checkbox" name="target_beneficiaries[]" value="Tunawisma & Pekerja Jalanan" class="rounded border-[#74877B] text-[#1E7A4C] focus:ring-[#1E7A4C]">
-                            <span class="font-medium text-[#16251D]">Tunawisma & Pekerja Jalanan</span>
-                        </label>
-
-                        <label class="flex items-center gap-2.5 p-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
-                            <input type="checkbox" name="target_beneficiaries[]" value="Lansia Dhuafa & Keluarga Prasejahtera" class="rounded border-[#74877B] text-[#1E7A4C] focus:ring-[#1E7A4C]">
-                            <span class="font-medium text-[#16251D]">Lansia Dhuafa & Warga Prasejahtera</span>
-                        </label>
-
-                        <label class="flex items-center gap-2.5 p-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 cursor-pointer transition sm:col-span-2">
-                            <input type="checkbox" name="target_beneficiaries[]" value="Dapur Umum & Tanggap Darurat Bencana" class="rounded border-[#74877B] text-[#1E7A4C] focus:ring-[#1E7A4C]">
-                            <span class="font-medium text-[#16251D]">Dapur Umum & Posko Tanggap Bencana Lokal</span>
-                        </label>
-                    </div>
+                    <label class="flex items-center gap-2.5 p-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 cursor-pointer transition sm:col-span-2">
+                        <input type="checkbox" name="target_beneficiaries[]" value="Dapur Umum & Tanggap Darurat Bencana" class="rounded border-[#74877B] text-[#1E7A4C] focus:ring-[#1E7A4C]">
+                        <span class="font-medium text-[#16251D]">Dapur Umum & Posko Tanggap Bencana Lokal</span>
+                    </label>
                 </div>
             </div>
 
