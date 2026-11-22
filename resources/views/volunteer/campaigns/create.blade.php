@@ -149,13 +149,33 @@
                                     <p class="text-[11px] text-[#4E6157] group-hover:text-[#16251D] truncate mt-0.5" x-text="s.subtitle || s.display_name"></p>
                                 </div>
                             </div>
-                            <span class="text-xs text-[#1E7A4C] opacity-0 group-hover:opacity-100 transition-opacity font-bold pr-1">Pilih &rarr;</span>
+                            <div class="opacity-0 group-hover:opacity-100 transition-opacity text-[#1E7A4C] flex items-center gap-1 font-bold text-xs pr-1">
+                                <span>Pilih</span>
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </div>
                         </div>
                     </template>
                 </div>
             </div>
 
-            <div id="camp-map" class="h-56 w-full rounded-2xl border border-[#D5E0D9] overflow-hidden relative"></div>
+            <!-- Mini Map for Picking Coordinates (Google Maps Style) -->
+            <div class="relative rounded-2xl border border-[#D5E0D9] overflow-hidden shadow-xs">
+                <div id="camp-map" class="h-56 w-full"></div>
+
+                <!-- Google Maps Control Dock (Bottom-Right) -->
+                <div class="absolute bottom-3 right-3 z-10 flex flex-col items-center gap-1.5 pointer-events-auto">
+                    <div class="flex flex-col rounded-xl bg-white/95 backdrop-blur-md border border-[#D5E0D9] shadow-sm overflow-hidden">
+                        <button type="button" @click="map.zoomIn()" class="w-7 h-7 flex items-center justify-center text-[#16251D] hover:bg-gray-100 transition border-b border-gray-100" title="Perbesar">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                        </button>
+                        <button type="button" @click="map.zoomOut()" class="w-7 h-7 flex items-center justify-center text-[#16251D] hover:bg-gray-100 transition" title="Perkecil">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
 
             <input type="hidden" name="latitude" :value="lat">
             <input type="hidden" name="longitude" :value="lng">
@@ -218,7 +238,7 @@ document.addEventListener('alpine:init', () => {
         },
 
         initMap() {
-            this.map = L.map('camp-map').setView([this.lat, this.lng], 14);
+            this.map = L.map('camp-map', { zoomControl: false }).setView([this.lat, this.lng], 14);
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: '&copy; OpenStreetMap'

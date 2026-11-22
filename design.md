@@ -461,5 +461,17 @@ Gunakan daftar audit berikut sebelum setiap rilis fitur:
 3. **Pencarian Autocomplete Bersih (Anti-Emoji):**
    - Panel saran lokasi geocoding menggunakan lencana ikon pin SVG emerald, pemisah halus, tipografi berjenjang, dan *hover slide* tanpa emoji apa pun.
 
+### 10.5 Ekosistem Pencarian Peta & Petunjuk Arah Lengkap (Google Maps Grade Ecosystem)
+1. **Tombol "Rute" Langsung pada Autocomplete Suggestion:**
+   - Setiap baris saran pencarian lokasi menampilkan estimasi jarak geodetik dari titik pengguna saat ini (`~X.X km dari Anda`) dan tombol aksi 1-klik **"Rute"** dengan ikon panah navigasi.
+   - Mengklik "Rute" langsung menutup dropdown dan menggambar polyline rute jalan turn-by-turn via OSRM tanpa perlu langkah tambahan.
+2. **Mode Petunjuk Arah Dua Titik (Two-Point Directions Mode):**
+   - Tombol "Rute" pada bar pencarian utama mengaktifkan Google Maps Two-Point Directions Panel.
+   - Menampilkan input Titik Awal (Point A - default GPS "Lokasi Anda saat ini"), input Tujuan (Point B), pemilih moda (Kendaraan vs Jalan Kaki), dan tombol *Swap* untuk menukar titik awal dan akhir secara instan.
+3. **Kartu Hasil Pencarian Tempat (Searched Place Destination Sheet):**
+   - Memilih lokasi dari pencarian menempatkan pin destinasi merah khas Google Maps (`searchMarker`) dan memunculkan panel tempat dengan 4 aksi: *Rute Jalan (OSRM)*, *Cari Makanan di Sini* (memindahkan radius penyelamatan pangan ke area tujuan), *Google Maps eksternal*, dan *Bagikan*.
+4. **Dock Kontrol Peta Seragam (Grouped Zoom Dock):**
+   - Seluruh peta di web (`home.blade.php`, `listings/create.blade.php`, `volunteer/campaigns/create.blade.php`, `listings/show.blade.php`) menggunakan dok kontrol vertikal minimalis putih dengan tombol perbesar (+) dan perkecil (-) SVG, menggantikan kontrol bawaan peramban demi keselarasan estetika Google Maps.
+
 ---
 *Dokumen ini merupakan spesifikasi antarmuka definitif untuk Locabite v2.0. Setiap penambahan fitur atau modifikasi tampilan wajib merujuk pada prinsip, token desain, dan aturan aksesibilitas yang telah ditetapkan di atas.*

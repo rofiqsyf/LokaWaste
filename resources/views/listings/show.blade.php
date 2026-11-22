@@ -201,18 +201,25 @@
                 @endif
 
                 <!-- Mini Leaflet Map -->
-                <div id="listing-mini-map" class="h-48 w-full rounded-2xl overflow-hidden border border-[#D5E0D9]"></div>
+                <div id="listing-mini-map" class="h-52 w-full rounded-2xl overflow-hidden border border-[#D5E0D9] relative shadow-xs"></div>
 
-                <!-- Navigation link to full interactive map hand-off (SDD FR-46) -->
-                <div class="flex items-center justify-between pt-1">
-                    <span class="text-xs text-[#4E6157]">Navigasi titik jemput:</span>
-                    <a href="{{ route('home', ['focus' => $listing->id, 'lat' => $listing->public_latitude, 'lng' => $listing->public_longitude]) }}"
-                       class="btn-secondary text-xs py-1.5 px-3.5 inline-flex items-center gap-1.5 shadow-xs hover:border-[#1E7A4C] hover:text-[#1E7A4C]">
-                        <svg class="w-3.5 h-3.5 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <!-- Google Maps Navigation Action Toolbar -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                    <a href="https://www.google.com/maps/dir/?api=1&destination={{ $canSeeExact ? $listing->latitude : $listing->public_latitude }},{{ $canSeeExact ? $listing->longitude : $listing->public_longitude }}"
+                       target="_blank"
+                       class="btn-primary text-xs py-2 px-3.5 flex items-center justify-center gap-1.5 shadow-xs">
+                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
                         </svg>
-                        Buka di Peta Interaktif
+                        <span>Petunjuk Arah Google Maps</span>
+                    </a>
+
+                    <a href="{{ route('home', ['focus' => $listing->id, 'lat' => $listing->public_latitude, 'lng' => $listing->public_longitude]) }}"
+                       class="btn-secondary text-xs py-2 px-3.5 flex items-center justify-center gap-1.5 shadow-xs hover:border-[#1E7A4C] hover:text-[#1E7A4C]">
+                        <svg class="w-3.5 h-3.5 text-[#1E7A4C] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                        </svg>
+                        <span>Buka di Peta Interaktif</span>
                     </a>
                 </div>
             </div>

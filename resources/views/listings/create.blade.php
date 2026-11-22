@@ -169,14 +169,37 @@
                                     <p class="text-[11px] text-[#4E6157] group-hover:text-[#16251D] truncate mt-0.5" x-text="s.subtitle || s.display_name"></p>
                                 </div>
                             </div>
-                            <span class="text-xs text-[#1E7A4C] opacity-0 group-hover:opacity-100 transition-opacity font-bold pr-1">Pilih &rarr;</span>
+                            <div class="opacity-0 group-hover:opacity-100 transition-opacity text-[#1E7A4C] flex items-center gap-1 font-bold text-xs pr-1">
+                                <span>Pilih</span>
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </div>
                         </div>
                     </template>
                 </div>
             </div>
 
-            <!-- Mini Map for Picking Coordinates -->
-            <div id="picker-map" class="h-56 w-full rounded-2xl border border-[#D5E0D9] overflow-hidden relative"></div>
+            <!-- Mini Map for Picking Coordinates (Google Maps Style) -->
+            <div class="relative rounded-2xl border border-[#D5E0D9] overflow-hidden shadow-xs">
+                <div id="picker-map" class="h-56 w-full"></div>
+
+                <!-- Google Maps Control Dock (Bottom-Right) -->
+                <div class="absolute bottom-3 right-3 z-10 flex flex-col items-center gap-1.5 pointer-events-auto">
+                    <div class="flex flex-col rounded-xl bg-white/95 backdrop-blur-md border border-[#D5E0D9] shadow-sm overflow-hidden">
+                        <button type="button" @click="map.zoomIn()" class="w-7 h-7 flex items-center justify-center text-[#16251D] hover:bg-gray-100 transition border-b border-gray-100" title="Perbesar">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                        </button>
+                        <button type="button" @click="map.zoomOut()" class="w-7 h-7 flex items-center justify-center text-[#16251D] hover:bg-gray-100 transition" title="Perkecil">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4"/></svg>
+                        </button>
+                    </div>
+
+                    <button type="button" @click="toggleBasemap()" class="w-7 h-7 rounded-xl bg-white/95 backdrop-blur-md hover:bg-white text-[#4E6157] hover:text-[#1E7A4C] border border-[#D5E0D9] shadow-sm flex items-center justify-center transition" title="Ganti tampilan peta">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+                    </button>
+                </div>
+            </div>
 
             <!-- Reverse Geocoding Address Suggestion Pill -->
             <template x-if="detectedAddress">
@@ -358,7 +381,7 @@ document.addEventListener('alpine:init', () => {
         },
 
         initPickerMap() {
-            this.map = L.map('picker-map').setView([this.lat, this.lng], 15);
+            this.map = L.map('picker-map', { zoomControl: false }).setView([this.lat, this.lng], 15);
 
             this.osmLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,

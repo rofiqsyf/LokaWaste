@@ -4,9 +4,11 @@
 
     <!-- Top Floating Filter & Search Bar on Map (Google Maps / Apple Maps Class) -->
     <div class="absolute top-3 inset-x-3 md:inset-x-6 z-20 pointer-events-none flex flex-col gap-2 max-w-2xl mx-auto">
-        <!-- Search bar with Autocomplete Dropdown -->
+        <!-- Search bar with Autocomplete Dropdown & Directions Mode (Google Maps Class) -->
         <div class="pointer-events-auto relative">
-            <div class="bg-white/95 backdrop-blur-2xl rounded-2xl shadow-[0_12px_36px_-6px_rgba(22,37,29,0.14),0_2px_8px_rgba(22,37,29,0.04)] border border-[#D5E0D9]/80 p-1.5 sm:p-2 flex items-center gap-2 transition-all focus-within:border-[#1E7A4C]/60 focus-within:shadow-[0_16px_40px_-6px_rgba(30,122,76,0.20)]">
+            <!-- Normal Search Mode Header -->
+            <div x-show="!directionsMode"
+                 class="bg-white/95 backdrop-blur-2xl rounded-2xl shadow-[0_12px_36px_-6px_rgba(22,37,29,0.14),0_2px_8px_rgba(22,37,29,0.04)] border border-[#D5E0D9]/80 p-1.5 sm:p-2 flex items-center gap-1.5 sm:gap-2 transition-all focus-within:border-[#1E7A4C]/60 focus-within:shadow-[0_16px_40px_-6px_rgba(30,122,76,0.20)]">
                 <div class="relative flex-1">
                     <input type="text"
                            x-model="searchQuery"
@@ -19,14 +21,25 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
                     <!-- Clear search button -->
-                    <button type="button" x-show="searchQuery" @click="clearSearch()" class="absolute right-2.5 top-2 text-gray-400 hover:text-gray-700 w-6 h-6 rounded-full hover:bg-gray-100 flex items-center justify-center transition">
+                    <button type="button" x-show="searchQuery" @click="clearSearch()" class="absolute right-2.5 top-2 text-gray-400 hover:text-gray-700 w-6 h-6 rounded-full hover:bg-gray-100 flex items-center justify-center transition" title="Hapus pencarian">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
                     </button>
                 </div>
 
-                <button @click="selectFirstOrSearch()" class="btn-primary text-xs px-3.5 py-2 shrink-0 shadow-xs active:scale-95 transition-transform">
+                <!-- Google Maps Directions Mode Trigger Button -->
+                <button type="button"
+                        @click="toggleDirectionsMode()"
+                        class="p-2 text-[#2A6F97] hover:bg-blue-50 hover:text-[#1E7A4C] rounded-xl border border-[#D5E0D9] shrink-0 transition active:scale-95 bg-white flex items-center gap-1 font-bold text-xs shadow-2xs"
+                        title="Buka Mode Petunjuk Arah / Rute Google Maps">
+                    <svg class="w-4 h-4 text-[#2A6F97]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                    </svg>
+                    <span class="hidden sm:inline">Rute</span>
+                </button>
+
+                <button @click="selectFirstOrSearch()" class="btn-primary text-xs px-3 sm:px-3.5 py-2 shrink-0 shadow-xs active:scale-95 transition-transform font-bold">
                     Cari
                 </button>
                 <button @click="useCurrentLocation()" :disabled="locating" title="Gunakan lokasi GPS saya saat ini" class="p-2 text-[#1E7A4C] hover:bg-emerald-50 rounded-xl border border-[#D5E0D9] shrink-0 transition active:scale-95 bg-white">
@@ -36,7 +49,89 @@
                 </button>
             </div>
 
-            <!-- Autocomplete Results Dropdown -->
+            <!-- Google Maps Two-Point Directions Panel (Directions Mode) -->
+            <div x-show="directionsMode"
+                 x-transition:enter="transition ease-out duration-250"
+                 x-transition:enter-start="opacity-0 -translate-y-2 scale-98"
+                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                 x-transition:leave="transition ease-in duration-150"
+                 x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                 x-transition:leave-end="opacity-0 -translate-y-2 scale-98"
+                 class="bg-white/98 backdrop-blur-2xl rounded-3xl shadow-[0_20px_50px_-10px_rgba(22,37,29,0.22)] border border-[#D5E0D9] p-3 space-y-2.5">
+                
+                <!-- Directions Header: Mode & Close -->
+                <div class="flex items-center justify-between pb-1 border-b border-gray-100">
+                    <div class="flex items-center gap-1 bg-gray-100/80 p-0.5 rounded-full border border-gray-200/60">
+                        <button type="button"
+                                @click="switchRouteMode('driving')"
+                                :class="routeMode === 'driving' ? 'bg-[#1E7A4C] text-white shadow-2xs font-bold' : 'text-[#4E6157] hover:text-[#16251D] font-medium'"
+                                class="px-3 py-1 rounded-full text-xs flex items-center gap-1 transition">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h8m-9 4h10M5 16h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v7a2 2 0 002 2zm2 0v2m10-2v2"/>
+                            </svg>
+                            <span>Kendaraan</span>
+                        </button>
+                        <button type="button"
+                                @click="switchRouteMode('walking')"
+                                :class="routeMode === 'walking' ? 'bg-[#2A6F97] text-white shadow-2xs font-bold' : 'text-[#4E6157] hover:text-[#16251D] font-medium'"
+                                class="px-3 py-1 rounded-full text-xs flex items-center gap-1 transition">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7a2 2 0 11-4 0 2 2 0 014 0zM9 14l2-4 3 2 1 4m-4-2v6m-2 0h4"/>
+                            </svg>
+                            <span>Jalan Kaki</span>
+                        </button>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] font-bold text-[#14573A] uppercase tracking-wider hidden sm:inline">Navigasi Rute</span>
+                        <button type="button" @click="toggleDirectionsMode()" class="w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 text-[#4E6157] flex items-center justify-center transition" title="Tutup Mode Rute">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Origin & Destination Inputs with Swap Button -->
+                <div class="flex items-center gap-2">
+                    <div class="flex flex-col gap-2 flex-1">
+                        <!-- Origin Input (Point A) -->
+                        <div class="relative flex items-center">
+                            <span class="w-3 h-3 rounded-full bg-emerald-500 border-2 border-white shadow-2xs absolute left-3"></span>
+                            <input type="text"
+                                   x-model="originLabel"
+                                   readonly
+                                   @click="useCurrentLocation()"
+                                   class="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-gray-200 bg-gray-50/80 font-medium text-[#16251D] cursor-pointer hover:bg-gray-100 transition"
+                                   title="Klik untuk pusatkan ke GPS">
+                        </div>
+
+                        <!-- Destination Input (Point B) -->
+                        <div class="relative flex items-center">
+                            <span class="w-3 h-3 rounded-full bg-red-500 border-2 border-white shadow-2xs absolute left-3"></span>
+                            <input type="text"
+                                   x-model="searchQuery"
+                                   @input.debounce.300ms="fetchSuggestions()"
+                                   @focus="if (suggestions.length > 0) showSuggestions = true"
+                                   @keydown.enter.prevent="selectFirstOrSearch()"
+                                   placeholder="Pilih tujuan atau ketik tempat..."
+                                   class="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-emerald-300 bg-white font-medium text-[#16251D] focus:ring-2 focus:ring-[#1E7A4C] focus:outline-none transition">
+                        </div>
+                    </div>
+
+                    <!-- Swap Direction Button -->
+                    <button type="button"
+                            @click="swapDirections()"
+                            class="w-9 h-16 rounded-2xl bg-gray-100 hover:bg-gray-200 text-[#4E6157] hover:text-[#16251D] flex items-center justify-center transition active:scale-95 shrink-0"
+                            title="Tukar Titik Awal dan Tujuan">
+                        <svg class="w-4 h-4 transition-transform active:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Autocomplete Results Dropdown with Google Maps Style Route & View Actions -->
             <div x-show="showSuggestions && suggestions.length > 0"
                  x-transition:enter="transition ease-out duration-200"
                  x-transition:enter-start="opacity-0 translate-y-2 scale-98"
@@ -45,20 +140,20 @@
                  x-transition:leave-start="opacity-100 translate-y-0 scale-100"
                  x-transition:leave-end="opacity-0 translate-y-2 scale-98"
                  @click.away="showSuggestions = false"
-                 class="absolute top-full left-0 right-0 mt-2 bg-white/95 backdrop-blur-2xl rounded-3xl shadow-[0_24px_54px_-8px_rgba(22,37,29,0.22),0_8px_18px_rgba(22,37,29,0.08)] border border-[#D5E0D9]/70 overflow-hidden z-50 p-2 space-y-1 max-h-[380px] overflow-y-auto">
+                 class="absolute top-full left-0 right-0 mt-2 bg-white/95 backdrop-blur-2xl rounded-3xl shadow-[0_24px_54px_-8px_rgba(22,37,29,0.22),0_8px_18px_rgba(22,37,29,0.08)] border border-[#D5E0D9]/70 overflow-hidden z-50 p-2 space-y-1 max-h-[400px] overflow-y-auto">
                 
                 <div class="px-3 py-2 flex items-center justify-between border-b border-gray-100/80 mb-1">
                     <div class="flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-[#1E7A4C] animate-pulse"></span>
-                        <span class="text-[11px] font-bold text-[#16251D] tracking-wide uppercase">Saran Lokasi Terpilih</span>
+                        <span class="text-[11px] font-bold text-[#16251D] tracking-wide uppercase">Hasil Pencarian Tujuan</span>
                     </div>
-                    <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-[#1E7A4C] border border-emerald-100" x-text="`${suggestions.length} opsi tersedia`"></span>
+                    <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-[#1E7A4C] border border-emerald-100" x-text="`${suggestions.length} opsi ditemukan`"></span>
                 </div>
 
                 <template x-for="(s, idx) in suggestions" :key="s.id || idx">
                     <div @click="selectSuggestion(s)"
-                         class="group relative p-2.5 rounded-2xl hover:bg-linear-to-r hover:from-emerald-50/90 hover:via-teal-50/40 hover:to-transparent cursor-pointer transition-all duration-200 flex items-center justify-between gap-3 border border-transparent hover:border-emerald-200/60 hover:shadow-xs active:scale-[0.99]">
-                        <div class="flex items-center gap-3 min-w-0">
+                         class="group relative p-2.5 rounded-2xl hover:bg-linear-to-r hover:from-emerald-50/90 hover:via-teal-50/40 hover:to-transparent cursor-pointer transition-all duration-200 flex items-center justify-between gap-2.5 border border-transparent hover:border-emerald-200/60 hover:shadow-xs active:scale-[0.99]">
+                        <div class="flex items-center gap-2.5 min-w-0 flex-1">
                             <div class="w-10 h-10 rounded-2xl bg-linear-to-br from-emerald-100/80 to-teal-50 text-[#1E7A4C] group-hover:from-[#1E7A4C] group-hover:to-[#14573A] group-hover:text-white flex items-center justify-center shrink-0 transition-all duration-200 shadow-xs group-hover:scale-105">
                                 <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
@@ -67,19 +162,36 @@
                             </div>
 
                             <div class="min-w-0 flex-1">
-                                <div class="flex items-center gap-2">
+                                <div class="flex items-center gap-1.5 flex-wrap">
                                     <h4 class="font-display font-bold text-sm text-[#16251D] group-hover:text-[#1E7A4C] truncate transition-colors" x-text="s.title"></h4>
-                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-gray-100 text-[#4E6157] group-hover:bg-emerald-100 group-hover:text-[#14573A] transition-colors shrink-0" x-text="s.type_label || 'Wilayah'"></span>
+                                    <span class="text-[9px] font-bold px-1.5 py-0.2 rounded-md bg-gray-100 text-[#4E6157] group-hover:bg-emerald-100 group-hover:text-[#14573A] transition-colors shrink-0" x-text="s.type_label || 'Wilayah'"></span>
+                                    <template x-if="getDistanceKm(s.lat, s.lng)">
+                                        <span class="text-[10px] font-semibold text-[#1E7A4C] bg-emerald-50 px-1.5 py-0.2 rounded shrink-0" x-text="`~${getDistanceKm(s.lat, s.lng)} km`"></span>
+                                    </template>
                                 </div>
                                 <p class="text-xs text-[#4E6157] group-hover:text-[#16251D] truncate transition-colors mt-0.5" x-text="s.subtitle || s.display_name"></p>
                             </div>
                         </div>
 
-                        <div class="opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all duration-200 text-[#1E7A4C] shrink-0 pr-1 flex items-center gap-1">
-                            <span class="text-[11px] font-bold hidden sm:inline">Pilih</span>
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
-                            </svg>
+                        <!-- Right Quick Actions: 1-Click "Rute" + "Pilih" -->
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <!-- Direct Route Button (Google Maps Directions) -->
+                            <button type="button"
+                                    @click.stop="routeToSuggestion(s)"
+                                    class="px-2.5 py-1 rounded-xl bg-emerald-50 hover:bg-[#1E7A4C] text-[#1E7A4C] hover:text-white text-xs font-bold border border-emerald-200/80 transition flex items-center gap-1 active:scale-95 shadow-2xs"
+                                    title="Tampilkan rute jalan ke tempat ini">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                                </svg>
+                                <span>Rute</span>
+                            </button>
+
+                            <!-- View Place Action -->
+                            <div class="hidden sm:flex items-center text-[#4E6157] group-hover:text-[#1E7A4C] px-1 py-1 text-xs font-semibold">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </div>
                         </div>
                     </div>
                 </template>
@@ -89,9 +201,9 @@
                         <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        Ketuk untuk terbang ke lokasi & cari makanan
+                        Ketuk <strong>Rute</strong> untuk panduan jalan, atau nama tempat untuk lihat area
                     </span>
-                    <span class="hidden sm:inline font-mono text-[10px] bg-white px-2 py-0.5 rounded-md border border-gray-200">ESC untuk tutup</span>
+                    <span class="hidden sm:inline font-mono text-[10px] bg-white px-2 py-0.5 rounded-md border border-gray-200">ESC tutup</span>
                 </div>
             </div>
         </div>
@@ -599,6 +711,94 @@
             </div>
         </div>
 
+        <!-- Searched Place Result Sheet (Google Maps Destination Card) -->
+        <div x-show="searchedPlace"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 translate-y-8 sm:translate-y-0 sm:scale-95"
+             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+             x-transition:leave-end="opacity-0 translate-y-8 sm:translate-y-0 sm:scale-95"
+             class="fixed sm:absolute inset-x-0 bottom-0 sm:bottom-6 sm:left-6 sm:inset-x-auto sm:w-[420px] max-h-[85vh] sm:max-h-[640px] z-40 bg-white/98 backdrop-blur-2xl rounded-t-3xl sm:rounded-3xl shadow-[0_25px_60px_-12px_rgba(22,37,29,0.35),0_6px_20px_rgba(22,37,29,0.12)] border border-[#D5E0D9] overflow-hidden flex flex-col pointer-events-auto">
+            
+            <!-- Mobile pull handle -->
+            <div class="sm:hidden pt-2 pb-1 flex justify-center">
+                <div class="w-10 h-1 rounded-full bg-gray-300"></div>
+            </div>
+
+            <!-- Header with Badges & Close -->
+            <div class="p-4 sm:p-5 border-b border-gray-100 flex items-start justify-between gap-3 bg-linear-to-b from-gray-50/80 to-transparent">
+                <div class="flex items-center gap-1.5 flex-wrap min-w-0">
+                    <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-md bg-emerald-100 text-[#14573A] border border-emerald-200" x-text="searchedPlace?.type_label || 'Titik Tujuan'"></span>
+                    <template x-if="searchedPlace?.distance_km">
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-[#2A6F97] border border-blue-200 flex items-center gap-1">
+                            <svg class="w-3 h-3 text-[#2A6F97]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-width="2"/><path d="M12 7v5l3 3"/></svg>
+                            <span x-text="`~${searchedPlace?.distance_km} km dari Anda`"></span>
+                        </span>
+                    </template>
+                </div>
+
+                <button @click="closeSearchedPlace()"
+                        class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-[#4E6157] hover:text-[#16251D] flex items-center justify-center shrink-0 transition"
+                        title="Tutup Panel Tempat">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Content Body -->
+            <div class="p-4 sm:p-5 overflow-y-auto space-y-4 flex-1">
+                <div>
+                    <h2 class="font-display font-black text-lg text-[#16251D] leading-snug" x-text="searchedPlace?.title"></h2>
+                    <p class="text-xs text-[#4E6157] mt-1 leading-relaxed" x-text="searchedPlace?.subtitle"></p>
+                </div>
+
+                <!-- Google Maps Actions Grid -->
+                <div class="grid grid-cols-2 gap-2 pt-1">
+                    <!-- 1. Road Route to this destination -->
+                    <button type="button"
+                            @click="drawRoute(searchedPlace, 'driving'); closeSearchedPlace()"
+                            class="p-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition active:scale-95">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                        </svg>
+                        <span>Rute Jalan (OSRM)</span>
+                    </button>
+
+                    <!-- 2. Explore Food Rescue in this neighborhood -->
+                    <button type="button"
+                            @click="setCenterLocation(searchedPlace.lat, searchedPlace.lng); closeSearchedPlace()"
+                            class="p-2.5 rounded-2xl bg-[#16251D] hover:bg-black text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition active:scale-95">
+                        <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                        <span>Cari Makanan di Sini</span>
+                    </button>
+
+                    <!-- 3. External Google Maps turn-by-turn -->
+                    <a :href="'https://www.google.com/maps/dir/?api=1&origin=' + userLat + ',' + userLng + '&destination=' + searchedPlace?.lat + ',' + searchedPlace?.lng"
+                       target="_blank"
+                       class="p-2.5 rounded-2xl bg-blue-50 hover:bg-blue-100 text-[#2A6F97] font-bold text-xs flex items-center justify-center gap-1.5 border border-blue-200/80 transition active:scale-95">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                        </svg>
+                        <span>Google Maps</span>
+                    </a>
+
+                    <!-- 4. Share Destination -->
+                    <button type="button"
+                            @click="sharePlace({ title: searchedPlace?.title, id: 'search', lat: searchedPlace?.lat, lng: searchedPlace?.lng, pickup_address: searchedPlace?.subtitle, portions_left: 'Titik Lokasi' })"
+                            class="p-2.5 rounded-2xl bg-gray-100 hover:bg-gray-200 text-[#16251D] font-bold text-xs flex items-center justify-center gap-1.5 transition active:scale-95">
+                        <svg class="w-4 h-4 text-[#1E7A4C] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+                        </svg>
+                        <span>Bagikan</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- Floating Re-open Sidebar Button (When sidebar is collapsed on desktop) -->
         <button x-show="!desktopSidebarOpen"
                 @click="desktopSidebarOpen = true"
@@ -644,6 +844,26 @@
 
         <!-- Floating Map Control Dock (Bottom-Right - Google Maps Style) -->
         <div class="absolute bottom-20 right-4 z-10 pointer-events-auto flex flex-col items-center gap-2">
+            <!-- Google Maps Vertical Grouped Zoom Dock (+ / -) -->
+            <div class="flex flex-col rounded-2xl bg-white/95 backdrop-blur-md border border-[#D5E0D9] shadow-card overflow-hidden">
+                <button type="button"
+                        @click="map.zoomIn()"
+                        class="w-10 h-10 flex items-center justify-center text-[#16251D] hover:bg-gray-50 active:bg-gray-100 transition border-b border-gray-100"
+                        title="Perbesar peta">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+                    </svg>
+                </button>
+                <button type="button"
+                        @click="map.zoomOut()"
+                        class="w-10 h-10 flex items-center justify-center text-[#16251D] hover:bg-gray-50 active:bg-gray-100 transition"
+                        title="Perkecil peta">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4"/>
+                    </svg>
+                </button>
+            </div>
+
             <!-- Basemap Switcher (Satellite vs Street) -->
             <button type="button"
                     @click="toggleBasemap()"
@@ -721,6 +941,10 @@ document.addEventListener('alpine:init', () => {
         searchQuery: '',
         suggestions: [],
         showSuggestions: false,
+        directionsMode: false,
+        originLabel: 'Lokasi Anda saat ini (GPS)',
+        searchedPlace: null,
+        searchMarker: null,
         loading: false,
         locating: false,
         routingLoading: false,
@@ -757,8 +981,6 @@ document.addEventListener('alpine:init', () => {
             this.map = L.map('locabite-map', {
                 zoomControl: false,
             }).setView([this.userLat, this.userLng], 14);
-
-            L.control.zoom({ position: 'bottomright' }).addTo(this.map);
 
             // OpenStreetMap Standard Tiles
             this.osmLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -1175,9 +1397,115 @@ document.addEventListener('alpine:init', () => {
             if (this.routeLayer) {
                 this.routeLayer.clearLayers();
             }
+            if (this.searchMarker && !this.searchedPlace) {
+                this.map.removeLayer(this.searchMarker);
+                this.searchMarker = null;
+            }
             this.routeInfo = null;
             this.routeTarget = null;
             this.showToast("Rute jalan ditutup.");
+        },
+
+        toggleDirectionsMode() {
+            this.directionsMode = !this.directionsMode;
+            if (this.directionsMode) {
+                this.originLabel = 'Lokasi Anda saat ini (GPS)';
+                this.showSuggestions = false;
+            } else {
+                this.clearRoute();
+            }
+        },
+
+        swapDirections() {
+            if (this.searchedPlace || this.routeTarget) {
+                const target = this.searchedPlace || this.routeTarget;
+                const tempLat = this.userLat;
+                const tempLng = this.userLng;
+                const tempLabel = this.originLabel;
+
+                this.userLat = target.lat;
+                this.userLng = target.lng;
+                this.originLabel = target.title;
+
+                target.lat = tempLat;
+                target.lng = tempLng;
+                target.title = tempLabel;
+
+                this.drawRoute(target, this.routeMode);
+                this.showToast("Titik awal dan tujuan ditukar.");
+            }
+        },
+
+        getDistanceKm(lat, lng) {
+            if (!lat || !lng || !this.userLat || !this.userLng) return null;
+            const R = 6371; // km
+            const dLat = (lat - this.userLat) * Math.PI / 180;
+            const dLon = (lng - this.userLng) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(this.userLat * Math.PI / 180) * Math.cos(lat * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            const dist = R * c;
+            return dist < 10 ? dist.toFixed(1) : Math.round(dist);
+        },
+
+        setSearchMarker(lat, lng, title) {
+            if (this.searchMarker) {
+                this.map.removeLayer(this.searchMarker);
+            }
+            const searchIcon = L.divIcon({
+                className: 'search-destination-pin',
+                html: `
+                    <div style="display:flex; flex-direction:column; align-items:center; filter:drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
+                        <div style="width:32px; height:32px; border-radius:50% 50% 50% 0; transform:rotate(-45deg); background:#C93A2E; border:3px solid white; display:grid; place-items:center;">
+                            <div style="width:10px; height:10px; border-radius:50%; background:white; transform:rotate(45deg);"></div>
+                        </div>
+                        <div style="width:8px; height:8px; border-radius:50%; background:rgba(0,0,0,0.3); margin-top:2px;"></div>
+                    </div>
+                `,
+                iconSize: [32, 44],
+                iconAnchor: [16, 40]
+            });
+
+            this.searchMarker = L.marker([lat, lng], { icon: searchIcon }).addTo(this.map);
+            if (title) {
+                this.searchMarker.bindTooltip(title, { direction: 'top', offset: [0, -35] });
+            }
+        },
+
+        routeToSuggestion(s) {
+            this.searchQuery = s.title;
+            this.showSuggestions = false;
+            this.closePlaceDetail();
+            this.closeSearchedPlace();
+            this.setSearchMarker(s.lat, s.lng, s.title);
+            this.drawRoute({
+                title: s.title,
+                lat: s.lat,
+                lng: s.lng,
+                pickup_address: s.subtitle || s.display_name,
+                distance_km: this.getDistanceKm(s.lat, s.lng) || 1
+            }, this.routeMode || 'driving');
+        },
+
+        openSearchedPlace(s) {
+            this.closePlaceDetail();
+            this.searchedPlace = {
+                title: s.title,
+                subtitle: s.subtitle || s.display_name,
+                lat: s.lat,
+                lng: s.lng,
+                type_label: s.type_label || 'Tujuan',
+                distance_km: this.getDistanceKm(s.lat, s.lng)
+            };
+        },
+
+        closeSearchedPlace() {
+            this.searchedPlace = null;
+            if (this.searchMarker && !this.routeInfo) {
+                this.map.removeLayer(this.searchMarker);
+                this.searchMarker = null;
+            }
         },
 
         async sharePlace(item) {
@@ -1279,8 +1607,10 @@ document.addEventListener('alpine:init', () => {
         selectSuggestion(s) {
             this.searchQuery = s.title;
             this.showSuggestions = false;
+            this.setSearchMarker(s.lat, s.lng, s.title);
             this.setCenterLocation(s.lat, s.lng);
             this.map.flyTo([s.lat, s.lng], 15);
+            this.openSearchedPlace(s);
         },
 
         selectFirstOrSearch() {
