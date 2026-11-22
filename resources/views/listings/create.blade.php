@@ -131,13 +131,14 @@
                         <label class="font-bold text-xs text-[#16251D] block mb-2">Jenis Pangan <span class="text-red-500">*</span></label>
                         <input type="hidden" name="food_type" :value="foodType">
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                            <!-- Cooked -->
+                            <!-- Cooked (Siap Santap) -->
                             <div @click="foodType = 'cooked'"
                                  :class="foodType === 'cooked' ? 'border-[#1E7A4C] bg-emerald-50/70 ring-2 ring-[#1E7A4C]/20 text-[#14573A]' : 'border-gray-200 bg-white hover:bg-gray-50 text-[#4E6157]'"
                                  class="p-3 rounded-2xl border cursor-pointer transition-all duration-200 flex sm:flex-col items-center sm:text-center gap-2.5 group">
                                 <div class="w-8 h-8 rounded-xl bg-white border border-[#D5E0D9] flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
-                                    <svg class="w-4 h-4 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v3m-4-3v3m8-3v3M4 11h16a8 8 0 01-16 0z"/>
+                                    <!-- Spoon & Fork (Sendok & Garpu Makanan Masak) -->
+                                    <svg class="w-4.5 h-4.5 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 2v5a2 2 0 002 2 2 2 0 002-2V2m-2 7v13M6 2v3m4-3v3M16 2a3 3 0 00-3 3v2a3 3 0 006 0V5a3 3 0 00-3-3zm0 7v13"/>
                                     </svg>
                                 </div>
                                 <div class="min-w-0 flex-1">
@@ -146,13 +147,16 @@
                                 </div>
                             </div>
 
-                            <!-- Packaged -->
+                            <!-- Packaged (Kemasan Pangan) -->
                             <div @click="foodType = 'packaged'"
                                  :class="foodType === 'packaged' ? 'border-[#1E7A4C] bg-emerald-50/70 ring-2 ring-[#1E7A4C]/20 text-[#14573A]' : 'border-gray-200 bg-white hover:bg-gray-50 text-[#4E6157]'"
                                  class="p-3 rounded-2xl border cursor-pointer transition-all duration-200 flex sm:flex-col items-center sm:text-center gap-2.5 group">
                                 <div class="w-8 h-8 rounded-xl bg-white border border-[#D5E0D9] flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
-                                    <svg class="w-4 h-4 text-[#2A6F97]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                    <!-- Canned Food / Hermetic Food Package (Kaleng & Kemasan Pangan) -->
+                                    <svg class="w-4.5 h-4.5 text-[#2A6F97]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <ellipse cx="12" cy="5.5" rx="6.5" ry="2.5" stroke-width="2"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.5 5.5v13c0 1.38 2.91 2.5 6.5 2.5s6.5-1.12 6.5-2.5v-13"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.5 11.5c0 1.38 2.91 2.5 6.5 2.5s6.5-1.12 6.5-2.5"/>
                                     </svg>
                                 </div>
                                 <div class="min-w-0 flex-1">
@@ -161,13 +165,15 @@
                                 </div>
                             </div>
 
-                            <!-- Raw -->
+                            <!-- Raw (Bahan Mentah / Hasil Tani & Sayuran) -->
                             <div @click="foodType = 'raw'"
                                  :class="foodType === 'raw' ? 'border-[#1E7A4C] bg-emerald-50/70 ring-2 ring-[#1E7A4C]/20 text-[#14573A]' : 'border-gray-200 bg-white hover:bg-gray-50 text-[#4E6157]'"
                                  class="p-3 rounded-2xl border cursor-pointer transition-all duration-200 flex sm:flex-col items-center sm:text-center gap-2.5 group">
                                 <div class="w-8 h-8 rounded-xl bg-white border border-[#D5E0D9] flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
-                                    <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                                    <!-- Fresh Carrot / Vegetables (Wortel & Sayuran Segar) -->
+                                    <svg class="w-4.5 h-4.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.27 21.7s9.87-3.5 12.73-6.36a4.5 4.5 0 0 0-6.36-6.37C5.77 11.84 2.27 21.7 2.27 21.7z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 9l6-6M17 3l4 4M13 7l4 4"/>
                                     </svg>
                                 </div>
                                 <div class="min-w-0 flex-1">
@@ -595,7 +601,7 @@
                                 <span>Halaman Masjid</span>
                             </button>
                             <button type="button" @click="appendSafeZone('Area SPBU')" class="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 hover:bg-emerald-50 hover:text-[#1E7A4C] text-[11px] font-semibold rounded-lg border border-[#D5E0D9] transition active:scale-95">
-                                <svg class="w-3 h-3 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+                                <svg class="w-3 h-3 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 22h12M4 4h10a1 1 0 011 1v17H4V5a1 1 0 011-1zM7 8h4M15 9h2a2 2 0 012 2v6a2 2 0 002 2h0a2 2 0 002-2V9a2 2 0 00-2-2h-1M19 5l-2 2"/></svg>
                                 <span>Area SPBU</span>
                             </button>
                         </div>
