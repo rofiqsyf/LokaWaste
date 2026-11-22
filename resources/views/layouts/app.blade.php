@@ -116,19 +116,19 @@
                         </form>
                     @else
                         <div class="flex items-center gap-2">
-                            <!-- Tombol Masuk (Sleek Outline Pill) -->
+                            <!-- Tombol Masuk (Refined Secondary Pill) -->
                             <a href="{{ route('login') }}"
-                               class="inline-flex items-center gap-1.5 text-xs font-bold text-[#16251D] hover:text-[#1E7A4C] bg-white hover:bg-emerald-50/70 border border-gray-200/90 hover:border-emerald-300 px-3.5 py-2 rounded-full shadow-2xs hover:shadow-xs active:scale-95 transition-all duration-150 group">
+                               class="h-9 px-4 rounded-full text-xs font-bold text-[#16251D] hover:text-[#1E7A4C] bg-white hover:bg-emerald-50/80 border border-[#D5E0D9] hover:border-[#1E7A4C]/50 shadow-2xs hover:shadow-xs active:scale-95 transition-all duration-150 inline-flex items-center justify-center gap-1.5 group">
                                 <svg class="w-3.5 h-3.5 text-[#4E6157] group-hover:text-[#1E7A4C] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
                                 </svg>
                                 <span>Masuk</span>
                             </a>
 
-                            <!-- Tombol Daftar (Premium Emerald Gradient Pill) -->
+                            <!-- Tombol Daftar (Premium Emerald Primary Pill) -->
                             <a href="{{ route('register') }}"
-                               class="inline-flex items-center gap-1.5 text-xs font-extrabold text-white bg-gradient-to-r from-[#1E7A4C] to-[#14573A] hover:from-[#14573A] hover:to-[#0F422C] px-4 py-2 rounded-full shadow-xs hover:shadow-md active:scale-95 transition-all duration-200 group">
-                                <svg class="w-3.5 h-3.5 text-emerald-200 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                               class="h-9 px-4.5 rounded-full text-xs font-bold text-white bg-[#1E7A4C] hover:bg-[#14573A] shadow-xs hover:shadow-md hover:shadow-[#1E7A4C]/25 active:scale-95 transition-all duration-150 inline-flex items-center justify-center gap-1.5 group">
+                                <svg class="w-3.5 h-3.5 text-emerald-200 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
                                 </svg>
                                 <span>Daftar</span>
