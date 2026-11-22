@@ -448,22 +448,37 @@
                         </div>
                     </div>
 
-                    <!-- Location Search with Google Maps Autocomplete Dropdown -->
+                    <!-- Smart Google Maps Search Bar with Autocomplete Dropdown -->
                     <div class="relative">
-                        <div class="relative">
-                            <input type="text"
-                                   x-model="searchQuery"
-                                   @input.debounce.300ms="fetchSuggestions()"
-                                   @focus="if (suggestions.length > 0) showSuggestions = true"
-                                   placeholder="Cari jalan, patokan toko, kelurahan..."
-                                   class="w-full pl-9 pr-8 py-2 text-xs rounded-xl border border-gray-200 text-[#16251D] focus:border-[#1E7A4C] focus:ring-2 focus:ring-[#1E7A4C]/20 bg-gray-50/70 focus:bg-white transition">
-                            <svg class="w-4 h-4 text-[#4E6157] absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                            <button type="button" x-show="searchQuery" @click="searchQuery = ''; suggestions = []; showSuggestions = false;" class="absolute right-2.5 top-2 w-5 h-5 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-700 flex items-center justify-center transition">
-                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                        <div class="relative flex items-center bg-white rounded-2xl border border-[#D5E0D9] shadow-xs focus-within:border-[#1E7A4C] focus-within:ring-2 focus-within:ring-[#1E7A4C]/20 p-1 transition-all">
+                            <div class="relative flex-1 min-w-0">
+                                <input type="text"
+                                       x-model="searchQuery"
+                                       @input.debounce.300ms="fetchSuggestions()"
+                                       @focus="if (suggestions.length > 0) showSuggestions = true"
+                                       @keydown.enter.prevent="selectFirstOrSearch()"
+                                       placeholder="Cari jalan, patokan, gedung, kelurahan (misal: Tembalang)..."
+                                       class="w-full h-9 pl-9 pr-8 text-xs rounded-xl border-0 text-[#16251D] placeholder:text-[#4E6157]/60 focus:outline-none focus:ring-0 bg-transparent transition-all">
+                                <svg class="w-4 h-4 text-[#4E6157] absolute left-3 top-2.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                </svg>
+                                <!-- Clear search button -->
+                                <button type="button" x-show="searchQuery" @click="clearSearch()" class="absolute right-2 top-1.5 text-gray-400 hover:text-gray-700 w-6 h-6 rounded-full hover:bg-gray-100 flex items-center justify-center transition" title="Hapus pencarian">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <!-- Cari Button -->
+                            <button type="button"
+                                    @click="selectFirstOrSearch()"
+                                    class="h-8.5 px-3 rounded-xl bg-[#1E7A4C] hover:bg-[#14573A] text-white font-bold text-xs flex items-center justify-center gap-1 transition shadow-2xs active:scale-95 shrink-0 cursor-pointer">
+                                <span>Cari</span>
                             </button>
                         </div>
 
-                        <!-- Suggestions Dropdown -->
+                        <!-- Autocomplete Suggestions Dropdown (Google Maps Style) -->
                         <div x-show="showSuggestions && suggestions.length > 0"
                              x-transition:enter="transition ease-out duration-150"
                              x-transition:enter-start="opacity-0 translate-y-2 scale-98"
@@ -472,18 +487,41 @@
                              x-transition:leave-start="opacity-100 translate-y-0 scale-100"
                              x-transition:leave-end="opacity-0 translate-y-2 scale-98"
                              @click.away="showSuggestions = false"
-                             class="absolute top-full left-0 right-0 mt-1.5 bg-white rounded-2xl shadow-[0_16px_40px_rgba(22,37,29,0.18)] border border-[#D5E0D9] overflow-hidden z-50 p-1.5 space-y-1 max-h-52 overflow-y-auto">
+                             class="absolute top-full left-0 right-0 mt-2 bg-white/98 backdrop-blur-2xl rounded-2xl shadow-[0_20px_45px_-8px_rgba(22,37,29,0.22)] border border-[#D5E0D9] overflow-hidden z-50 p-2 space-y-1 max-h-64 overflow-y-auto">
+                            
+                            <div class="px-3 py-1.5 flex items-center justify-between border-b border-gray-100 mb-1">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                    <span class="text-[10px] font-bold text-[#16251D] tracking-wide uppercase">Hasil Pencarian Tempat</span>
+                                </div>
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-[#14573A] border border-emerald-100" x-text="`${suggestions.length} opsi`"></span>
+                            </div>
+
                             <template x-for="(s, idx) in suggestions" :key="s.id || idx">
                                 <div @click="selectSuggestion(s)"
-                                     class="p-2 rounded-xl hover:bg-emerald-50/80 cursor-pointer transition flex items-center justify-between gap-2 border border-transparent hover:border-emerald-200/60 active:scale-[0.99]">
-                                    <div class="min-w-0 flex-1">
-                                        <div class="flex items-center gap-1.5">
-                                            <span class="font-bold text-xs text-[#16251D] truncate" x-text="s.title"></span>
-                                            <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-gray-100 text-[#4E6157] shrink-0" x-text="s.type_label || 'Wilayah'"></span>
+                                     class="p-2.5 rounded-xl hover:bg-emerald-50/80 cursor-pointer transition flex items-center justify-between gap-2.5 border border-transparent hover:border-emerald-200/60 active:scale-[0.99] group">
+                                    <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                                        <div class="w-8 h-8 rounded-xl bg-emerald-100 text-[#1E7A4C] group-hover:bg-[#1E7A4C] group-hover:text-white flex items-center justify-center shrink-0 transition-colors shadow-2xs">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                            </svg>
                                         </div>
-                                        <p class="text-[11px] text-[#4E6157] truncate" x-text="s.subtitle || s.display_name"></p>
+
+                                        <div class="min-w-0 flex-1">
+                                            <div class="flex items-center gap-1.5 flex-wrap">
+                                                <span class="font-bold text-xs text-[#16251D] group-hover:text-[#1E7A4C] truncate transition-colors" x-text="s.title"></span>
+                                                <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-gray-100 text-[#4E6157] group-hover:bg-emerald-100 group-hover:text-[#14573A] transition-colors shrink-0" x-text="s.type_label || 'Wilayah'"></span>
+                                                <template x-if="getDistanceKm(s.lat, s.lng)">
+                                                    <span class="text-[10px] font-semibold text-[#1E7A4C] bg-emerald-50 px-1.5 py-0.2 rounded shrink-0" x-text="`~${getDistanceKm(s.lat, s.lng)} km`"></span>
+                                                </template>
+                                            </div>
+                                            <p class="text-[11px] text-[#4E6157] group-hover:text-[#16251D] truncate transition-colors mt-0.5" x-text="s.subtitle || s.display_name"></p>
+                                        </div>
                                     </div>
-                                    <span class="text-[11px] font-bold text-[#1E7A4C] shrink-0">Pilih &rarr;</span>
+                                    <span class="text-[11px] font-bold text-[#1E7A4C] bg-white group-hover:bg-emerald-100 px-2.5 py-1 rounded-lg border border-emerald-200/80 shrink-0 transition">
+                                        Pilih Titik &rarr;
+                                    </span>
                                 </div>
                             </template>
                         </div>
@@ -538,16 +576,28 @@
                                    required>
                         </div>
 
-                        <div>
-                            <label class="font-bold text-xs text-[#16251D] block mb-1">Kecamatan <span class="text-red-500">*</span></label>
-                            <select name="district_id" x-model="selectedDistrict" class="input-field text-xs" required>
-                                @foreach($districts as $d)
-                                    <option value="{{ $d->id }}" {{ old('district_id', $duplicate->district_id ?? $user->district_id ?? '') == $d->id ? 'selected' : '' }}>
-                                        Kec. {{ $d->name }} ({{ $d->regency->name }})
-                                    </option>
-                                @endforeach
-                            </select>
+                        <!-- Wilayah Kecamatan Otomatis (Tanpa Dropdown Manual) -->
+                        <div class="p-3 bg-emerald-50/70 rounded-2xl border border-emerald-200/80 flex items-center justify-between text-xs">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <div class="w-7 h-7 rounded-xl bg-emerald-100 text-[#1E7A4C] flex items-center justify-center shrink-0 shadow-2xs">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                </div>
+                                <div class="min-w-0">
+                                    <span class="text-[10px] text-[#4E6157] font-medium block">Wilayah Kecamatan (Sinkron dari Peta):</span>
+                                    <span class="font-bold text-[#14573A] truncate block text-xs" x-text="selectedDistrictName"></span>
+                                </div>
+                            </div>
+                            <span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-white text-[#14573A] border border-emerald-200 shadow-2xs shrink-0 flex items-center gap-1">
+                                <svg class="w-3 h-3 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span>Otomatis Sinkron</span>
+                            </span>
                         </div>
+                        <input type="hidden" name="district_id" :value="selectedDistrict" required>
                     </div>
 
                     <!-- Rekomendasi Titik Temu Aman (Safe Zones) -->
@@ -760,6 +810,70 @@ document.addEventListener('alpine:init', () => {
             @endforeach
         },
 
+        districtsList: [
+            @foreach($districts as $d)
+                {
+                    id: {{ $d->id }},
+                    name: '{{ addslashes($d->name) }}',
+                    regency_name: '{{ addslashes($d->regency->name ?? '') }}',
+                    latitude: {{ $d->latitude ? (float) $d->latitude : 'null' }},
+                    longitude: {{ $d->longitude ? (float) $d->longitude : 'null' }}
+                },
+            @endforeach
+        ],
+
+        findNearestDistrict(lat, lng) {
+            if (!lat || !lng) return;
+            let best = null;
+            let minDist = Infinity;
+            for (const d of this.districtsList) {
+                if (d.latitude === null || d.longitude === null) continue;
+                const dLat = (d.latitude - lat) * (Math.PI / 180);
+                const dLng = (d.longitude - lng) * (Math.PI / 180);
+                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                          Math.cos(lat * (Math.PI / 180)) * Math.cos(d.latitude * (Math.PI / 180)) *
+                          Math.sin(dLng / 2) * Math.sin(dLng / 2);
+                const dist = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                if (dist < minDist) {
+                    minDist = dist;
+                    best = d;
+                }
+            }
+            if (best) {
+                this.selectedDistrict = best.id;
+                this.selectedDistrictName = `Kec. ${best.name}` + (best.regency_name ? ` (${best.regency_name})` : '');
+            }
+        },
+
+        getDistanceKm(targetLat, targetLng) {
+            if (!targetLat || !targetLng || !this.lat || !this.lng) return null;
+            const dLat = (targetLat - this.lat) * (Math.PI / 180);
+            const dLng = (targetLng - this.lng) * (Math.PI / 180);
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                      Math.cos(this.lat * (Math.PI / 180)) * Math.cos(targetLat * (Math.PI / 180)) *
+                      Math.sin(dLng / 2) * Math.sin(dLng / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            const d = 6371 * c;
+            return d < 10 ? d.toFixed(1) : Math.round(d);
+        },
+
+        clearSearch() {
+            this.searchQuery = '';
+            this.suggestions = [];
+            this.showSuggestions = false;
+        },
+
+        async selectFirstOrSearch() {
+            if (this.suggestions && this.suggestions.length > 0) {
+                this.selectSuggestion(this.suggestions[0]);
+            } else if (this.searchQuery.trim().length >= 2) {
+                await this.fetchSuggestions();
+                if (this.suggestions && this.suggestions.length > 0) {
+                    this.selectSuggestion(this.suggestions[0]);
+                }
+            }
+        },
+
         get categoryName() {
             return this.categoriesMap[this.categoryId] || 'Makanan';
         },
@@ -783,6 +897,7 @@ document.addEventListener('alpine:init', () => {
         },
 
         init() {
+            this.findNearestDistrict(this.lat, this.lng);
             this.$nextTick(() => {
                 this.initPickerMap();
                 this.reverseGeocode();
@@ -831,6 +946,7 @@ document.addEventListener('alpine:init', () => {
                 const pos = this.marker.getLatLng();
                 this.lat = pos.lat;
                 this.lng = pos.lng;
+                this.findNearestDistrict(this.lat, this.lng);
                 this.reverseGeocode();
             });
 
@@ -838,6 +954,7 @@ document.addEventListener('alpine:init', () => {
                 this.marker.setLatLng(e.latlng);
                 this.lat = e.latlng.lat;
                 this.lng = e.latlng.lng;
+                this.findNearestDistrict(this.lat, this.lng);
                 this.reverseGeocode();
             });
 
@@ -889,12 +1006,14 @@ document.addEventListener('alpine:init', () => {
             this.showSuggestions = false;
             this.lat = s.lat;
             this.lng = s.lng;
-            this.marker.setLatLng([s.lat, s.lng]);
-            this.map.flyTo([s.lat, s.lng], 16);
+            if (this.marker) this.marker.setLatLng([s.lat, s.lng]);
+            if (this.map) this.map.flyTo([s.lat, s.lng], 16);
             this.detectedAddress = s.display_name;
             if (!this.address) {
                 this.address = s.display_name;
             }
+            this.findNearestDistrict(s.lat, s.lng);
+            this.reverseGeocode();
         },
 
         async reverseGeocode() {
@@ -903,6 +1022,10 @@ document.addEventListener('alpine:init', () => {
                 if (res.ok) {
                     const data = await res.json();
                     this.detectedAddress = data.short_address || data.display_name || '';
+                    if (data.district_id) {
+                        this.selectedDistrict = data.district_id;
+                        this.selectedDistrictName = `Kec. ${data.district_name}` + (data.regency_name ? ` (${data.regency_name})` : '');
+                    }
                 }
             } catch (e) {
                 // Ignore
@@ -930,6 +1053,7 @@ document.addEventListener('alpine:init', () => {
                 this.lng = pos.coords.longitude;
                 this.map.flyTo([this.lat, this.lng], 16);
                 this.marker.setLatLng([this.lat, this.lng]);
+                this.findNearestDistrict(this.lat, this.lng);
                 this.reverseGeocode();
             });
         },

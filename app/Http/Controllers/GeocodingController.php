@@ -170,6 +170,30 @@ class GeocodingController extends Controller
             ];
         });
 
+        // Match closest district from database for automatic district synchronization
+        $districts = District::with('regency')->get();
+        $matchedDistrict = null;
+        $minDist = PHP_FLOAT_MAX;
+
+        foreach ($districts as $d) {
+            if ($d->latitude && $d->longitude) {
+                $dLat = deg2rad($d->latitude - $lat);
+                $dLng = deg2rad($d->longitude - $lng);
+                $a = sin($dLat / 2) * sin($dLat / 2) +
+                     cos(deg2rad($lat)) * cos(deg2rad($d->latitude)) *
+                     sin($dLng / 2) * sin($dLng / 2);
+                $dist = 2 * atan2(sqrt($a), sqrt(1 - $a));
+                if ($dist < $minDist) {
+                    $minDist = $dist;
+                    $matchedDistrict = $d;
+                }
+            }
+        }
+
+        $result['district_id'] = $matchedDistrict?->id;
+        $result['district_name'] = $matchedDistrict?->name;
+        $result['regency_name'] = $matchedDistrict?->regency?->name;
+
         return response()->json($result);
     }
 }
