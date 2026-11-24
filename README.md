@@ -1,58 +1,84 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# LokaWaste — Platform Penyelamat Pangan & Distribusi Donasi
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+LokaWaste adalah platform web berbasis geolokasi dan hierarki wilayah administratif Indonesia untuk menyelamatkan makanan berlebih (*food waste reduction*) dari restoran, katering, dan pelaku usaha makanan, lalu mendistribusikannya secara aman dan bermartabat kepada warga yang membutuhkan maupun panti asuhan melalui jaringan relawan terverifikasi.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Daftar Akun Demo (Email & Password)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Untuk keperluan pengujian, demo, dan evaluasi fitur, gunakan akun-akun bawaan (*seeders*) berikut. Semua akun demo menggunakan kata sandi (*password*) yang seragam:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+> **Password default untuk seluruh akun demo:** `password`
 
-## Learning Laravel
+| No | Peran (Role) | Nama Akun | Email | Password | Hak Akses & Fitur Utama |
+|---|---|---|---|---|---|
+| 1 | **Admin** | Admin LokaWaste | `admin@lokawaste.test` | `password` | Moderasi galang makanan, persetujuan pendaftaran relawan, manajemen wilayah cakupan, pemantauan laporan & pengguna. |
+| 2 | **Bisnis / Donatur** | Warung Bu Sari | `warung@lokawaste.test` | `password` | Menambahkan donasi makanan berlebih (*Listing*), mengatur porsi & kedaluwarsa, mengelola pengambilan, dan verifikasi serah terima via Smart QR Code. |
+| 3 | **Relawan** | Rina Relawan | `relawan@lokawaste.test` | `password` | Membuat inisiatif galang pangan (*Campaign*), klaim donasi makanan dengan kuota lebih besar untuk target panti asuhan/komunitas di wilayah terdaftar. |
+| 4 | **Warga / Penerima** | Budi Santoso | `warga@lokawaste.test` | `password` | Menjelajahi peta interaktif & katalog makanan dengan filter hierarki wilayah (Provinsi, Kota/Kabupaten, Kecamatan), klaim porsi makanan, dan navigasi rute penjemputan. |
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+---
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Ringkasan Skenario Pengujian
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+### Skenario 1: Admin (`admin@lokawaste.test`)
+1. Masuk ke halaman [Masuk](http://127.0.0.1:8000/login) dengan email `admin@lokawaste.test` dan kata sandi `password`.
+2. Klik tombol **Admin** di bilah navigasi atas untuk membuka [Panel Admin](http://127.0.0.1:8000/admin).
+3. Kelola pengajuan relawan, moderasi galang makanan, dan verifikasi status donatur.
 
-## Agentic Development
+### Skenario 2: Donatur Makanan (`warung@lokawaste.test`)
+1. Masuk menggunakan akun `warung@lokawaste.test`.
+2. Klik tombol **Bagikan Makanan** untuk mempublikasikan makanan berlebih baru.
+3. Buka **Dashboard** untuk melihat status klaim dari warga/relawan dan melakukan verifikasi penyerahan menggunakan kode serah terima / Smart QR Code.
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### Skenario 3: Relawan (`relawan@lokawaste.test`)
+1. Masuk menggunakan akun `relawan@lokawaste.test`.
+2. Buka menu **Galang** untuk membuat atau memperbarui kampanye bantuan makanan panti asuhan.
+3. Klaim makanan berlebih yang diprioritaskan untuk kampanye bantuan sosial.
 
+### Skenario 4: Warga (`warga@lokawaste.test`)
+1. Masuk menggunakan akun `warga@lokawaste.test`.
+2. Buka menu **Peta Interaktif** atau **Katalog Makanan**.
+3. Gunakan filter hierarki wilayah (Provinsi Jawa Tengah -> Kabupaten Wonosobo / Kota Semarang -> Kecamatan).
+4. Pilih makanan yang diinginkan dan lakukan **Klaim Makanan**.
+
+---
+
+## Instalasi & Menjalankan Proyek
+
+### Prasyarat
+- PHP >= 8.2 (dengan ekstensi SQLite, cURL, OpenSSL, Mbstring)
+- Composer
+- Node.js & NPM
+
+### Langkah Menjalankan
 ```bash
-composer require laravel/boost --dev
+# 1. Pasang dependensi PHP & JavaScript
+composer install
+npm install
 
-php artisan boost:install
+# 2. Siapkan file konfigurasi environment
+cp .env.example .env
+php artisan key:generate
+
+# 3. Jalankan migrasi dan isi database dengan data demo
+php artisan migrate:fresh --seed
+
+# 4. Bangun aset frontend
+npm run build
+
+# 5. Jalankan server lokal
+php artisan serve
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Aplikasi dapat diakses melalui browser pada alamat: `http://127.0.0.1:8000`.
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Menjalankan Pengujian Otomatis
 
-## Code of Conduct
+Proyek ini dilengkapi dengan pengujian fitur dan unit (*feature & unit tests*) komprehensif menggunakan PHPUnit:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+php artisan test
+```

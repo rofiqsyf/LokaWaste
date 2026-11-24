@@ -9,7 +9,7 @@
     <!-- Google Fonts for Bricolage Grotesque & Atkinson Hyperlegible -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -19,116 +19,152 @@
 
     @stack('styles')
 </head>
-<body class="bg-[#F2F6F3] text-[#16251D] min-h-screen flex flex-col font-sans antialiased pb-20 md:pb-0 overflow-x-clip">
+<body class="bg-glass-ambient text-[#16251D] min-h-screen flex flex-col font-sans antialiased pb-24 md:pb-0 overflow-x-clip selection:bg-[#D7F57C] selection:text-[#16251D]">
 
     <!-- Accessibility Skip Link -->
     <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#1E7A4C] focus:text-white focus:rounded-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#2A6F97]">
         Ke konten utama
     </a>
 
-    <!-- Top Navigation Bar -->
-    <header class="bg-white/95 backdrop-blur-xl border-b border-[#D5E0D9]/80 sticky top-0 z-40 shadow-[0_1px_3px_rgba(22,37,29,0.03)] transition-all">
+    <!-- Top Navigation Bar (Huddly Glassmorphism Aesthetic) -->
+    <header class="glass-nav sticky top-0 z-40 transition-all">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16 gap-4">
-                <!-- Brand -->
-                <div class="flex items-center gap-5 sm:gap-6 shrink-0">
+            <div class="flex items-center justify-between h-16 gap-3 sm:gap-4">
+                <!-- Brand (Soft-lime Squircle + Sparkle Icon + Modern Sans) -->
+                <div class="flex items-center gap-4 sm:gap-6 shrink-0">
                     <a href="{{ route('home') }}" class="flex items-center gap-2.5 group">
-                        <div class="w-9 h-9 rounded-2xl bg-linear-to-br from-[#1E7A4C] to-[#14573A] flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-all duration-200">
-                            <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 2a5 5 0 0 1 5 5c0 3-5 7-5 7s-5-4-5-7a5 5 0 0 1 5-5z"/>
-                                <circle cx="12" cy="7" r="1.5" fill="currentColor"/>
-                                <path d="M3 14c0 4.418 4.03 8 9 8s9-3.582 9-8"/>
+                        <div class="w-9 h-9 rounded-2xl bg-[#D7F57C] text-[#16251D] flex items-center justify-center shadow-xs group-hover:scale-105 group-hover:rotate-6 transition-all duration-200 border border-white/70">
+                            <svg class="w-5 h-5 text-[#16251D]" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z"/>
                             </svg>
                         </div>
                         <div class="flex flex-col">
-                            <span class="font-display font-extrabold text-xl tracking-tight text-[#16251D] group-hover:text-[#1E7A4C] transition-colors leading-none">LokaWaste</span>
-                            <span class="text-[10px] text-[#4E6157] font-medium tracking-wide mt-1 hidden sm:inline">Penyelamat Pangan</span>
+                            <span class="font-display font-extrabold text-xl tracking-tight text-[#16251D] group-hover:text-[#1E7A4C] transition-colors leading-none lowercase">lokawaste</span>
+                            <span class="text-[9px] uppercase tracking-wider text-[#4E6157] font-bold mt-0.5 hidden sm:inline">Penyelamat Pangan</span>
                         </div>
                     </a>
-
-                    <!-- Nav Links Dock (Minimalist Segments) -->
-                    <nav class="hidden md:inline-flex items-center p-1 rounded-full bg-gray-100/80 border border-gray-200/60 backdrop-blur-xs gap-0.5">
-                        <a href="{{ route('home') }}"
-                           class="px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 flex items-center gap-1.5 {{ request()->routeIs('home') ? 'bg-white text-[#1E7A4C] shadow-2xs' : 'text-[#4E6157] hover:text-[#16251D] hover:bg-white/60' }}">
-                            <svg class="w-3.5 h-3.5 {{ request()->routeIs('home') ? 'text-[#1E7A4C]' : 'text-[#74877B]' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
-                            </svg>
-                            <span>Peta Interaktif</span>
-                        </a>
-
-                        <a href="{{ route('catalog.index') }}"
-                           class="px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 flex items-center gap-1.5 {{ request()->routeIs('catalog.*') || request()->routeIs('listings.index') ? 'bg-white text-[#1E7A4C] shadow-2xs' : 'text-[#4E6157] hover:text-[#16251D] hover:bg-white/60' }}">
-                            <svg class="w-3.5 h-3.5 {{ request()->routeIs('catalog.*') || request()->routeIs('listings.index') ? 'text-[#1E7A4C]' : 'text-[#74877B]' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-                            </svg>
-                            <span>Katalog Makanan</span>
-                        </a>
-
-                        <a href="{{ route('campaigns.index') }}"
-                           class="px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 flex items-center gap-1.5 {{ request()->routeIs('campaigns.*') ? 'bg-white text-[#1E7A4C] shadow-2xs' : 'text-[#4E6157] hover:text-[#16251D] hover:bg-white/60' }}">
-                            <svg class="w-3.5 h-3.5 {{ request()->routeIs('campaigns.*') ? 'text-[#1E7A4C]' : 'text-[#74877B]' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                            </svg>
-                            <span>Galang</span>
-                        </a>
-
-                        <a href="{{ route('volunteer.apply') }}"
-                           class="px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 flex items-center gap-1.5 {{ request()->routeIs('volunteer.*') ? 'bg-white text-[#1E7A4C] shadow-2xs' : 'text-[#4E6157] hover:text-[#16251D] hover:bg-white/60' }}">
-                            <svg class="w-3.5 h-3.5 {{ request()->routeIs('volunteer.*') ? 'text-[#1E7A4C]' : 'text-[#74877B]' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                            </svg>
-                            <span>Relawan</span>
-                        </a>
-                    </nav>
                 </div>
 
-                <!-- Right Actions -->
-                <div class="flex items-center gap-2.5">
+                <!-- Center: Segmented Pill Dock (Exact Reference Aesthetic) -->
+                <nav class="hidden md:inline-flex items-center p-1 rounded-full glass-dock gap-0.5 shadow-xs">
+                    <a href="{{ route('home') }}"
+                       class="px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 flex items-center gap-1.5 {{ request()->routeIs('home') ? 'bg-[#16251D] text-white shadow-xs' : 'text-[#4E6157] hover:text-[#16251D] hover:bg-white/80' }}">
+                        <span>Peta</span>
+                    </a>
+
+                    <a href="{{ route('catalog.index') }}"
+                       class="px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 flex items-center gap-1.5 {{ request()->routeIs('catalog.*') || request()->routeIs('listings.index') ? 'bg-[#16251D] text-white shadow-xs' : 'text-[#4E6157] hover:text-[#16251D] hover:bg-white/80' }}">
+                        <span>Katalog</span>
+                    </a>
+
+                    <a href="{{ route('campaigns.index') }}"
+                       class="px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 flex items-center gap-1.5 {{ request()->routeIs('campaigns.*') ? 'bg-[#16251D] text-white shadow-xs' : 'text-[#4E6157] hover:text-[#16251D] hover:bg-white/80' }}">
+                        <span>Galang</span>
+                    </a>
+
+                    <a href="{{ route('volunteer.apply') }}"
+                       class="px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 flex items-center gap-1.5 {{ request()->routeIs('volunteer.*') ? 'bg-[#16251D] text-white shadow-xs' : 'text-[#4E6157] hover:text-[#16251D] hover:bg-white/80' }}">
+                        <span>Relawan</span>
+                    </a>
+                </nav>
+
+                <!-- Right Controls: Search Pill + Notification Bell + User Profile -->
+                <div class="flex items-center gap-2 sm:gap-2.5">
+                    <!-- Quick Search Pill (Like Reference Image) -->
+                    <form action="{{ route('catalog.index') }}" method="GET" class="relative hidden lg:flex items-center" x-data @keydown.window.prevent.cmd.k="$refs.navSearch.focus()" @keydown.window.prevent.ctrl.k="$refs.navSearch.focus()">
+                        <svg class="w-3.5 h-3.5 text-[#74877B] absolute left-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                        <input x-ref="navSearch" type="text" name="q" placeholder="Cari makanan..."
+                               class="w-40 xl:w-52 pl-9 pr-9 py-1.5 rounded-full text-xs glass-input focus:w-60 focus:bg-white text-[#16251D] placeholder:text-[#74877B] transition-all">
+                        <span class="absolute right-2.5 px-1.5 py-0.5 rounded text-[9px] font-mono font-bold text-[#74877B] bg-white/90 border border-gray-200/80 shadow-2xs pointer-events-none">⌘K</span>
+                    </form>
+
+                    <!-- Notification Bell (Activity Hub) -->
+                    <a href="{{ route('dashboard') }}" class="w-9 h-9 rounded-full glass-pill hover:bg-white flex items-center justify-center text-[#4E6157] hover:text-[#16251D] relative transition-all active:scale-95" title="Aktivitas & Notifikasi">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                        </svg>
+                        <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#1E7A4C] ring-2 ring-white"></span>
+                    </a>
+
                     @auth
-                        <!-- Share Food Primary Button (Desktop) -->
-                        <a href="{{ route('listings.create') }}" class="btn-primary text-xs py-2 px-3.5 hidden sm:inline-flex items-center gap-1.5 shadow-xs active:scale-95 transition-all">
+                        <!-- Share Food Button (Desktop) -->
+                        <a href="{{ route('listings.create') }}" class="h-9 px-4 rounded-full text-xs font-bold text-white bg-[#1E7A4C] hover:bg-[#14573A] shadow-xs hover:shadow-md hidden sm:inline-flex items-center gap-1.5 active:scale-95 transition-all">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
                             </svg>
-                            <span>Bagikan Makanan</span>
+                            <span>Bagikan</span>
                         </a>
 
-                        <!-- Dashboard / Activity -->
-                        <a href="{{ route('dashboard') }}" class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 {{ request()->routeIs('dashboard') ? 'bg-emerald-50 text-[#14573A] border border-emerald-200/70' : 'text-[#4E6157] hover:text-[#16251D] hover:bg-gray-100' }}">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                            </svg>
-                            <span>Dashboard</span>
-                        </a>
-
-                        @if(Auth::user()->isAdmin())
-                            <a href="{{ route('admin.dashboard') }}" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-[#7A4A00]/10 text-[#7A4A00] hover:bg-[#7A4A00]/20 border border-[#B45309]/30 transition">
-                                Admin
-                            </a>
-                        @endif
-
-                        <!-- Logout -->
-                        <form method="POST" action="{{ route('logout') }}" class="inline">
-                            @csrf
-                            <button type="submit" class="text-xs font-medium text-[#4E6157] hover:text-[#C93A2E] px-2 py-1.5 rounded-lg hover:bg-gray-100 transition">
-                                Keluar
+                        <!-- User Profile Avatar Pill Dropdown (Like Reference Image Avatar) -->
+                        <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+                            <button @click="open = !open" class="flex items-center gap-1.5 p-0.5 rounded-full hover:ring-2 hover:ring-[#1E7A4C]/30 transition-all focus:outline-none">
+                                <div class="w-8 h-8 rounded-full bg-linear-to-br from-[#1E7A4C] to-[#14573A] text-white flex items-center justify-center text-xs font-bold ring-2 ring-[#D7F57C] hover:ring-[#1E7A4C] shadow-xs">
+                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                </div>
+                                <svg class="w-3.5 h-3.5 text-[#4E6157] hidden sm:inline transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
                             </button>
-                        </form>
+
+                            <!-- Dropdown Menu Glass Card -->
+                            <div x-show="open"
+                                 x-transition:enter="transition ease-out duration-150"
+                                 x-transition:enter-start="opacity-0 scale-95 -translate-y-2"
+                                 x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                                 x-transition:leave="transition ease-in duration-100"
+                                 x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                                 x-transition:leave-end="opacity-0 scale-95 -translate-y-2"
+                                 class="absolute right-0 mt-2 w-56 rounded-2xl glass-card p-2 shadow-2xl z-50 border border-white/80"
+                                 style="display: none;">
+                                <div class="px-3 py-2 border-b border-gray-100/80">
+                                    <p class="text-xs font-bold text-[#16251D] truncate">{{ Auth::user()->name }}</p>
+                                    <p class="text-[11px] text-[#4E6157] truncate">{{ Auth::user()->email }}</p>
+                                    <span class="inline-block mt-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-[#1E7A4C] border border-emerald-200/60">
+                                        {{ ucfirst(Auth::user()->role) }}
+                                    </span>
+                                </div>
+
+                                <div class="py-1">
+                                    <a href="{{ route('dashboard') }}" class="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#16251D] hover:text-[#1E7A4C] hover:bg-emerald-50/60 rounded-xl transition">
+                                        <svg class="w-4 h-4 text-[#4E6157]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                                        <span>Dashboard Aktivitas</span>
+                                    </a>
+
+                                    @if(Auth::user()->isAdmin())
+                                        <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#7A4A00] hover:bg-[#FBEFC9]/60 rounded-xl transition">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+                                            <span>Panel Admin</span>
+                                        </a>
+                                    @endif
+                                </div>
+
+                                <div class="pt-1 border-t border-gray-100/80">
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit" class="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#C93A2E] hover:bg-red-50/60 rounded-xl transition">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013 3h4a3 3 0 013 3v1"/></svg>
+                                            <span>Keluar</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     @else
+                        <!-- Guest Masuk & Daftar Glass Pills -->
                         <div class="flex items-center gap-2">
-                            <!-- Tombol Masuk (Refined Secondary Pill) -->
                             <a href="{{ route('login') }}"
-                               class="h-9 px-4 rounded-full text-xs font-bold text-[#16251D] hover:text-[#1E7A4C] bg-white hover:bg-emerald-50/80 border border-[#D5E0D9] hover:border-[#1E7A4C]/50 shadow-2xs hover:shadow-xs active:scale-95 transition-all duration-150 inline-flex items-center justify-center gap-1.5 group">
-                                <svg class="w-3.5 h-3.5 text-[#4E6157] group-hover:text-[#1E7A4C] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                               class="h-9 px-4 rounded-full text-xs font-bold text-[#16251D] hover:text-[#1E7A4C] glass-pill hover:bg-white active:scale-95 transition-all duration-150 inline-flex items-center justify-center gap-1.5">
+                                <svg class="w-3.5 h-3.5 text-[#4E6157]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
                                 </svg>
                                 <span>Masuk</span>
                             </a>
 
-                            <!-- Tombol Daftar (Premium Emerald Primary Pill) -->
                             <a href="{{ route('register') }}"
-                               class="h-9 px-4.5 rounded-full text-xs font-bold text-white bg-[#1E7A4C] hover:bg-[#14573A] shadow-xs hover:shadow-md hover:shadow-[#1E7A4C]/25 active:scale-95 transition-all duration-150 inline-flex items-center justify-center gap-1.5 group">
-                                <svg class="w-3.5 h-3.5 text-emerald-200 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                               class="h-9 px-5 rounded-full text-xs font-bold text-white bg-[#1E7A4C] hover:bg-[#14573A] shadow-xs hover:shadow-md active:scale-95 transition-all duration-150 inline-flex items-center justify-center gap-1.5">
+                                <svg class="w-3.5 h-3.5 text-emerald-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
                                 </svg>
                                 <span>Daftar</span>
@@ -140,58 +176,58 @@
         </div>
     </header>
 
-    <!-- Flash Alerts / Toasts (WCAG accessible) -->
+    <!-- Flash Alerts / Toasts (Glassmorphism accessible cards) -->
     @if (session('success') || session('error') || session('warning') || session('info'))
         <div aria-live="polite" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-3">
             @if (session('success'))
                 <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
-                     class="mb-3 p-3.5 bg-[#1E7A4C]/10 border border-[#1E7A4C] text-[#14573A] rounded-xl flex items-center justify-between text-sm shadow-xs">
-                    <div class="flex items-center gap-2">
-                        <svg class="w-5 h-5 text-[#1E7A4C] shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                        </svg>
-                        <span>{{ session('success') }}</span>
+                     class="mb-3 p-3.5 glass-card bg-emerald-50/80 border border-emerald-300/80 text-[#14573A] rounded-2xl flex items-center justify-between text-sm shadow-md">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-6 h-6 rounded-full bg-[#1E7A4C] text-white flex items-center justify-center shrink-0 text-xs shadow-xs">
+                            ✓
+                        </div>
+                        <span class="font-medium">{{ session('success') }}</span>
                     </div>
-                    <button @click="show = false" class="text-[#14573A] hover:text-black font-bold text-lg">&times;</button>
+                    <button @click="show = false" class="text-[#14573A] hover:text-black font-bold text-lg px-1">&times;</button>
                 </div>
             @endif
 
             @if (session('error'))
                 <div x-data="{ show: true }" x-show="show"
-                     class="mb-3 p-3.5 bg-[#C93A2E]/10 border border-[#C93A2E] text-[#C93A2E] rounded-xl flex items-center justify-between text-sm shadow-xs">
-                    <div class="flex items-center gap-2">
-                        <svg class="w-5 h-5 text-[#C93A2E] shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                        </svg>
-                        <span>{{ session('error') }}</span>
+                     class="mb-3 p-3.5 glass-card bg-red-50/80 border border-red-300/80 text-[#C93A2E] rounded-2xl flex items-center justify-between text-sm shadow-md">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-6 h-6 rounded-full bg-[#C93A2E] text-white flex items-center justify-center shrink-0 text-xs shadow-xs">
+                            ✕
+                        </div>
+                        <span class="font-medium">{{ session('error') }}</span>
                     </div>
-                    <button @click="show = false" class="text-[#C93A2E] hover:text-black font-bold text-lg">&times;</button>
+                    <button @click="show = false" class="text-[#C93A2E] hover:text-black font-bold text-lg px-1">&times;</button>
                 </div>
             @endif
 
             @if (session('warning'))
                 <div x-data="{ show: true }" x-show="show"
-                     class="mb-3 p-3.5 bg-[#FBEFC9] border border-[#B45309] text-[#7A4A00] rounded-xl flex items-center justify-between text-sm shadow-xs">
-                    <div class="flex items-center gap-2">
-                        <svg class="w-5 h-5 text-[#B45309] shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                        </svg>
-                        <span>{{ session('warning') }}</span>
+                     class="mb-3 p-3.5 glass-card bg-[#FBEFC9]/85 border border-[#B45309]/50 text-[#7A4A00] rounded-2xl flex items-center justify-between text-sm shadow-md">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-6 h-6 rounded-full bg-[#B45309] text-white flex items-center justify-center shrink-0 text-xs shadow-xs">
+                            !
+                        </div>
+                        <span class="font-medium">{{ session('warning') }}</span>
                     </div>
-                    <button @click="show = false" class="text-[#7A4A00] hover:text-black font-bold text-lg">&times;</button>
+                    <button @click="show = false" class="text-[#7A4A00] hover:text-black font-bold text-lg px-1">&times;</button>
                 </div>
             @endif
 
             @if (session('info'))
                 <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)"
-                     class="mb-3 p-3.5 bg-[#2A6F97]/10 border border-[#2A6F97] text-[#2A6F97] rounded-xl flex items-center justify-between text-sm shadow-xs">
-                    <div class="flex items-center gap-2">
-                        <svg class="w-5 h-5 text-[#2A6F97] shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-                        </svg>
-                        <span>{{ session('info') }}</span>
+                     class="mb-3 p-3.5 glass-card bg-sky-50/80 border border-sky-300/80 text-[#2A6F97] rounded-2xl flex items-center justify-between text-sm shadow-md">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-6 h-6 rounded-full bg-[#2A6F97] text-white flex items-center justify-center shrink-0 text-xs shadow-xs">
+                            i
+                        </div>
+                        <span class="font-medium">{{ session('info') }}</span>
                     </div>
-                    <button @click="show = false" class="text-[#2A6F97] hover:text-black font-bold text-lg">&times;</button>
+                    <button @click="show = false" class="text-[#2A6F97] hover:text-black font-bold text-lg px-1">&times;</button>
                 </div>
             @endif
         </div>
@@ -202,57 +238,57 @@
         {{ $slot }}
     </main>
 
-    <!-- Mobile Bottom Navigation Bar (SDD 4.1 & design.md 8) -->
-    <nav class="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-[#D5E0D9] z-40 flex items-center justify-around h-16 px-2 shadow-lg">
+    <!-- Mobile Floating Bottom Navigation Bar (Glassmorphic Floating Dock) -->
+    <nav class="md:hidden fixed bottom-3 inset-x-3 glass-dock rounded-3xl z-40 flex items-center justify-around h-16 px-2 shadow-2xl border border-white/90">
         <!-- Peta -->
-        <a href="{{ route('home') }}" class="flex flex-col items-center justify-center flex-1 py-1 {{ request()->routeIs('home') ? 'text-[#1E7A4C]' : 'text-[#4E6157]' }}">
+        <a href="{{ route('home') }}" class="flex flex-col items-center justify-center flex-1 py-1 {{ request()->routeIs('home') ? 'text-[#1E7A4C] font-bold' : 'text-[#4E6157]' }}">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
             </svg>
-            <span class="text-[10px] font-medium mt-0.5">Peta</span>
+            <span class="text-[10px] mt-0.5">Peta</span>
         </a>
 
         <!-- Katalog -->
-        <a href="{{ route('catalog.index') }}" class="flex flex-col items-center justify-center flex-1 py-1 {{ request()->routeIs('catalog.*') || request()->routeIs('listings.index') ? 'text-[#1E7A4C]' : 'text-[#4E6157]' }}">
+        <a href="{{ route('catalog.index') }}" class="flex flex-col items-center justify-center flex-1 py-1 {{ request()->routeIs('catalog.*') || request()->routeIs('listings.index') ? 'text-[#1E7A4C] font-bold' : 'text-[#4E6157]' }}">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
             </svg>
-            <span class="text-[10px] font-medium mt-0.5">Katalog</span>
+            <span class="text-[10px] mt-0.5">Katalog</span>
         </a>
 
-        <!-- Center Action: Bagikan makanan -->
-        <a href="{{ route('listings.create') }}" class="flex flex-col items-center justify-center -mt-5">
-            <div class="w-12 h-12 rounded-full bg-[#1E7A4C] text-white flex items-center justify-center shadow-md active:bg-[#14573A]">
+        <!-- Center Action: Bagikan makanan (Floating Jewel) -->
+        <a href="{{ route('listings.create') }}" class="flex flex-col items-center justify-center -mt-6 group">
+            <div class="w-13 h-13 rounded-2xl bg-linear-to-br from-[#1E7A4C] to-[#14573A] text-white flex items-center justify-center shadow-lg group-hover:scale-105 active:scale-95 transition-all border-2 border-white">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
                 </svg>
             </div>
-            <span class="text-[10px] font-bold text-[#1E7A4C] mt-1">Bagikan</span>
+            <span class="text-[9px] font-extrabold text-[#1E7A4C] mt-0.5 tracking-tight">Bagikan</span>
         </a>
 
         <!-- Galang -->
-        <a href="{{ route('campaigns.index') }}" class="flex flex-col items-center justify-center flex-1 py-1 {{ request()->routeIs('campaigns.*') ? 'text-[#1E7A4C]' : 'text-[#4E6157]' }}">
+        <a href="{{ route('campaigns.index') }}" class="flex flex-col items-center justify-center flex-1 py-1 {{ request()->routeIs('campaigns.*') ? 'text-[#1E7A4C] font-bold' : 'text-[#4E6157]' }}">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
             </svg>
-            <span class="text-[10px] font-medium mt-0.5">Galang</span>
+            <span class="text-[10px] mt-0.5">Galang</span>
         </a>
 
         @auth
             <!-- Aktivitas / Dashboard -->
-            <a href="{{ route('dashboard') }}" class="flex flex-col items-center justify-center flex-1 py-1 {{ request()->routeIs('dashboard') ? 'text-[#1E7A4C]' : 'text-[#4E6157]' }}">
+            <a href="{{ route('dashboard') }}" class="flex flex-col items-center justify-center flex-1 py-1 {{ request()->routeIs('dashboard') ? 'text-[#1E7A4C] font-bold' : 'text-[#4E6157]' }}">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                 </svg>
-                <span class="text-[10px] font-medium mt-0.5">Aktivitas</span>
+                <span class="text-[10px] mt-0.5">Aktivitas</span>
             </a>
         @else
             <!-- Masuk -->
-            <a href="{{ route('login') }}" class="flex flex-col items-center justify-center flex-1 py-1 {{ request()->routeIs('login') ? 'text-[#1E7A4C]' : 'text-[#4E6157]' }}">
+            <a href="{{ route('login') }}" class="flex flex-col items-center justify-center flex-1 py-1 {{ request()->routeIs('login') ? 'text-[#1E7A4C] font-bold' : 'text-[#4E6157]' }}">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
                 </svg>
-                <span class="text-[10px] font-medium mt-0.5">Masuk</span>
+                <span class="text-[10px] mt-0.5">Masuk</span>
             </a>
         @endauth
     </nav>

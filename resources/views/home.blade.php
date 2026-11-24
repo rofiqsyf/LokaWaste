@@ -8,7 +8,7 @@
         <div class="pointer-events-auto relative">
             <!-- Normal Search Mode Header -->
             <div x-show="!directionsMode && !routeInfo"
-                 class="bg-white/95 backdrop-blur-2xl rounded-2xl shadow-[0_12px_36px_-6px_rgba(22,37,29,0.14),0_2px_8px_rgba(22,37,29,0.04)] border border-[#D5E0D9]/80 p-1.5 sm:p-2 flex items-center gap-1.5 sm:gap-2 transition-all focus-within:border-[#1E7A4C]/60 focus-within:shadow-[0_16px_40px_-6px_rgba(30,122,76,0.20)]">
+                 class="glass-card rounded-2xl p-1.5 sm:p-2 flex items-center gap-1.5 sm:gap-2 transition-all focus-within:border-[#1E7A4C]/60 focus-within:shadow-[0_16px_40px_-6px_rgba(30,122,76,0.20)] border border-white/85 shadow-xl">
                 <div class="relative flex-1 min-w-0">
                     <input type="text"
                            x-model="searchQuery"
@@ -69,7 +69,7 @@
                  x-transition:leave="transition ease-in duration-150"
                  x-transition:leave-start="opacity-100 translate-y-0 scale-100"
                  x-transition:leave-end="opacity-0 -translate-y-2 scale-98"
-                 class="bg-white/98 backdrop-blur-2xl rounded-3xl shadow-[0_20px_50px_-10px_rgba(22,37,29,0.22)] border border-[#D5E0D9] p-3 space-y-2.5">
+                 class="glass-card rounded-3xl shadow-2xl border border-white/85 p-3 space-y-2.5">
                 
                 <!-- Directions Header: Mode & Close -->
                 <div class="flex items-center justify-between pb-1 border-b border-gray-100">
@@ -254,7 +254,7 @@
                  @scroll.passive="checkChipsScroll()"
                  class="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none scroll-smooth pr-9 sm:pr-10">
                 <!-- Layer Segmented Switcher: Makanan | Galang -->
-                <div class="inline-flex rounded-full bg-white/95 backdrop-blur-md p-1 shadow-sm border border-[#D5E0D9] shrink-0">
+                <div class="inline-flex rounded-full glass-dock p-1 shadow-xs border border-white/80 shrink-0">
                     <button @click="layer = 'food'; loadData()"
                             :class="layer === 'food' ? 'bg-[#1E7A4C] text-white shadow-2xs font-bold' : 'text-[#4E6157] hover:text-[#16251D] font-medium'"
                             class="px-3 py-1 text-xs rounded-full transition cursor-pointer">
@@ -270,7 +270,7 @@
                 <!-- Radius Quick Filter (Cycle Pill) -->
                 <template x-if="layer === 'food'">
                     <button @click="cycleRadius()"
-                            class="px-3 py-1.5 text-xs font-semibold rounded-full bg-white/95 backdrop-blur-md text-[#16251D] border border-[#D5E0D9] shadow-sm hover:border-[#1E7A4C] shrink-0 transition flex items-center gap-1.5 active:scale-95 cursor-pointer"
+                            class="px-3 py-1.5 text-xs font-semibold rounded-full glass-pill text-[#16251D] border border-white/80 shadow-xs hover:border-[#1E7A4C] shrink-0 transition flex items-center gap-1.5 active:scale-95 cursor-pointer"
                             title="Klik untuk ubah radius pencarian (1 km, 5 km, 10 km, 20 km)">
                         <svg class="w-3.5 h-3.5 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <circle cx="12" cy="12" r="9" stroke-width="2"/>
@@ -282,7 +282,7 @@
 
                 <!-- Halal filter toggle -->
                 <button @click="halalOnly = !halalOnly; loadData()"
-                        :class="halalOnly ? 'bg-emerald-700 text-white font-bold border-transparent shadow-xs' : 'bg-white/95 text-[#4E6157] border-[#D5E0D9] shadow-sm'"
+                        :class="halalOnly ? 'bg-emerald-700 text-white font-bold border-transparent shadow-xs' : 'glass-pill text-[#4E6157] border-white/80 shadow-xs hover:border-[#1E7A4C]'"
                         class="px-3 py-1.5 text-xs rounded-full border shrink-0 transition flex items-center gap-1.5 font-medium active:scale-95 cursor-pointer">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -292,7 +292,7 @@
 
                 <!-- Urgent filter (< 2 jam) -->
                 <button @click="urgentOnly = !urgentOnly; filterListings()"
-                        :class="urgentOnly ? 'bg-[#C93A2E] text-white font-bold border-transparent shadow-xs' : 'bg-white/95 text-[#4E6157] border-[#D5E0D9] shadow-sm'"
+                        :class="urgentOnly ? 'bg-[#C93A2E] text-white font-bold border-transparent shadow-xs' : 'glass-pill text-[#4E6157] border-white/80 shadow-xs hover:border-[#C93A2E]'"
                         class="px-3 py-1.5 text-xs rounded-full border shrink-0 transition flex items-center gap-1.5 font-medium active:scale-95 cursor-pointer">
                     <svg class="w-3.5 h-3.5 text-current shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -307,13 +307,13 @@
                 <template x-if="layer === 'food'">
                     <div class="flex items-center gap-1.5 shrink-0">
                         <button @click="selectedCategory = ''; filterListings()"
-                                :class="selectedCategory === '' ? 'bg-[#1E7A4C] text-white font-bold shadow-2xs' : 'bg-white/95 text-[#4E6157] hover:bg-gray-50 border border-[#D5E0D9] shadow-sm'"
+                                :class="selectedCategory === '' ? 'bg-[#1E7A4C] text-white font-bold shadow-2xs' : 'glass-pill text-[#4E6157] hover:bg-white border-white/80 shadow-xs'"
                                 class="px-3 py-1.5 text-xs rounded-full shrink-0 transition active:scale-95 cursor-pointer">
                             Semua Kategori
                         </button>
                         @foreach($categories as $cat)
                             <button @click="selectedCategory = '{{ $cat->name }}'; filterListings()"
-                                    :class="selectedCategory === '{{ $cat->name }}' ? 'bg-[#1E7A4C] text-white font-bold shadow-2xs' : 'bg-white/95 text-[#4E6157] hover:bg-gray-50 border border-[#D5E0D9] shadow-sm'"
+                                    :class="selectedCategory === '{{ $cat->name }}' ? 'bg-[#1E7A4C] text-white font-bold shadow-2xs' : 'glass-pill text-[#4E6157] hover:bg-white border-white/80 shadow-xs'"
                                     class="px-3 py-1.5 text-xs rounded-full shrink-0 transition active:scale-95 cursor-pointer">
                                 {{ $cat->name }}
                             </button>
@@ -348,12 +348,12 @@
             sheetExpanded ? 'h-[75vh]' : 'h-48 lg:h-full',
             desktopSidebarOpen ? 'lg:w-[420px] lg:min-w-[420px] lg:max-w-[420px]' : 'lg:w-0 lg:min-w-0 lg:max-w-0 lg:overflow-hidden lg:border-r-0'
          ]"
-         class="relative w-full bg-white border-t lg:border-t-0 lg:border-r border-[#D5E0D9] flex flex-col order-2 lg:order-1 transition-all duration-300 z-10 shrink-0">
+         class="relative w-full glass-card border-t lg:border-t-0 lg:border-r border-white/80 shadow-2xl flex flex-col order-2 lg:order-1 transition-all duration-300 z-10 shrink-0">
 
         <!-- Desktop Collapse / Expand Handle Button (World-Class Floating Circle) -->
         <button type="button"
                 @click="toggleDesktopSidebar()"
-                class="hidden lg:flex absolute -right-4 top-1/2 -translate-y-1/2 z-30 w-8 h-8 rounded-full bg-white border border-[#D5E0D9] shadow-[0_2px_10px_rgba(22,37,29,0.14)] items-center justify-center text-[#4E6157] hover:text-[#1E7A4C] hover:border-[#1E7A4C] hover:bg-emerald-50 transition-all duration-200 active:scale-90 hover:scale-110 cursor-pointer group"
+                class="hidden lg:flex absolute -right-4 top-1/2 -translate-y-1/2 z-30 w-8 h-8 rounded-full glass-pill border border-white/80 shadow-md items-center justify-center text-[#4E6157] hover:text-[#1E7A4C] hover:border-[#1E7A4C] hover:bg-white transition-all duration-200 active:scale-90 hover:scale-110 cursor-pointer group"
                 :title="desktopSidebarOpen ? 'Ciutkan panel daftar' : 'Buka panel daftar'">
             <svg :class="desktopSidebarOpen ? '' : 'rotate-180'" class="w-4 h-4 transition-transform duration-300 text-[#4E6157] group-hover:text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
@@ -361,7 +361,7 @@
         </button>
 
         <!-- Mobile Pull Handle / Header -->
-        <div class="lg:hidden p-2 flex flex-col items-center border-b border-[#D5E0D9] cursor-pointer"
+        <div class="lg:hidden p-2 flex flex-col items-center border-b border-gray-100/80 cursor-pointer"
              @click="sheetExpanded = !sheetExpanded">
             <div class="w-12 h-1.5 rounded-full bg-[#74877B]/40 mb-1"></div>
             <div class="flex items-center justify-between w-full px-4 text-xs font-bold text-[#4E6157]">
@@ -371,7 +371,7 @@
         </div>
 
         <!-- Desktop Sidebar Header -->
-        <div class="hidden lg:flex items-center justify-between px-5 py-3.5 border-b border-[#D5E0D9] bg-gray-50/60">
+        <div class="hidden lg:flex items-center justify-between px-5 py-3.5 border-b border-gray-100/80 bg-white/40 backdrop-blur-md">
             <div>
                 <h1 class="font-display font-bold text-base text-[#16251D]" x-text="layer === 'food' ? 'Penyelamat Makanan' : 'Galang Makanan'"></h1>
                 <p class="text-xs text-[#4E6157] truncate max-w-[200px]" x-text="`Pusat: ${currentLocationLabel}`"></p>
@@ -439,10 +439,10 @@
                     <div :id="`card-${item.id}`"
                          @click="openPlaceDetail(item)"
                          :class="[
-                            selectedId === item.id ? 'ring-2 ring-[#2A6F97] bg-blue-50/40 shadow-card border-[#2A6F97]' : 'bg-white hover:border-[#1E7A4C]/70 hover:shadow-card hover:-translate-y-0.5 border-[#D5E0D9]',
-                            item.my_claim && item.my_claim.status === 'pending' ? 'border-amber-300 ring-2 ring-amber-100 bg-linear-to-b from-amber-50/25 to-white' : '',
-                            item.my_claim && item.my_claim.status === 'approved' ? 'border-emerald-300 ring-2 ring-emerald-100 bg-linear-to-b from-emerald-50/25 to-white' : '',
-                            item.remaining_minutes < 60 && !item.my_claim ? 'border-red-200 bg-linear-to-r from-red-50/20 via-white to-white' : ''
+                            selectedId === item.id ? 'ring-2 ring-[#2A6F97] bg-blue-50/70 shadow-md border-[#2A6F97]' : 'glass-card glass-card-hover border-white/80',
+                            item.my_claim && item.my_claim.status === 'pending' ? 'border-amber-300 ring-2 ring-amber-200 bg-amber-50/40' : '',
+                            item.my_claim && item.my_claim.status === 'approved' ? 'border-emerald-300 ring-2 ring-emerald-200 bg-emerald-50/40' : '',
+                            item.remaining_minutes < 60 && !item.my_claim ? 'border-red-200 bg-red-50/30' : ''
                          ]"
                          class="p-4 rounded-2xl border shadow-xs cursor-pointer transition-all duration-200 space-y-3 group">
                         
@@ -623,7 +623,7 @@
              x-transition:leave="transition ease-in duration-200"
              x-transition:leave-start="opacity-100 translate-y-0"
              x-transition:leave-end="opacity-0 -translate-y-full"
-             class="absolute top-0 inset-x-0 z-[1200] pointer-events-auto bg-[#14573A] text-white shadow-2xl border-b border-emerald-400/30">
+             class="absolute top-0 inset-x-0 z-[1200] pointer-events-auto glass-dark text-white shadow-2xl border-b border-white/25">
             <div class="max-w-3xl mx-auto p-3.5 sm:p-4 flex items-center justify-between gap-3 sm:gap-4">
                 <!-- Maneuver Direction Icon -->
                 <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white/15 flex items-center justify-center shrink-0 border border-white/20">
@@ -652,8 +652,12 @@
 
                 <!-- Maneuver Text & Distance -->
                 <div class="min-w-0 flex-1">
-                    <div class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-emerald-200" x-text="navCurrentManeuver.distContext || 'Belokan Berikutnya'"></div>
-                    <div class="flex items-baseline gap-1.5 sm:gap-2">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-emerald-200" x-text="navCurrentManeuver.distContext || 'Belokan Berikutnya'"></span>
+                        <span class="text-[10px] sm:text-xs bg-emerald-950/70 text-emerald-200 font-semibold px-2 py-0.5 rounded-full border border-emerald-400/20" x-text="`Total sisa: ${routeInfo?.distanceKm || 0} km`"></span>
+                    </div>
+                    <div class="flex items-baseline gap-1.5 sm:gap-2 mt-0.5">
+                        <span class="text-xs sm:text-sm text-emerald-200 font-semibold">Dalam</span>
                         <span class="font-display font-black text-xl sm:text-2xl tracking-tight text-white" x-text="navCurrentManeuver.distLabel"></span>
                         <span class="text-xs text-emerald-200 uppercase tracking-wider font-bold" x-text="navCurrentManeuver.distSuffix || ''"></span>
                     </div>
@@ -675,7 +679,7 @@
                         <span x-text="`${routeInfo?.durationMin || 2} mnt`"></span>
                     </div>
                     <span class="text-emerald-400/50">•</span>
-                    <span class="text-emerald-100 font-semibold truncate" x-text="`Sisa ${routeInfo?.distanceKm || 0} km ke ${routeTarget?.title || 'tujuan'}`"></span>
+                    <span class="text-emerald-100 font-semibold truncate" x-text="`Sisa rute jalan ${routeInfo?.distanceKm || 0} km${routeTarget?.distance_km ? ' (lurus ' + routeTarget.distance_km + ' km)' : ''} ke ${routeTarget?.title || 'tujuan'}`"></span>
                     <span class="text-emerald-400/50 hidden md:inline">•</span>
                     <span class="text-emerald-200 text-[11px] hidden md:inline shrink-0" x-text="`Tiba ~${navEtaFormatted}`"></span>
                 </div>
@@ -793,7 +797,7 @@
              x-transition:leave="transition ease-in duration-200"
              x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
              x-transition:leave-end="opacity-0 translate-y-8 sm:translate-y-0 sm:scale-95"
-             class="fixed sm:absolute inset-x-0 bottom-0 sm:bottom-4 sm:left-4 sm:inset-x-auto sm:w-[410px] max-h-[78vh] sm:max-h-[calc(100%-7.5rem)] z-[1000] bg-white/98 backdrop-blur-2xl rounded-t-3xl sm:rounded-3xl shadow-[0_25px_60px_-12px_rgba(22,37,29,0.35),0_6px_20px_rgba(22,37,29,0.12)] border border-[#D5E0D9] overflow-hidden flex flex-col pointer-events-auto">
+             class="fixed sm:absolute inset-x-0 bottom-0 sm:bottom-4 sm:left-4 sm:inset-x-auto sm:w-[410px] max-h-[78vh] sm:max-h-[calc(100%-7.5rem)] z-[1000] glass-card rounded-t-3xl sm:rounded-3xl shadow-2xl border border-white/85 overflow-hidden flex flex-col pointer-events-auto">
             
             <!-- Mobile pull handle -->
             <div class="sm:hidden pt-2 pb-1 flex justify-center">
@@ -1093,7 +1097,7 @@
              x-transition:leave="transition ease-in duration-200"
              x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
              x-transition:leave-end="opacity-0 translate-y-8 sm:translate-y-0 sm:scale-95"
-             class="fixed sm:absolute inset-x-0 bottom-0 sm:bottom-4 sm:left-4 sm:inset-x-auto sm:w-[410px] max-h-[78vh] sm:max-h-[calc(100%-7.5rem)] z-[1000] bg-white/98 backdrop-blur-2xl rounded-t-3xl sm:rounded-3xl shadow-[0_25px_60px_-12px_rgba(22,37,29,0.35),0_6px_20px_rgba(22,37,29,0.12)] border border-[#D5E0D9] overflow-hidden flex flex-col pointer-events-auto">
+             class="fixed sm:absolute inset-x-0 bottom-0 sm:bottom-4 sm:left-4 sm:inset-x-auto sm:w-[410px] max-h-[78vh] sm:max-h-[calc(100%-7.5rem)] z-[1000] glass-card rounded-t-3xl sm:rounded-3xl shadow-2xl border border-white/85 overflow-hidden flex flex-col pointer-events-auto">
             
             <!-- Mobile pull handle -->
             <div class="sm:hidden pt-2 pb-1 flex justify-center">
@@ -1508,7 +1512,7 @@ document.addEventListener('alpine:init', () => {
                         modifier: 'arrive',
                         type: 'arrive',
                         distLabel: label,
-                        distContext: 'Tiba di Lokasi',
+                        distContext: `Tujuan Akhir (${this.navSteps.length}/${this.navSteps.length})`,
                         distSuffix: 'ke tujuan',
                         instruction: `Tiba di tujuan: ${this.routeTarget.title}`
                     };
@@ -1535,7 +1539,7 @@ document.addEventListener('alpine:init', () => {
                 const distLabel = distMeters >= 1000 ? `${(distMeters / 1000).toFixed(1)} km` : `${distMeters} m`;
 
                 let action = 'Lurus terus';
-                let distContext = 'Belokan Berikutnya';
+                let distContext = idx === 0 ? `Mulai Rute (1/${this.navSteps.length})` : `Belokan Berikutnya (${idx + 1}/${this.navSteps.length})`;
                 let distSuffix = 'ke belokan';
 
                 if (modifier.includes('right')) {
@@ -1546,7 +1550,7 @@ document.addEventListener('alpine:init', () => {
                     action = 'Putar balik';
                 } else if (modifier.includes('straight') || type === 'continue' || type === 'new name') {
                     action = 'Lurus terus';
-                    distContext = 'Ikuti Jalur';
+                    distContext = `Ikuti Jalur (${idx + 1}/${this.navSteps.length})`;
                     distSuffix = 'lagi';
                 }
 
@@ -1555,6 +1559,8 @@ document.addEventListener('alpine:init', () => {
                     instruction = `${action} ke ${nextRoadName}`;
                 } else if (currRoadName && (modifier.includes('straight') || type === 'continue')) {
                     instruction = `${action} di ${currRoadName}`;
+                } else if (idx === 0) {
+                    instruction = `Mulai jalan: ${action} menuju ${this.routeTarget.title}`;
                 }
 
                 return {

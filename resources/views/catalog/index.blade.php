@@ -2,7 +2,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
         <!-- Top Breadcrumb & E-Commerce Hero Header -->
-        <div class="bg-white rounded-3xl p-6 sm:p-8 border border-[#D5E0D9] shadow-card relative overflow-hidden">
+        <div class="glass-card rounded-3xl p-6 sm:p-8 border border-white/85 shadow-xl relative overflow-hidden">
             <div class="relative z-10 space-y-4">
                 <nav class="flex items-center gap-2 text-xs text-[#4E6157]">
                     <a href="{{ route('home') }}" class="hover:text-[#1E7A4C] transition">Peta</a>
@@ -21,7 +21,7 @@
                     </div>
 
                     <!-- Impact & Stock Live Counter Badge -->
-                    <div class="flex items-center gap-3 shrink-0 bg-[#F2F6F3] p-3 rounded-2xl border border-[#D5E0D9]">
+                    <div class="flex items-center gap-3 shrink-0 glass-pill p-3 rounded-2xl border border-white/80 shadow-xs">
                         <div class="w-10 h-10 rounded-xl bg-emerald-100 text-[#1E7A4C] flex items-center justify-center shrink-0">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
@@ -59,7 +59,12 @@
                         @if(request('vegetarian')) <input type="hidden" name="vegetarian" value="1"> @endif
                         @if(request('food_type')) <input type="hidden" name="food_type" value="{{ request('food_type') }}"> @endif
                         @if(request('urgency')) <input type="hidden" name="urgency" value="{{ request('urgency') }}"> @endif
+                        @if(request('province_id')) <input type="hidden" name="province_id" value="{{ request('province_id') }}"> @endif
+                        @if(request('province_name')) <input type="hidden" name="province_name" value="{{ request('province_name') }}"> @endif
+                        @if(request('regency_id')) <input type="hidden" name="regency_id" value="{{ request('regency_id') }}"> @endif
+                        @if(request('regency_name')) <input type="hidden" name="regency_name" value="{{ request('regency_name') }}"> @endif
                         @if(request('district_id')) <input type="hidden" name="district_id" value="{{ request('district_id') }}"> @endif
+                        @if(request('district_name')) <input type="hidden" name="district_name" value="{{ request('district_name') }}"> @endif
                         @if(request('sort')) <input type="hidden" name="sort" value="{{ request('sort') }}"> @endif
 
                         <div class="flex items-center gap-2 w-full sm:w-auto">
@@ -127,7 +132,7 @@
                         </svg>
                         <h2 class="font-display font-bold text-sm text-[#16251D]">Filter Pilihan</h2>
                     </div>
-                    @if(request()->hasAny(['q', 'category', 'halal', 'vegetarian', 'food_type', 'urgency', 'district_id']))
+                    @if(request()->hasAny(['q', 'category', 'halal', 'vegetarian', 'food_type', 'urgency', 'district_id', 'regency_id', 'province_id']))
                         <a href="{{ route('catalog.index') }}" class="text-[11px] font-bold text-[#C93A2E] hover:underline">
                             Reset Semua
                         </a>
@@ -189,17 +194,103 @@
                         </select>
                     </div>
 
-                    <!-- District Filter -->
-                    <div class="space-y-2 pt-2 border-t border-[#D5E0D9]">
-                        <label class="text-xs font-bold text-[#16251D] block">Wilayah / Kecamatan</label>
-                        <select name="district_id" class="w-full text-xs rounded-xl border border-[#D5E0D9] p-2 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#1E7A4C]">
-                            <option value="">Semua Kecamatan</option>
-                            @foreach($districts as $d)
-                                <option value="{{ $d->id }}" {{ request('district_id') == $d->id ? 'selected' : '' }}>
-                                    Kec. {{ $d->name }} ({{ $d->regency->name }})
-                                </option>
-                            @endforeach
-                        </select>
+                    <!-- Wilayah Filter: Provinsi, Kab/Kota, Kecamatan (Sinkron EMSIFA & Database Spasial) -->
+                    <div class="space-y-3 pt-3 border-t border-[#D5E0D9]"
+                         x-data="catalogWilayahFilter({
+                             initialProvinces: @js($provinces),
+                             initialRegencies: @js($initialRegencies),
+                             initialDistricts: @js($initialDistricts),
+                             selectedProvince: '{{ $selectedProvince }}',
+                             selectedProvinceName: '{{ $selectedProvinceName }}',
+                             selectedRegency: '{{ $selectedRegency }}',
+                             selectedRegencyName: '{{ $selectedRegencyName }}',
+                             selectedDistrict: '{{ $selectedDistrict }}',
+                             selectedDistrictName: '{{ $selectedDistrictName }}'
+                         })">
+
+                        <div class="flex items-center justify-between">
+                            <label class="text-xs font-bold text-[#16251D] flex items-center gap-1.5">
+                                <svg class="w-3.5 h-3.5 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                                <span>Wilayah Penjemputan</span>
+                            </label>
+                            <template x-if="selectedProvince || selectedRegency || selectedDistrict">
+                                <button type="button" @click="resetWilayah()" class="text-[10px] text-[#C93A2E] hover:underline font-semibold cursor-pointer">
+                                    Bersihkan
+                                </button>
+                            </template>
+                        </div>
+
+                        <!-- 1. Provinsi -->
+                        <div class="space-y-1">
+                            <span class="text-[10px] font-semibold text-[#4E6157] block">1. Provinsi</span>
+                            <select name="province_id"
+                                    x-model="selectedProvince"
+                                    @change="onProvinceChange()"
+                                    class="w-full text-xs rounded-xl border border-[#D5E0D9] p-2 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#1E7A4C] transition">
+                                <option value="">Semua Provinsi</option>
+                                <template x-for="p in provinces" :key="p.id">
+                                    <option :value="p.id" x-text="p.name" :selected="String(p.id) === String(selectedProvince)"></option>
+                                </template>
+                            </select>
+                            <input type="hidden" name="province_name" :value="selectedProvinceName">
+                        </div>
+
+                        <!-- 2. Kabupaten / Kota -->
+                        <div class="space-y-1">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[10px] font-semibold text-[#4E6157] block">2. Kabupaten / Kota</span>
+                                <span x-show="loadingRegencies" class="text-[9px] text-[#1E7A4C] font-semibold animate-pulse">Memuat...</span>
+                            </div>
+                            <select name="regency_id"
+                                    x-model="selectedRegency"
+                                    @change="onRegencyChange()"
+                                    :disabled="!selectedProvince || loadingRegencies"
+                                    class="w-full text-xs rounded-xl border border-[#D5E0D9] p-2 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#1E7A4C] disabled:opacity-60 disabled:cursor-not-allowed transition">
+                                <option value="">Semua Kab / Kota</option>
+                                <template x-for="r in regencies" :key="r.id">
+                                    <option :value="r.id" x-text="r.name" :selected="String(r.id) === String(selectedRegency)"></option>
+                                </template>
+                            </select>
+                            <input type="hidden" name="regency_name" :value="selectedRegencyName">
+                        </div>
+
+                        <!-- 3. Kecamatan -->
+                        <div class="space-y-1">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[10px] font-semibold text-[#4E6157] block">3. Kecamatan</span>
+                                <span x-show="loadingDistricts" class="text-[9px] text-[#1E7A4C] font-semibold animate-pulse">Memuat...</span>
+                            </div>
+                            <select name="district_id"
+                                    x-model="selectedDistrict"
+                                    @change="onDistrictChange()"
+                                    :disabled="!selectedRegency || loadingDistricts"
+                                    class="w-full text-xs rounded-xl border border-[#D5E0D9] p-2 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#1E7A4C] disabled:opacity-60 disabled:cursor-not-allowed transition">
+                                <option value="">Semua Kecamatan</option>
+                                <template x-for="d in districts" :key="d.id">
+                                    <option :value="d.id" x-text="'Kec. ' + d.name" :selected="String(d.id) === String(selectedDistrict)"></option>
+                                </template>
+                            </select>
+                            <input type="hidden" name="district_name" :value="selectedDistrictName">
+                        </div>
+
+                        <!-- Quick shortcuts for active districts with food listings -->
+                        @if($activeListingDistricts->isNotEmpty())
+                            <div class="pt-2 border-t border-gray-100 space-y-1.5">
+                                <span class="text-[10px] font-bold text-[#4E6157] block uppercase tracking-wider">Lokasi Makanan Tersedia:</span>
+                                <div class="flex flex-wrap gap-1">
+                                    @foreach($activeListingDistricts as $ad)
+                                        <button type="button"
+                                                @click="setQuickDistrict('{{ $ad->regency->province->code ?? '' }}', '{{ $ad->regency->code ?? '' }}', '{{ $ad->id }}', '{{ $ad->regency->province->name ?? '' }}', '{{ $ad->regency->name ?? '' }}', '{{ $ad->name }}')"
+                                                class="text-[10px] px-2 py-1 rounded-lg border transition cursor-pointer {{ (request('district_id') == $ad->id || request('district_id') == $ad->code) ? 'bg-[#1E7A4C] text-white border-[#1E7A4C] font-bold shadow-2xs' : 'bg-gray-50 hover:bg-emerald-50 text-[#16251D] border-[#D5E0D9]' }}">
+                                            Kec. {{ $ad->name }}
+                                        </button>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
                     </div>
 
                     <button type="submit" class="w-full btn-primary py-2.5 text-xs font-bold shadow-xs">
@@ -229,6 +320,13 @@
                     <div class="text-xs text-[#4E6157]">
                         Menampilkan <strong class="text-[#16251D]">{{ $listings->total() }}</strong> makanan penyelamat
                         @if(request('q')) untuk pencarian "<em>{{ request('q') }}</em>" @endif
+                        @if($selectedDistrictName || request('district_name'))
+                            di <span class="font-bold text-[#1E7A4C]">Kec. {{ $selectedDistrictName ?: request('district_name') }}</span>
+                        @elseif($selectedRegencyName || request('regency_name'))
+                            di <span class="font-bold text-[#1E7A4C]">{{ $selectedRegencyName ?: request('regency_name') }}</span>
+                        @elseif($selectedProvinceName || request('province_name'))
+                            di <span class="font-bold text-[#1E7A4C]">{{ $selectedProvinceName ?: request('province_name') }}</span>
+                        @endif
                     </div>
 
                     <div class="flex items-center gap-2 self-end sm:self-auto">
@@ -340,8 +438,8 @@
                                                 @endif
                                             </div>
 
-                                            <span class="text-[11px] shrink-0 font-medium">
-                                                {{ $item->district->name }}
+                                            <span class="text-[11px] shrink-0 font-medium text-[#4E6157]">
+                                                Kec. {{ $item->district->name }}{{ $item->district->regency ? ' (' . $item->district->regency->name . ')' : '' }}
                                             </span>
                                         </div>
 
@@ -413,4 +511,140 @@
         </div>
 
     </div>
+
+@push('scripts')
+<script>
+document.addEventListener('alpine:init', () => {
+    Alpine.data('catalogWilayahFilter', (config = {}) => ({
+        provinces: config.initialProvinces || [],
+        regencies: config.initialRegencies || [],
+        districts: config.initialDistricts || [],
+
+        selectedProvince: config.selectedProvince || '',
+        selectedProvinceName: config.selectedProvinceName || '',
+        selectedRegency: config.selectedRegency || '',
+        selectedRegencyName: config.selectedRegencyName || '',
+        selectedDistrict: config.selectedDistrict || '',
+        selectedDistrictName: config.selectedDistrictName || '',
+
+        loadingRegencies: false,
+        loadingDistricts: false,
+
+        init() {
+            if (!this.provinces || this.provinces.length === 0) {
+                this.fetchProvinces();
+            }
+            if (this.selectedProvince && (!this.regencies || this.regencies.length === 0)) {
+                this.fetchRegencies(this.selectedProvince);
+            }
+            if (this.selectedRegency && (!this.districts || this.districts.length === 0)) {
+                this.fetchDistricts(this.selectedRegency);
+            }
+        },
+
+        async fetchProvinces() {
+            try {
+                const res = await fetch('/api/wilayah/provinces');
+                if (res.ok) {
+                    this.provinces = await res.json();
+                }
+            } catch (e) {
+                console.error("Gagal memuat provinsi:", e);
+            }
+        },
+
+        async onProvinceChange() {
+            this.selectedRegency = '';
+            this.selectedRegencyName = '';
+            this.selectedDistrict = '';
+            this.selectedDistrictName = '';
+            this.regencies = [];
+            this.districts = [];
+
+            const p = this.provinces.find(item => String(item.id) === String(this.selectedProvince));
+            this.selectedProvinceName = p ? p.name : '';
+
+            if (!this.selectedProvince) return;
+            await this.fetchRegencies(this.selectedProvince);
+        },
+
+        async fetchRegencies(provinceId) {
+            this.loadingRegencies = true;
+            try {
+                const res = await fetch(`/api/wilayah/regencies/${provinceId}`);
+                if (res.ok) {
+                    this.regencies = await res.json();
+                    if (this.selectedRegency) {
+                        const r = this.regencies.find(item => String(item.id) === String(this.selectedRegency));
+                        if (r) this.selectedRegencyName = r.name;
+                    }
+                }
+            } catch (e) {
+                console.error("Gagal memuat kabupaten/kota:", e);
+            } finally {
+                this.loadingRegencies = false;
+            }
+        },
+
+        async onRegencyChange() {
+            this.selectedDistrict = '';
+            this.selectedDistrictName = '';
+            this.districts = [];
+
+            const r = this.regencies.find(item => String(item.id) === String(this.selectedRegency));
+            this.selectedRegencyName = r ? r.name : '';
+
+            if (!this.selectedRegency) return;
+            await this.fetchDistricts(this.selectedRegency);
+        },
+
+        async fetchDistricts(regencyId) {
+            this.loadingDistricts = true;
+            try {
+                const res = await fetch(`/api/wilayah/districts/${regencyId}`);
+                if (res.ok) {
+                    this.districts = await res.json();
+                    if (this.selectedDistrict) {
+                        const d = this.districts.find(item => String(item.id) === String(this.selectedDistrict));
+                        if (d) this.selectedDistrictName = d.name;
+                    }
+                }
+            } catch (e) {
+                console.error("Gagal memuat kecamatan:", e);
+            } finally {
+                this.loadingDistricts = false;
+            }
+        },
+
+        onDistrictChange() {
+            const d = this.districts.find(item => String(item.id) === String(this.selectedDistrict));
+            this.selectedDistrictName = d ? d.name : '';
+        },
+
+        resetWilayah() {
+            this.selectedProvince = '';
+            this.selectedProvinceName = '';
+            this.selectedRegency = '';
+            this.selectedRegencyName = '';
+            this.selectedDistrict = '';
+            this.selectedDistrictName = '';
+            this.regencies = [];
+            this.districts = [];
+        },
+
+        setQuickDistrict(provCode, regCode, distCode, provName, regName, distName) {
+            this.selectedProvince = String(provCode);
+            this.selectedProvinceName = provName;
+            this.selectedRegency = String(regCode);
+            this.selectedRegencyName = regName;
+            this.selectedDistrict = String(distCode);
+            this.selectedDistrictName = distName;
+            this.$nextTick(() => {
+                this.$el.closest('form').submit();
+            });
+        }
+    }));
+});
+</script>
+@endpush
 </x-layouts.app>

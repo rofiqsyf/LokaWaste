@@ -189,6 +189,85 @@ class CatalogTest extends TestCase
         $resVeg->assertDontSee('Nasi Kotak Ayam Bakar');
     }
 
+    public function test_catalog_wilayah_filters(): void
+    {
+        $provJateng = Province::where('code', '33')->first();
+        $regSmg = Regency::where('code', '3374')->first();
+
+        // Create second regency & district (Wonosobo)
+        $regWonosobo = Regency::create([
+            'province_id' => $provJateng->id,
+            'code' => '3307',
+            'name' => 'Kabupaten Wonosobo',
+            'type' => 'kabupaten'
+        ]);
+        $distSelomerto = District::create([
+            'regency_id' => $regWonosobo->id,
+            'code' => '3307060',
+            'name' => 'Selomerto',
+            'latitude' => -7.40,
+            'longitude' => 109.89
+        ]);
+
+        // Semarang listing
+        FoodListing::create([
+            'user_id' => $this->user->id,
+            'category_id' => $this->catBread->id,
+            'district_id' => $this->district->id,
+            'title' => 'Lumpia Goreng Semarang',
+            'description' => 'Khas Semarang',
+            'food_type' => 'cooked',
+            'portions_total' => 5,
+            'portions_left' => 5,
+            'pickup_address' => 'Jl. Pandanaran',
+            'latitude' => -7.052,
+            'longitude' => 110.438,
+            'public_latitude' => -7.053,
+            'public_longitude' => 110.439,
+            'available_from' => now()->subMinutes(10),
+            'expires_at' => now()->addHours(2),
+            'status' => 'available',
+        ]);
+
+        // Wonosobo listing
+        FoodListing::create([
+            'user_id' => $this->user->id,
+            'category_id' => $this->catRice->id,
+            'district_id' => $distSelomerto->id,
+            'title' => 'Mie Ongklok Wonosobo',
+            'description' => 'Khas Wonosobo',
+            'food_type' => 'cooked',
+            'portions_total' => 8,
+            'portions_left' => 8,
+            'pickup_address' => 'Jl. Raya Selomerto',
+            'latitude' => -7.40,
+            'longitude' => 109.89,
+            'public_latitude' => -7.401,
+            'public_longitude' => 109.891,
+            'available_from' => now()->subMinutes(10),
+            'expires_at' => now()->addHours(2),
+            'status' => 'available',
+        ]);
+
+        // 1. Filter by Wonosobo regency
+        $resReg = $this->get(route('catalog.index', ['regency_id' => '3307']));
+        $resReg->assertStatus(200);
+        $resReg->assertSee('Mie Ongklok Wonosobo');
+        $resReg->assertDontSee('Lumpia Goreng Semarang');
+
+        // 2. Filter by Selomerto district
+        $resDist = $this->get(route('catalog.index', ['district_id' => '3307060']));
+        $resDist->assertStatus(200);
+        $resDist->assertSee('Mie Ongklok Wonosobo');
+        $resDist->assertDontSee('Lumpia Goreng Semarang');
+
+        // 3. Filter by Semarang regency
+        $resSmg = $this->get(route('catalog.index', ['regency_id' => '3374']));
+        $resSmg->assertStatus(200);
+        $resSmg->assertSee('Lumpia Goreng Semarang');
+        $resSmg->assertDontSee('Mie Ongklok Wonosobo');
+    }
+
     public function test_home_page_accepts_focus_parameter_handoff(): void
     {
         $listing = FoodListing::create([

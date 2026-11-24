@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\District;
 use App\Models\FoodCampaign;
 use App\Models\FoodListing;
+use App\Services\EmsifaWilayahService;
 use App\Services\ImageUploadService;
 use App\Services\LocationPrivacyService;
 use Carbon\Carbon;
@@ -18,7 +19,8 @@ class ListingController extends Controller
 {
     public function __construct(
         protected LocationPrivacyService $privacyService,
-        protected ImageUploadService $imageService
+        protected ImageUploadService $imageService,
+        protected EmsifaWilayahService $wilayahService
     ) {}
 
     /**
@@ -30,14 +32,16 @@ class ListingController extends Controller
             ->visibleToMap()
             ->with(['category', 'user', 'district.regency.province', 'campaign']);
 
-        // Search query (keyword in title, description, or provider)
+        // Search query (keyword in title, description, provider, or location)
         if ($request->filled('q')) {
             $keyword = trim($request->input('q'));
             $query->where(function ($q) use ($keyword) {
                 $q->where('title', 'like', "%{$keyword}%")
                   ->orWhere('description', 'like', "%{$keyword}%")
                   ->orWhereHas('user', fn($u) => $u->where('name', 'like', "%{$keyword}%")->orWhere('organization_name', 'like', "%{$keyword}%"))
-                  ->orWhereHas('district', fn($d) => $d->where('name', 'like', "%{$keyword}%"));
+                  ->orWhereHas('district', fn($d) => $d->where('name', 'like', "%{$keyword}%"))
+                  ->orWhereHas('district.regency', fn($r) => $r->where('name', 'like', "%{$keyword}%"))
+                  ->orWhereHas('district.regency.province', fn($p) => $p->where('name', 'like', "%{$keyword}%"));
             });
         }
 
@@ -71,9 +75,44 @@ class ListingController extends Controller
             $query->where('expires_at', '<=', now()->addHours(2));
         }
 
-        // District filter
+        // Wilayah filters (Provinsi, Kab/Kota, Kecamatan) - harmonized with EMSIFA API & database
         if ($request->filled('district_id')) {
-            $query->where('district_id', $request->input('district_id'));
+            $distParam = $request->input('district_id');
+            $distName = $request->input('district_name');
+            $query->whereHas('district', function ($d) use ($distParam, $distName) {
+                $d->where(function ($sq) use ($distParam, $distName) {
+                    $sq->where('id', $distParam)
+                       ->orWhere('code', (string) $distParam)
+                       ->orWhere('code', 'like', substr((string) $distParam, 0, 6) . '%');
+                    if (!empty($distName)) {
+                        $sq->orWhere('name', 'like', '%' . trim($distName) . '%');
+                    }
+                });
+            });
+        } elseif ($request->filled('regency_id')) {
+            $regParam = $request->input('regency_id');
+            $regName = $request->input('regency_name');
+            $query->whereHas('district.regency', function ($r) use ($regParam, $regName) {
+                $r->where(function ($sq) use ($regParam, $regName) {
+                    $sq->where('id', $regParam)
+                       ->orWhere('code', (string) $regParam);
+                    if (!empty($regName)) {
+                        $sq->orWhere('name', 'like', '%' . trim($regName) . '%');
+                    }
+                });
+            });
+        } elseif ($request->filled('province_id')) {
+            $provParam = $request->input('province_id');
+            $provName = $request->input('province_name');
+            $query->whereHas('district.regency.province', function ($p) use ($provParam, $provName) {
+                $p->where(function ($sq) use ($provParam, $provName) {
+                    $sq->where('id', $provParam)
+                       ->orWhere('code', (string) $provParam);
+                    if (!empty($provName)) {
+                        $sq->orWhere('name', 'like', '%' . trim($provName) . '%');
+                    }
+                });
+            });
         }
 
         // Coordinates for distance calculations if user provided
@@ -134,7 +173,24 @@ class ListingController extends Controller
         $totalActiveListings = FoodListing::visibleToMap()->count();
         $totalPortionsAvailable = FoodListing::visibleToMap()->sum('portions_left');
 
-        $districts = District::with('regency')->orderBy('name')->get();
+        $districts = District::with('regency.province')->orderBy('name')->get();
+        $provinces = $this->wilayahService->getProvinces();
+
+        $selectedProvince = (string) $request->input('province_id', '');
+        $selectedRegency = (string) $request->input('regency_id', '');
+        $selectedDistrict = (string) $request->input('district_id', '');
+        $selectedProvinceName = (string) $request->input('province_name', '');
+        $selectedRegencyName = (string) $request->input('regency_name', '');
+        $selectedDistrictName = (string) $request->input('district_name', '');
+
+        $initialRegencies = $selectedProvince ? $this->wilayahService->getRegencies($selectedProvince) : [];
+        $initialDistricts = $selectedRegency ? $this->wilayahService->getDistricts($selectedRegency) : [];
+
+        // Active districts with available surplus food for quick shortcut chips
+        $activeListingDistricts = District::whereHas('listings', fn($q) => $q->visibleToMap())
+            ->with('regency.province')
+            ->orderBy('name')
+            ->get();
 
         return view('catalog.index', compact(
             'listings',
@@ -142,6 +198,16 @@ class ListingController extends Controller
             'totalActiveListings',
             'totalPortionsAvailable',
             'districts',
+            'provinces',
+            'initialRegencies',
+            'initialDistricts',
+            'selectedProvince',
+            'selectedRegency',
+            'selectedDistrict',
+            'selectedProvinceName',
+            'selectedRegencyName',
+            'selectedDistrictName',
+            'activeListingDistricts',
             'userLat',
             'userLng',
             'sort'
