@@ -31,7 +31,7 @@ class CampaignService
             'district_id' => $data['district_id'],
             'title' => $data['title'],
             'slug' => $slug,
-            'body' => strip_tags($data['body'], '<p><br><strong><em><ul><ol><li>'),
+            'body' => strip_tags($data['body']),
             'cover_path' => $data['cover_path'] ?? null,
             'beneficiary_type' => $data['beneficiary_type'],
             'beneficiary_name' => $data['beneficiary_name'],

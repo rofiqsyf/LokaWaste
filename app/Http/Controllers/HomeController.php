@@ -11,6 +11,7 @@ use App\Models\Regency;
 use App\Services\NearbyListingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class HomeController extends Controller
 {
@@ -23,9 +24,10 @@ class HomeController extends Controller
         $categories = Category::all();
         $user = auth()->user();
 
-        // Default center: Tembalang, Kota Semarang (-7.05194, 110.43778)
-        $initialLat = -7.05194;
-        $initialLng = 110.43778;
+        // Default center configurable in Admin Settings
+        $initialLat = (float) site_setting('default_map_lat', -7.05194);
+        $initialLng = (float) site_setting('default_map_lng', 110.43778);
+        $defaultRadiusKm = (int) site_setting('default_map_radius_km', 5);
 
         // If lat/lng passed from catalog hand-off (SDD FR-46, SDD 8.8)
         if ($request->filled('lat') && $request->filled('lng')) {
@@ -38,7 +40,7 @@ class HomeController extends Controller
 
         $focusId = $request->input('focus');
 
-        return view('home', compact('categories', 'initialLat', 'initialLng', 'focusId'));
+        return view('home', compact('categories', 'initialLat', 'initialLng', 'defaultRadiusKm', 'focusId'));
     }
 
     /**
@@ -47,9 +49,9 @@ class HomeController extends Controller
      */
     public function nearbyListings(Request $request): JsonResponse
     {
-        $lat = (float) $request->input('lat', -7.05194);
-        $lng = (float) $request->input('lng', 110.43778);
-        $radius = (int) $request->input('radius', 5);
+        $lat = (float) $request->input('lat', (float) site_setting('default_map_lat', -7.05194));
+        $lng = (float) $request->input('lng', (float) site_setting('default_map_lng', 110.43778));
+        $radius = (int) $request->input('radius', (int) site_setting('default_map_radius_km', 5));
 
         $filters = [
             'category' => $request->input('category'),
@@ -141,12 +143,22 @@ class HomeController extends Controller
             ->where('status', CampaignStatus::PUBLISHED->value)
             ->get()
             ->map(function ($c) {
+                $typeLabel = match ($c->beneficiary_type) {
+                    'panti_asuhan' => 'Panti Asuhan',
+                    'ponpes' => 'Pondok Pesantren',
+                    'panti_jompo' => 'Panti Jompo',
+                    'tunawisma' => 'Tunawisma',
+                    default => 'Lainnya',
+                };
+
                 return [
                     'id' => $c->id,
                     'title' => $c->title,
                     'slug' => $c->slug,
+                    'excerpt' => Str::limit(trim(strip_tags((string) $c->body)), 120),
                     'beneficiary_name' => $c->beneficiary_name,
                     'beneficiary_type' => $c->beneficiary_type,
+                    'beneficiary_type_label' => $typeLabel,
                     'target_portions' => $c->target_portions,
                     'collected_portions' => $c->collected_portions,
                     'progress_percent' => $c->progressPercent(),

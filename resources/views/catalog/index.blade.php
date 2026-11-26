@@ -1,11 +1,11 @@
-<x-layouts.app :title="'Katalog Makanan Penyelamat — LokaWaste'">
+<x-layouts.app :title="site_setting('catalog_hero_title', 'Katalog Surplus Pangan') . ' — ' . site_setting('site_name', 'LokaWaste')">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
         <!-- Top Breadcrumb & E-Commerce Hero Header -->
         <div class="glass-card rounded-3xl p-6 sm:p-8 border border-white/85 shadow-xl relative overflow-hidden">
             <div class="relative z-10 space-y-4">
                 <nav class="flex items-center gap-2 text-xs text-[#4E6157]">
-                    <a href="{{ route('home') }}" class="hover:text-[#1E7A4C] transition">Peta</a>
+                    <a href="{{ route('home') }}" class="hover:text-[#16251D] transition">Peta</a>
                     <span>/</span>
                     <span class="text-[#16251D] font-bold">Katalog Makanan</span>
                 </nav>
@@ -13,16 +13,16 @@
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                         <h1 class="font-display font-bold text-2xl sm:text-3xl text-[#16251D] tracking-tight">
-                            Katalog Surplus Pangan
+                            {{ site_setting('catalog_hero_title', 'Katalog Surplus Pangan') }}
                         </h1>
                         <p class="text-xs sm:text-sm text-[#4E6157] mt-1 max-w-2xl leading-relaxed">
-                            Jelajahi makanan layak konsumsi dari toko roti, resto, katering, dan warga sekitar. Pengambilan dilakukan langsung di titik lokasi via <strong>Peta Interaktif</strong>.
+                            {{ site_setting('catalog_hero_subtitle', 'Jelajahi makanan layak konsumsi dari toko roti, resto, katering, dan warga sekitar. Pengambilan dilakukan langsung di titik lokasi via Peta Interaktif.') }}
                         </p>
                     </div>
 
                     <!-- Impact & Stock Live Counter Badge -->
-                    <div class="flex items-center gap-3 shrink-0 glass-pill p-3 rounded-2xl border border-white/80 shadow-xs">
-                        <div class="w-10 h-10 rounded-xl bg-emerald-100 text-[#1E7A4C] flex items-center justify-center shrink-0">
+                    <div class="flex items-center gap-3 shrink-0 glass-clear p-3 rounded-2xl border border-white/80 shadow-xs">
+                        <div class="w-10 h-10 rounded-xl bg-[#D7F57C] text-[#16251D] flex items-center justify-center shrink-0 border border-[#C8EE63]">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                             </svg>
@@ -32,7 +32,7 @@
                                 <span class="font-display font-bold text-lg text-[#16251D]">{{ $totalPortionsAvailable }}</span>
                                 <span class="text-xs text-[#4E6157]">porsi aktif</span>
                             </div>
-                            <span class="text-[11px] text-[#1E7A4C] font-semibold block">dari {{ $totalActiveListings }} listing siap ambil</span>
+                            <span class="text-[11px] text-[#16251D] font-bold block">dari {{ $totalActiveListings }} listing siap ambil</span>
                         </div>
                     </div>
                 </div>
@@ -45,7 +45,7 @@
                                    name="q"
                                    value="{{ request('q') }}"
                                    placeholder="Cari nama makanan, toko roti, resto, atau kecamatan (misal: Roti Sisir, Tembalang)..."
-                                   class="w-full pl-10 pr-4 py-3 rounded-2xl border border-[#D5E0D9] text-xs sm:text-sm bg-white focus:ring-2 focus:ring-[#1E7A4C] focus:border-transparent transition shadow-xs">
+                                   class="w-full pl-10 pr-4 py-3 rounded-2xl glass-input text-xs sm:text-sm">
                             <span class="absolute left-3.5 top-3.5 text-[#4E6157]">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
@@ -88,18 +88,18 @@
                 <!-- Category Horizontal Scroller (E-Commerce Category Chips) -->
                 <div class="pt-2 border-t border-[#D5E0D9]/80 flex items-center gap-2 overflow-x-auto scrollbar-none pb-1">
                     <a href="{{ route('catalog.index', array_merge(request()->except('category', 'page'))) }}"
-                       class="px-3.5 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition flex items-center gap-1.5 {{ !request('category') ? 'bg-[#1E7A4C] text-white shadow-xs' : 'bg-gray-100 hover:bg-gray-200 text-[#4E6157]' }}">
+                       class="px-3.5 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition flex items-center gap-1.5 active:scale-95 {{ !request('category') ? 'bg-[#D7F57C] text-[#16251D] font-bold shadow-xs border border-white/60 active:bg-[#c8ee63]' : 'glass-clear hover:bg-white text-[#4E6157] active:text-[#16251D] active:bg-[#D7F57C]/40' }}">
                         <span>Semua Kategori</span>
-                        <span class="text-[10px] px-1.5 py-0.2 rounded-full {{ !request('category') ? 'bg-white/20 text-white' : 'bg-gray-200 text-[#16251D]' }}">
+                        <span class="text-[10px] px-1.5 py-0.2 rounded-full {{ !request('category') ? 'bg-[#16251D]/15 text-[#16251D] font-bold' : 'bg-gray-200/80 text-[#16251D]' }}">
                             {{ $totalActiveListings }}
                         </span>
                     </a>
 
                     @foreach($categories as $cat)
                         <a href="{{ route('catalog.index', array_merge(request()->except('page'), ['category' => $cat->slug])) }}"
-                           class="px-3.5 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition flex items-center gap-1.5 {{ request('category') === $cat->slug ? 'bg-[#1E7A4C] text-white shadow-xs' : 'bg-gray-100 hover:bg-gray-200 text-[#4E6157]' }}">
+                           class="px-3.5 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition flex items-center gap-1.5 active:scale-95 {{ request('category') === $cat->slug ? 'bg-[#D7F57C] text-[#16251D] font-bold shadow-xs border border-white/60 active:bg-[#c8ee63]' : 'glass-clear hover:bg-white text-[#4E6157] active:text-[#16251D] active:bg-[#D7F57C]/40' }}">
                             <span>{{ $cat->name }}</span>
-                            <span class="text-[10px] px-1.5 py-0.2 rounded-full {{ request('category') === $cat->slug ? 'bg-white/20 text-white' : 'bg-gray-200 text-[#16251D]' }}">
+                            <span class="text-[10px] px-1.5 py-0.2 rounded-full {{ request('category') === $cat->slug ? 'bg-[#16251D]/15 text-[#16251D] font-bold' : 'bg-gray-200/80 text-[#16251D]' }}">
                                 {{ $cat->listings_count }}
                             </span>
                         </a>
@@ -112,7 +112,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start" x-data="{ mobileFilterOpen: false }">
 
             <!-- Mobile Filter Toggle Button -->
-            <div class="lg:hidden flex items-center justify-between bg-white p-4 rounded-2xl border border-[#D5E0D9] shadow-xs">
+            <div class="lg:hidden flex items-center justify-between glass-card p-4 rounded-2xl shadow-xs">
                 <span class="text-xs font-bold text-[#16251D]">Filter & Pengurutan</span>
                 <button type="button" @click="mobileFilterOpen = !mobileFilterOpen" class="btn-secondary py-1.5 px-3 text-xs flex items-center gap-1">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -124,10 +124,10 @@
 
             <!-- Left Filter Sidebar -->
             <aside :class="mobileFilterOpen ? 'block' : 'hidden lg:block'"
-                   class="bg-white rounded-3xl p-5 border border-[#D5E0D9] shadow-card space-y-6 sticky top-20">
+                   class="glass-frosted rounded-3xl p-5 shadow-card space-y-6 sticky top-20">
                 <div class="flex items-center justify-between pb-3 border-b border-[#D5E0D9]">
                     <div class="flex items-center gap-2">
-                        <svg class="w-4 h-4 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 text-[#16251D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
                         </svg>
                         <h2 class="font-display font-bold text-sm text-[#16251D]">Filter Pilihan</h2>
@@ -150,12 +150,12 @@
                         <div class="space-y-2">
                             <label class="flex items-center gap-2.5 text-xs text-[#4E6157] hover:text-[#16251D] cursor-pointer">
                                 <input type="checkbox" name="halal" value="1" {{ request('halal') ? 'checked' : '' }}
-                                       class="rounded border-[#74877B] text-[#1E7A4C] focus:ring-[#1E7A4C]">
+                                       class="rounded border-[#74877B] text-[#16251D] focus:ring-[#A8DC2E]">
                                 <span>Pernyataan Halal</span>
                             </label>
                             <label class="flex items-center gap-2.5 text-xs text-[#4E6157] hover:text-[#16251D] cursor-pointer">
                                 <input type="checkbox" name="vegetarian" value="1" {{ request('vegetarian') ? 'checked' : '' }}
-                                       class="rounded border-[#74877B] text-[#1E7A4C] focus:ring-[#1E7A4C]">
+                                       class="rounded border-[#74877B] text-[#16251D] focus:ring-[#A8DC2E]">
                                 <span>Vegetarian</span>
                             </label>
                         </div>
@@ -167,7 +167,7 @@
                         <div class="space-y-1.5">
                             <label class="flex items-center gap-2 text-xs text-[#4E6157] hover:text-[#16251D] cursor-pointer">
                                 <input type="radio" name="urgency" value="" {{ !request('urgency') ? 'checked' : '' }}
-                                       class="text-[#1E7A4C] focus:ring-[#1E7A4C]">
+                                       class="text-[#16251D] focus:ring-[#A8DC2E]">
                                 <span>Semua Batas Waktu</span>
                             </label>
                             <label class="flex items-center gap-2 text-xs text-red-700 font-semibold cursor-pointer">
@@ -186,7 +186,7 @@
                     <!-- Food Type Filter -->
                     <div class="space-y-2 pt-2 border-t border-[#D5E0D9]">
                         <label class="text-xs font-bold text-[#16251D] block">Jenis Olahan Pangan</label>
-                        <select name="food_type" class="w-full text-xs rounded-xl border border-[#D5E0D9] p-2 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#1E7A4C]">
+                        <select name="food_type" class="w-full text-xs rounded-xl glass-input p-2.5">
                             <option value="">Semua Jenis Olahan</option>
                             <option value="cooked" {{ request('food_type') === 'cooked' ? 'selected' : '' }}>Siap Santap / Matang</option>
                             <option value="packaged" {{ request('food_type') === 'packaged' ? 'selected' : '' }}>Kemasan Pabrik / Toko</option>
@@ -210,7 +210,7 @@
 
                         <div class="flex items-center justify-between">
                             <label class="text-xs font-bold text-[#16251D] flex items-center gap-1.5">
-                                <svg class="w-3.5 h-3.5 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-3.5 h-3.5 text-[#16251D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                                 </svg>
@@ -229,7 +229,7 @@
                             <select name="province_id"
                                     x-model="selectedProvince"
                                     @change="onProvinceChange()"
-                                    class="w-full text-xs rounded-xl border border-[#D5E0D9] p-2 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#1E7A4C] transition">
+                                    class="w-full text-xs rounded-xl glass-input p-2.5 transition">
                                 <option value="">Semua Provinsi</option>
                                 <template x-for="p in provinces" :key="p.id">
                                     <option :value="p.id" x-text="p.name" :selected="String(p.id) === String(selectedProvince)"></option>
@@ -242,13 +242,13 @@
                         <div class="space-y-1">
                             <div class="flex items-center justify-between">
                                 <span class="text-[10px] font-semibold text-[#4E6157] block">2. Kabupaten / Kota</span>
-                                <span x-show="loadingRegencies" class="text-[9px] text-[#1E7A4C] font-semibold animate-pulse">Memuat...</span>
+                                <span x-show="loadingRegencies" class="text-[9px] text-[#16251D] font-bold animate-pulse">Memuat...</span>
                             </div>
                             <select name="regency_id"
                                     x-model="selectedRegency"
                                     @change="onRegencyChange()"
                                     :disabled="!selectedProvince || loadingRegencies"
-                                    class="w-full text-xs rounded-xl border border-[#D5E0D9] p-2 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#1E7A4C] disabled:opacity-60 disabled:cursor-not-allowed transition">
+                                    class="w-full text-xs rounded-xl glass-input p-2.5 disabled:opacity-60 disabled:cursor-not-allowed transition">
                                 <option value="">Semua Kab / Kota</option>
                                 <template x-for="r in regencies" :key="r.id">
                                     <option :value="r.id" x-text="r.name" :selected="String(r.id) === String(selectedRegency)"></option>
@@ -261,13 +261,13 @@
                         <div class="space-y-1">
                             <div class="flex items-center justify-between">
                                 <span class="text-[10px] font-semibold text-[#4E6157] block">3. Kecamatan</span>
-                                <span x-show="loadingDistricts" class="text-[9px] text-[#1E7A4C] font-semibold animate-pulse">Memuat...</span>
+                                <span x-show="loadingDistricts" class="text-[9px] text-[#16251D] font-bold animate-pulse">Memuat...</span>
                             </div>
                             <select name="district_id"
                                     x-model="selectedDistrict"
                                     @change="onDistrictChange()"
                                     :disabled="!selectedRegency || loadingDistricts"
-                                    class="w-full text-xs rounded-xl border border-[#D5E0D9] p-2 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#1E7A4C] disabled:opacity-60 disabled:cursor-not-allowed transition">
+                                    class="w-full text-xs rounded-xl glass-input p-2.5 disabled:opacity-60 disabled:cursor-not-allowed transition">
                                 <option value="">Semua Kecamatan</option>
                                 <template x-for="d in districts" :key="d.id">
                                     <option :value="d.id" x-text="'Kec. ' + d.name" :selected="String(d.id) === String(selectedDistrict)"></option>
@@ -284,7 +284,7 @@
                                     @foreach($activeListingDistricts as $ad)
                                         <button type="button"
                                                 @click="setQuickDistrict('{{ $ad->regency->province->code ?? '' }}', '{{ $ad->regency->code ?? '' }}', '{{ $ad->id }}', '{{ $ad->regency->province->name ?? '' }}', '{{ $ad->regency->name ?? '' }}', '{{ $ad->name }}')"
-                                                class="text-[10px] px-2 py-1 rounded-lg border transition cursor-pointer {{ (request('district_id') == $ad->id || request('district_id') == $ad->code) ? 'bg-[#1E7A4C] text-white border-[#1E7A4C] font-bold shadow-2xs' : 'bg-gray-50 hover:bg-emerald-50 text-[#16251D] border-[#D5E0D9]' }}">
+                                                class="text-[10px] px-2 py-1 rounded-lg transition cursor-pointer {{ (request('district_id') == $ad->id || request('district_id') == $ad->code) ? 'bg-[#D7F57C] text-[#16251D] font-bold shadow-2xs border border-white/60' : 'glass-pill hover:bg-white text-[#16251D]' }}">
                                             Kec. {{ $ad->name }}
                                         </button>
                                     @endforeach
@@ -316,7 +316,7 @@
             <div class="lg:col-span-3 space-y-5">
 
                 <!-- Toolbar: Result Counter & Sort Dropdown -->
-                <div class="bg-white rounded-2xl p-4 border border-[#D5E0D9] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="glass-blur rounded-2xl p-4 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div class="text-xs text-[#4E6157]">
                         Menampilkan <strong class="text-[#16251D]">{{ $listings->total() }}</strong> makanan penyelamat
                         @if(request('q')) untuk pencarian "<em>{{ request('q') }}</em>" @endif
@@ -336,7 +336,7 @@
                                 <input type="hidden" name="{{ $key }}" value="{{ $val }}">
                             @endforeach
                             <select name="sort" onchange="document.getElementById('sort-form').submit()"
-                                    class="text-xs font-semibold rounded-xl border border-[#D5E0D9] py-1.5 pl-3 pr-8 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#1E7A4C] cursor-pointer">
+                                    class="text-xs font-semibold rounded-xl glass-input py-1.5 pl-3 pr-8 cursor-pointer">
                                 <option value="expiring_soon" {{ $sort === 'expiring_soon' ? 'selected' : '' }}>Batas Waktu Terdekat (Prioritas Food Rescue)</option>
                                 <option value="newest" {{ $sort === 'newest' ? 'selected' : '' }}>Terbaru Diposting</option>
                                 <option value="portions_high" {{ $sort === 'portions_high' ? 'selected' : '' }}>Porsi Terbanyak</option>
@@ -347,8 +347,8 @@
 
                 <!-- Product Grid (1, 2, 3 cols) -->
                 @if($listings->isEmpty())
-                    <div class="bg-white rounded-3xl p-12 text-center border border-[#D5E0D9] shadow-card space-y-3">
-                        <div class="w-16 h-16 mx-auto rounded-2xl bg-gray-100 text-[#4E6157] flex items-center justify-center">
+                    <div class="glass-card rounded-3xl p-12 text-center shadow-card space-y-3">
+                        <div class="w-16 h-16 mx-auto rounded-2xl bg-gray-100/80 text-[#4E6157] flex items-center justify-center">
                             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                             </svg>
@@ -374,7 +374,7 @@
                                 $isUrgent = $remainingMins < 60;
                             @endphp
 
-                            <div class="bg-white rounded-3xl border border-[#D5E0D9] shadow-card overflow-hidden hover:border-[#1E7A4C]/60 hover:shadow-lg transition-all duration-300 flex flex-col justify-between group">
+                            <div class="glass-card glass-card-hover rounded-3xl overflow-hidden flex flex-col justify-between group">
                                 <div>
                                     <!-- Card Media Box with Floating Badges -->
                                     <div class="relative h-48 bg-gray-100 overflow-hidden">
@@ -384,8 +384,8 @@
                                                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                                         @else
                                             <!-- SVG Fallback Illustration -->
-                                            <div class="w-full h-full bg-linear-to-br from-emerald-50 to-[#F2F6F3] flex items-center justify-center text-[#1E7A4C]">
-                                                <svg class="w-12 h-12 text-[#1E7A4C]/40 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <div class="w-full h-full bg-linear-to-br from-[#D7F57C]/20 to-[#F2F6F3] flex items-center justify-center text-[#16251D]">
+                                                <svg class="w-12 h-12 text-[#16251D]/30 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                                                 </svg>
                                             </div>
@@ -396,7 +396,7 @@
                                             <span class="px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-md text-[10px] font-bold text-[#16251D] shadow-xs">
                                                 {{ $item->category->name }}
                                             </span>
-                                            <span class="px-2.5 py-0.5 rounded-full bg-[#1E7A4C] text-white text-[10px] font-bold shadow-xs flex items-center gap-1">
+                                            <span class="px-2.5 py-0.5 rounded-full bg-[#D7F57C] text-[#16251D] text-[10px] font-bold shadow-xs flex items-center gap-1 border border-white/60">
                                                 <span>{{ $item->portions_left }} porsi tersisa</span>
                                             </span>
                                         </div>
@@ -412,7 +412,7 @@
                                                 </div>
                                             @else
                                                 <div class="px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-md text-[#16251D] text-[10px] font-bold shadow-xs flex items-center gap-1">
-                                                    <svg class="w-3 h-3 text-[#1E7A4C] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <svg class="w-3 h-3 text-[#16251D] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                     </svg>
                                                     <span>Sisa {{ $timeShort }}</span>
@@ -430,7 +430,7 @@
                                                     {{ $item->user->organization_name ?? $item->user->name }}
                                                 </span>
                                                 @if($item->user->is_verified)
-                                                    <span title="Penyedia Terverifikasi" class="text-emerald-700 shrink-0">
+                                                    <span title="Penyedia Terverifikasi" class="text-[#2A6F97] shrink-0">
                                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                                                         </svg>
@@ -444,7 +444,7 @@
                                         </div>
 
                                         <!-- Title -->
-                                        <h3 class="font-display font-bold text-base text-[#16251D] group-hover:text-[#1E7A4C] transition-colors line-clamp-2 leading-snug">
+                                        <h3 class="font-display font-bold text-base text-[#16251D] group-hover:text-[#16251D] transition-colors line-clamp-2 leading-snug">
                                             {{ $item->title }}
                                         </h3>
 
@@ -456,12 +456,12 @@
                                         <!-- Diet & Syariah Chips -->
                                         <div class="flex items-center gap-1.5 flex-wrap pt-1">
                                             @if($item->halal_claim)
-                                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200">
+                                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-[#D7F57C]/40 text-[#16251D] border border-[#C8EE63]">
                                                     Halal
                                                 </span>
                                             @endif
                                             @if($item->is_vegetarian)
-                                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-green-50 text-green-800 border border-green-200">
+                                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-[#D7F57C]/40 text-[#16251D] border border-[#C8EE63]">
                                                     Vegetarian
                                                 </span>
                                             @endif

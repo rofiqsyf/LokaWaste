@@ -7,9 +7,11 @@ use App\Http\Controllers\ClaimController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ListingController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\VolunteerController;
 use App\Http\Middleware\EnsureAdmin;
+use App\Http\Middleware\EnsureUserIsActive;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\GeocodingController;
@@ -25,8 +27,10 @@ Route::get('/api/regions/regencies', [HomeController::class, 'regencies'])->name
 Route::get('/api/regions/regencies/{id}/districts', [HomeController::class, 'districtsByRegency'])->name('api.regions.districts');
 
 // Geocoding & Autocomplete Search (Google Maps style)
-Route::get('/api/geocoding/search', [GeocodingController::class, 'search'])->name('api.geocoding.search');
-Route::get('/api/geocoding/reverse', [GeocodingController::class, 'reverse'])->name('api.geocoding.reverse');
+Route::middleware('throttle:60,1')->group(function () {
+    Route::get('/api/geocoding/search', [GeocodingController::class, 'search'])->name('api.geocoding.search');
+    Route::get('/api/geocoding/reverse', [GeocodingController::class, 'reverse'])->name('api.geocoding.reverse');
+});
 
 // EMSIFA Wilayah Indonesia API Proxy & Cache
 Route::prefix('api/wilayah')->name('api.wilayah.')->group(function () {
@@ -49,17 +53,24 @@ Route::get('/campaigns/{slug}', [CampaignController::class, 'show'])->name('camp
 // Guest Auth
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:10,1');
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:10,1');
 });
 
 // Authenticated Routes
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', EnsureUserIsActive::class])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Notifications
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
+    Route::post('/notifications/{id}/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-read');
+    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
+    Route::delete('/notifications-clear-read', [NotificationController::class, 'destroyAllRead'])->name('notifications.clear-read');
 
     // Listings
     Route::get('/my/listings/create', [ListingController::class, 'create'])->name('listings.create');
@@ -92,7 +103,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/volunteer/campaigns/{campaign}/close', [CampaignController::class, 'close'])->name('volunteer.campaigns.close');
 
     // Reports
-    Route::post('/reports', [ReportController::class, 'store'])->name('reports.store');
+    Route::post('/reports', [ReportController::class, 'store'])->middleware('throttle:15,1')->name('reports.store');
 
     // Admin Routes
     Route::prefix('admin')->middleware(EnsureAdmin::class)->as('admin.')->group(function () {
@@ -107,5 +118,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/users', [AdminController::class, 'users'])->name('users');
         Route::post('/users/{user}/toggle-verify', [AdminController::class, 'toggleUserVerify'])->name('users.toggle-verify');
         Route::post('/users/{user}/toggle-active', [AdminController::class, 'toggleUserActive'])->name('users.toggle-active');
+        Route::post('/users/{user}/reset-penalties', [AdminController::class, 'resetUserPenalties'])->name('users.reset-penalties');
+
+        Route::get('/listings', [AdminController::class, 'listings'])->name('listings');
+        Route::post('/listings/{listing}/toggle-takedown', [AdminController::class, 'toggleListingTakedown'])->name('listings.toggle-takedown');
+        Route::delete('/listings/{listing}', [AdminController::class, 'destroyListing'])->name('listings.destroy');
+
+        Route::get('/settings', [AdminController::class, 'settings'])->name('settings');
+        Route::post('/settings', [AdminController::class, 'updateSettings'])->name('settings.update');
+        Route::post('/settings/reset-logo', [AdminController::class, 'resetLogo'])->name('settings.reset-logo');
+        Route::post('/settings/reset-all', [AdminController::class, 'resetSettings'])->name('settings.reset-all');
     });
 });

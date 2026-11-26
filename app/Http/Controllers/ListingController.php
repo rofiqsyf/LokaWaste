@@ -173,7 +173,6 @@ class ListingController extends Controller
         $totalActiveListings = FoodListing::visibleToMap()->count();
         $totalPortionsAvailable = FoodListing::visibleToMap()->sum('portions_left');
 
-        $districts = District::with('regency.province')->orderBy('name')->get();
         $provinces = $this->wilayahService->getProvinces();
 
         $selectedProvince = (string) $request->input('province_id', '');
@@ -197,7 +196,6 @@ class ListingController extends Controller
             'categories',
             'totalActiveListings',
             'totalPortionsAvailable',
-            'districts',
             'provinces',
             'initialRegencies',
             'initialDistricts',
@@ -363,8 +361,17 @@ class ListingController extends Controller
 
     public function show(FoodListing $listing)
     {
-        $listing->load(['user', 'category', 'campaign', 'district.regency.province', 'claims.user']);
         $currentUser = Auth::user();
+
+        if (in_array($listing->status, ['taken_down', 'draft'])) {
+            abort_unless(
+                $currentUser && ($currentUser->id === $listing->user_id || $currentUser->isAdmin()),
+                403,
+                'Listing makanan ini sedang tidak tersedia.'
+            );
+        }
+
+        $listing->load(['user', 'category', 'campaign', 'district.regency.province', 'claims.user']);
 
         // Check if user has active claim on this listing
         $userActiveClaim = null;

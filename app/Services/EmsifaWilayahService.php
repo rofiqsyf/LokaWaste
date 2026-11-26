@@ -13,6 +13,11 @@ class EmsifaWilayahService
 {
     protected string $baseUrl = 'https://emsifa.github.io/api-wilayah-indonesia/api';
 
+    protected function httpClient()
+    {
+        return Http::when(app()->environment('local', 'testing'), fn($h) => $h->withoutVerifying())->timeout(8);
+    }
+
     /**
      * Get all provinces from EMSIFA API with caching
      */
@@ -20,7 +25,7 @@ class EmsifaWilayahService
     {
         return Cache::remember('emsifa_provinces', 86400 * 30, function () {
             try {
-                $response = Http::withoutVerifying()->timeout(8)->get("{$this->baseUrl}/provinces.json");
+                $response = $this->httpClient()->get("{$this->baseUrl}/provinces.json");
                 if ($response->successful()) {
                     return $this->formatItems($response->json());
                 }
@@ -42,7 +47,7 @@ class EmsifaWilayahService
     {
         return Cache::remember("emsifa_regencies_{$provinceId}", 86400 * 30, function () use ($provinceId) {
             try {
-                $response = Http::withoutVerifying()->timeout(8)->get("{$this->baseUrl}/regencies/{$provinceId}.json");
+                $response = $this->httpClient()->get("{$this->baseUrl}/regencies/{$provinceId}.json");
                 if ($response->successful()) {
                     return $this->formatItems($response->json());
                 }
@@ -70,7 +75,7 @@ class EmsifaWilayahService
     {
         return Cache::remember("emsifa_districts_{$regencyId}", 86400 * 30, function () use ($regencyId) {
             try {
-                $response = Http::withoutVerifying()->timeout(8)->get("{$this->baseUrl}/districts/{$regencyId}.json");
+                $response = $this->httpClient()->get("{$this->baseUrl}/districts/{$regencyId}.json");
                 if ($response->successful()) {
                     return $this->formatItems($response->json());
                 }

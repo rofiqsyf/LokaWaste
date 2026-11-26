@@ -133,9 +133,9 @@
                      class="absolute top-full left-0 right-0 mt-2 bg-white/95 backdrop-blur-2xl rounded-3xl shadow-[0_20px_50px_rgba(22,37,29,0.18)] border border-[#D5E0D9]/80 overflow-hidden z-40 p-2 space-y-1 max-h-56 overflow-y-auto">
                     <template x-for="(s, idx) in suggestions" :key="s.id || idx">
                         <div @click="selectSuggestion(s)"
-                             class="group p-2.5 rounded-2xl hover:bg-linear-to-r hover:from-emerald-50/90 hover:via-teal-50/40 hover:to-transparent cursor-pointer transition-all duration-200 flex items-center justify-between gap-3 border border-transparent hover:border-emerald-200/60 active:scale-[0.99]">
+                             class="group p-2.5 rounded-2xl hover:bg-[#D7F57C]/20 cursor-pointer transition-all duration-200 flex items-center justify-between gap-3 border border-transparent hover:border-[#C8EE63]/60 active:scale-[0.99]">
                             <div class="flex items-center gap-2.5 min-w-0">
-                                <div class="w-8 h-8 rounded-xl bg-linear-to-br from-emerald-100 to-teal-50 text-[#1E7A4C] group-hover:from-[#1E7A4C] group-hover:to-[#14573A] group-hover:text-white flex items-center justify-center shrink-0 transition-all shadow-xs">
+                                <div class="w-8 h-8 rounded-xl bg-[#D7F57C] text-[#16251D] group-hover:bg-[#C8EE63] flex items-center justify-center shrink-0 transition-all shadow-xs border border-[#C8EE63]">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -144,7 +144,7 @@
                                 <div class="min-w-0 flex-1">
                                     <div class="flex items-center gap-1.5">
                                         <h5 class="font-display font-bold text-xs text-[#16251D] group-hover:text-[#1E7A4C] truncate" x-text="s.title"></h5>
-                                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-gray-100 text-[#4E6157] group-hover:bg-emerald-100 group-hover:text-[#14573A] shrink-0" x-text="s.type_label || 'Wilayah'"></span>
+                                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-gray-100 text-[#4E6157] group-hover:bg-[#D7F57C] group-hover:text-[#16251D] shrink-0" x-text="s.type_label || 'Wilayah'"></span>
                                     </div>
                                     <p class="text-[11px] text-[#4E6157] group-hover:text-[#16251D] truncate mt-0.5" x-text="s.subtitle || s.display_name"></p>
                                 </div>

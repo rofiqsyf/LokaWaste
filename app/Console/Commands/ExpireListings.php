@@ -57,9 +57,11 @@ class ExpireListings extends Command
 
                         $user->no_show_count = $noShowsIn30Days;
 
-                        // Rule 12 / TC-14: 3 no-shows in 30 days restricts claiming for 7 days
-                        if ($noShowsIn30Days >= 3) {
-                            $user->claim_restricted_until = now()->addDays(7);
+                        // Rule 12 / TC-14: Configurable no-shows threshold in 30 days restricts claiming
+                        $noShowThreshold = max((int) site_setting('no_show_penalty_threshold', 3), 1);
+                        $restrictionDays = max((int) site_setting('no_show_restriction_days', 7), 1);
+                        if ($noShowsIn30Days >= $noShowThreshold) {
+                            $user->claim_restricted_until = now()->addDays($restrictionDays);
                         }
                         $user->save();
                     }

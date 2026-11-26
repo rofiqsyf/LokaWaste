@@ -9,9 +9,11 @@
         --color-surface: #FFFFFF;
         --color-ink: #16251D;
         --color-ink-soft: #4E6157;
-        --color-primary: #1E7A4C;
-        --color-primary-dark: #14573A;
-        --color-time-ok: #23865A;
+        --color-primary: #D7F57C;
+        --color-primary-hover: #C8EE63;
+        --color-primary-dark: #A8DC2E;
+        --color-nature: #1E7A4C;
+        --color-time-ok: #84CC16;
         --color-time-warn: #B45309;
         --color-warn-soft: #FBEFC9;
         --color-warn-ink: #7A4A00;
@@ -39,99 +41,252 @@
 .border-line { border-color: var(--color-line); }
 .border-line-strong { border-color: var(--color-line-strong); }
 
+/* ==========================================================================
+   GLOBAL INTERACTION & ACTIVE STATE RESETS (Zero Browser Red-Link Bug)
+   Prevents browser default -webkit-activelink (#ff0000) on click/tap
+   ========================================================================== */
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
+a:active, 
+button:active, 
+[role="button"]:active,
+input[type="button"]:active,
+input[type="submit"]:active {
+    color: inherit;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Ensure any active state inside navigation docks stays strictly on brand palette */
+nav a:active,
+nav button:active,
+header a:active,
+header button:active {
+    color: inherit;
+}
+
 .btn-primary {
-    background-color: var(--color-primary);
-    color: #FFFFFF;
-    border-radius: 10px;
-    padding: 0.625rem 1.25rem;
-    font-weight: 600;
-    min-height: 44px;
+    background: linear-gradient(135deg, #D7F57C 0%, #C8EE63 100%);
+    color: #16251D !important;
+    border-radius: 9999px;
+    padding: 0.5rem 1.25rem;
+    font-weight: 700;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.15s cubic-bezier(0.2, 0, 0, 1);
+    gap: 0.375rem;
+    box-shadow: 
+        0 4px 14px 0 rgba(168, 220, 46, 0.32),
+        inset 0 1px 1px 0 rgba(255, 255, 255, 0.90);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid rgba(255, 255, 255, 0.70);
+    cursor: pointer;
 }
 .btn-primary:hover {
-    background-color: var(--color-primary-dark);
+    background: linear-gradient(135deg, #E2FA8F 0%, #C4ED57 100%);
+    color: #16251D !important;
+    box-shadow: 
+        0 8px 24px 0 rgba(168, 220, 46, 0.42),
+        inset 0 1px 1px 0 rgba(255, 255, 255, 1);
+    transform: translateY(-1px);
 }
 .btn-primary:active {
-    transform: scale(0.98);
+    background: #B4E634 !important;
+    color: #16251D !important;
+    transform: scale(0.97);
+    box-shadow: 0 2px 8px 0 rgba(168, 220, 46, 0.25);
 }
 
 .btn-secondary {
-    border: 1.5px solid var(--color-primary);
-    color: var(--color-primary);
-    background-color: transparent;
-    border-radius: 10px;
-    padding: 0.625rem 1.25rem;
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(14px) saturate(180%);
+    -webkit-backdrop-filter: blur(14px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.90);
+    color: #16251D !important;
+    border-radius: 9999px;
+    padding: 0.5rem 1.15rem;
     font-weight: 600;
-    min-height: 44px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.15s cubic-bezier(0.2, 0, 0, 1);
+    gap: 0.375rem;
+    box-shadow: 
+        0 2px 8px -1px rgba(18, 38, 28, 0.05),
+        inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
 }
 .btn-secondary:hover {
-    background-color: rgba(30, 122, 76, 0.08);
+    background: rgba(255, 255, 255, 0.98);
+    border-color: rgba(168, 220, 46, 0.7);
+    color: #16251D !important;
+    transform: translateY(-1px);
+    box-shadow: 
+        0 6px 18px -2px rgba(18, 38, 28, 0.08),
+        inset 0 1px 1px 0 rgba(255, 255, 255, 1);
 }
 .btn-secondary:active {
-    transform: scale(0.98);
+    color: #16251D !important;
+    transform: scale(0.97);
 }
 
 .btn-danger {
-    background-color: var(--color-time-urgent);
-    color: #FFFFFF;
-    border-radius: 10px;
-    padding: 0.625rem 1.25rem;
-    font-weight: 600;
-    min-height: 44px;
+    background: linear-gradient(135deg, #C93A2E 0%, #A8281E 100%);
+    color: #FFFFFF !important;
+    border-radius: 9999px;
+    padding: 0.5rem 1.15rem;
+    font-weight: 700;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.15s cubic-bezier(0.2, 0, 0, 1);
+    gap: 0.375rem;
+    box-shadow: 
+        0 4px 14px 0 rgba(201, 58, 46, 0.32),
+        inset 0 1px 1px 0 rgba(255, 255, 255, 0.35);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    cursor: pointer;
 }
 .btn-danger:hover {
-    opacity: 0.9;
+    background: linear-gradient(135deg, #DE4538 0%, #B82C22 100%);
+    color: #FFFFFF !important;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px 0 rgba(201, 58, 46, 0.4);
 }
 .btn-danger:active {
-    transform: scale(0.98);
+    background: #8E2018 !important;
+    color: #FFFFFF !important;
+    transform: scale(0.97);
 }
 
 .shadow-card {
-    box-shadow: 0 1px 3px 0 rgba(22, 37, 29, 0.06), 0 4px 12px -2px rgba(22, 37, 29, 0.04);
+    box-shadow: 
+        0 12px 36px -4px rgba(18, 38, 28, 0.06),
+        0 2px 8px -1px rgba(18, 38, 28, 0.03),
+        inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
 }
 
 .shadow-sheet {
-    box-shadow: 0 -4px 16px -2px rgba(22, 37, 29, 0.08), 0 -12px 32px -4px rgba(22, 37, 29, 0.10);
+    box-shadow: 
+        0 -12px 40px -4px rgba(18, 38, 28, 0.12),
+        0 -4px 16px -2px rgba(18, 38, 28, 0.06),
+        inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
 }
 
 @keyframes crisis-pulse {
     0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.85; transform: scale(1.04); }
+    50% { opacity: 0.88; transform: scale(1.03); }
 }
 
 .animate-crisis {
     animation: crisis-pulse 1.8s infinite ease-in-out;
 }
 
+/* ==========================================================================
+   LOKAWASTE DYNAMIC GPS-LEAF-HANDS BRAND LOGO ANIMATIONS
+   ========================================================================== */
+@keyframes lokawaste-pin-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-2.5px); }
+}
+
+@keyframes lokawaste-shadow-breathe {
+    0%, 100% { transform: scaleX(1); opacity: 0.16; }
+    50% { transform: scaleX(0.84); opacity: 0.10; }
+}
+
+@keyframes lokawaste-gps-ripple {
+    0% { transform: scale(0.82); opacity: 0.55; }
+    70%, 100% { transform: scale(1.22); opacity: 0; }
+}
+
+@keyframes lokawaste-leaf-sway {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(-2.5deg); }
+}
+
+.lokawaste-logo-pin {
+    transform-box: fill-box;
+    transform-origin: center bottom;
+    animation: lokawaste-pin-float 3.6s ease-in-out infinite;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lokawaste-logo-shadow {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: lokawaste-shadow-breathe 3.6s ease-in-out infinite;
+    transition: transform 0.35s ease, opacity 0.35s ease;
+}
+
+.lokawaste-logo-ripple {
+    animation: lokawaste-gps-ripple 3s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.lokawaste-logo-leaf {
+    transform-box: fill-box;
+    transform-origin: 20% 80%;
+    animation: lokawaste-leaf-sway 4.2s ease-in-out infinite;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lokawaste-logo-hand-give,
+.lokawaste-logo-hand-receive {
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.group:hover .lokawaste-logo-pin,
+.group\/logo:hover .lokawaste-logo-pin {
+    transform: translateY(-3px) scale(1.04);
+}
+
+.group:hover .lokawaste-logo-leaf,
+.group\/logo:hover .lokawaste-logo-leaf {
+    transform: rotate(-5deg) scale(1.04);
+}
+
+.group:hover .lokawaste-logo-hand-give,
+.group\/logo:hover .lokawaste-logo-hand-give {
+    transform: translate(-1.5px, 1.5px);
+}
+
+.group:hover .lokawaste-logo-hand-receive,
+.group\/logo:hover .lokawaste-logo-hand-receive {
+    transform: translate(0.5px, -0.5px);
+}
+
 .input-field {
-    border: 1.5px solid var(--color-line-strong);
-    border-radius: 10px;
-    background-color: #FFFFFF;
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(14px) saturate(160%);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    border: 1px solid rgba(213, 224, 217, 0.75);
+    border-radius: 14px;
     padding: 0.625rem 0.875rem;
     color: var(--color-ink);
     min-height: 44px;
     width: 100%;
+    box-shadow: 
+        inset 0 1px 2px 0 rgba(18, 38, 28, 0.03),
+        0 2px 6px 0 rgba(18, 38, 28, 0.02);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .input-field:focus {
-    outline: 2px solid var(--color-map);
-    outline-offset: 1px;
+    background: #FFFFFF;
+    border-color: #B4E634;
+    box-shadow: 
+        0 0 0 3px rgba(215, 245, 124, 0.40),
+        0 2px 8px 0 rgba(18, 38, 28, 0.05);
+    outline: none;
 }
 
 .badge-volunteer {
-    border: 1px solid var(--color-primary-dark);
-    color: var(--color-primary-dark);
-    background-color: #FFFFFF;
+    border: 1px solid rgba(20, 87, 58, 0.3);
+    color: #14573A;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
     border-radius: 9999px;
     font-size: 0.75rem;
     font-weight: 700;
@@ -139,94 +294,244 @@
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .badge-verified {
-    background-color: var(--color-map);
+    background: linear-gradient(135deg, #2A6F97 0%, #1E506D 100%);
     color: #FFFFFF;
     border-radius: 9999px;
     font-size: 0.75rem;
     font-weight: 600;
-    padding: 0.2rem 0.5rem;
+    padding: 0.25rem 0.625rem;
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
+    box-shadow: 0 2px 8px rgba(42, 111, 151, 0.25);
 }
 
 /* ==========================================================================
-   GLASSMORPHISM AESTHETIC SYSTEM
+   MODERN 3-TIER GLASSMORPHISM MATERIAL SYSTEM
+   Approaches: Clear (Ultra-Thin), Blur (Optical Refraction), Frosted (Deep Diffusion)
+   Inspired by visionOS, macOS Sonoma, Raycast, & Linear 2024-2026 UI Trends
    ========================================================================== */
 
 .bg-glass-ambient {
-    background-color: #F4F7F5;
+    background-color: #EFF4F1;
     background-image: 
-        radial-gradient(at 10% 10%, rgba(30, 122, 76, 0.08) 0px, transparent 40%),
-        radial-gradient(at 90% 15%, rgba(42, 111, 151, 0.07) 0px, transparent 40%),
-        radial-gradient(at 50% 85%, rgba(30, 122, 76, 0.06) 0px, transparent 50%),
-        radial-gradient(at 80% 80%, rgba(212, 238, 198, 0.12) 0px, transparent 45%);
+        radial-gradient(circle at 12% 18%, rgba(110, 231, 183, 0.45) 0%, transparent 48%),
+        radial-gradient(circle at 88% 12%, rgba(147, 197, 253, 0.40) 0%, transparent 44%),
+        radial-gradient(circle at 50% 45%, rgba(217, 249, 157, 0.35) 0%, transparent 50%),
+        radial-gradient(circle at 82% 82%, rgba(52, 211, 153, 0.36) 0%, transparent 46%),
+        radial-gradient(circle at 18% 85%, rgba(186, 230, 253, 0.40) 0%, transparent 44%);
     background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
-.glass-nav {
-    background: rgba(255, 255, 255, 0.82);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.9);
-    box-shadow: 0 4px 24px -2px rgba(22, 37, 29, 0.04), 0 1px 2px 0 rgba(22, 37, 29, 0.02);
+/* --------------------------------------------------------------------------
+   1. CLEAR GLASS (.glass-clear / .glass-pill)
+   Approach: Ultra-thin, high light transmission, subtle blur.
+   Leaves imagery and background vividly visible beneath with crisp specular rims.
+   Ideal for: Floating filter chips, secondary buttons, tags, GPS toggles.
+   -------------------------------------------------------------------------- */
+.glass-clear {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.52) 0%, rgba(255, 255, 255, 0.32) 100%);
+    backdrop-filter: blur(14px) saturate(190%);
+    -webkit-backdrop-filter: blur(14px) saturate(190%);
+    border: 1px solid rgba(255, 255, 255, 0.82);
+    box-shadow: 
+        0 4px 16px -2px rgba(18, 38, 28, 0.05),
+        0 1px 2px 0 rgba(18, 38, 28, 0.02),
+        inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
-
-.glass-card {
-    background: rgba(255, 255, 255, 0.76);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.85);
-    box-shadow: 0 10px 32px -4px rgba(22, 37, 29, 0.05), 0 1px 2px 0 rgba(22, 37, 29, 0.03);
-}
-
-.glass-card-hover {
-    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.glass-card-hover:hover {
-    background: rgba(255, 255, 255, 0.92);
-    transform: translateY(-3px);
-    border-color: rgba(255, 255, 255, 0.95);
-    box-shadow: 0 18px 40px -6px rgba(22, 37, 29, 0.08), 0 0 0 1px rgba(30, 122, 76, 0.15);
-}
-
-.glass-dock {
-    background: rgba(243, 246, 244, 0.80);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border: 1px solid rgba(255, 255, 255, 0.9);
-    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.9), 0 2px 8px -1px rgba(22, 37, 29, 0.04);
+.glass-clear:hover {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.70) 100%);
+    border-color: rgba(255, 255, 255, 1);
+    transform: translateY(-1.5px);
+    box-shadow: 
+        0 8px 22px -3px rgba(18, 38, 28, 0.09),
+        inset 0 1px 1.5px 0 #FFFFFF;
 }
 
 .glass-pill {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.9);
-    box-shadow: 0 2px 6px -1px rgba(22, 37, 29, 0.05);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.45) 100%);
+    backdrop-filter: blur(16px) saturate(190%);
+    -webkit-backdrop-filter: blur(16px) saturate(190%);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    box-shadow: 
+        0 3px 12px -2px rgba(18, 38, 28, 0.05),
+        inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-pill:hover {
+    background: rgba(255, 255, 255, 0.92);
+    transform: translateY(-1px);
+    border-color: #FFFFFF;
+    box-shadow: 
+        0 6px 18px -2px rgba(18, 38, 28, 0.08),
+        inset 0 1px 1.5px 0 #FFFFFF;
 }
 
+/* --------------------------------------------------------------------------
+   2. BLUR GLASS (.glass-blur / .glass-nav / .glass-dock)
+   Approach: High optical refraction, 24px-28px blur, 200% saturation boost.
+   Elevated structures that float gracefully above content without visual noise.
+   Ideal for: Floating headers, navigation docks, search bars, HUD controls.
+   -------------------------------------------------------------------------- */
+.glass-blur {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.80) 0%, rgba(255, 255, 255, 0.66) 100%);
+    backdrop-filter: blur(24px) saturate(200%);
+    -webkit-backdrop-filter: blur(24px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.90);
+    box-shadow: 
+        0 12px 36px -4px rgba(18, 38, 28, 0.07),
+        0 2px 6px -1px rgba(18, 38, 28, 0.03),
+        inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 1),
+        inset 0 -1px 1px 0 rgba(0, 0, 0, 0.02);
+}
+
+.glass-nav {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.70) 100%);
+    backdrop-filter: blur(28px) saturate(200%);
+    -webkit-backdrop-filter: blur(28px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.92);
+    box-shadow: 
+        0 12px 40px -4px rgba(18, 38, 28, 0.08),
+        0 1px 3px 0 rgba(18, 38, 28, 0.02),
+        inset 0 1.5px 2px 0 rgba(255, 255, 255, 1);
+}
+
+.glass-dock {
+    background: linear-gradient(135deg, rgba(246, 249, 247, 0.82) 0%, rgba(238, 243, 240, 0.70) 100%);
+    backdrop-filter: blur(22px) saturate(190%);
+    -webkit-backdrop-filter: blur(22px) saturate(190%);
+    border: 1px solid rgba(255, 255, 255, 0.88);
+    box-shadow: 
+        0 6px 20px -3px rgba(18, 38, 28, 0.06),
+        inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.95);
+}
+
+/* --------------------------------------------------------------------------
+   3. FROSTED GLASS (.glass-frosted / .glass-card)
+   Approach: Velvety milky diffusion, 32px blur, maximum contrast & readability.
+   Provides a solid yet translucent reading plane free of eye strain.
+   Ideal for: Listing cards, sidebars, place detail sheets, modals, auth panels.
+   -------------------------------------------------------------------------- */
+.glass-frosted {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.88) 0%, rgba(255, 255, 255, 0.76) 100%);
+    backdrop-filter: blur(32px) saturate(170%);
+    -webkit-backdrop-filter: blur(32px) saturate(170%);
+    border: 1px solid rgba(255, 255, 255, 0.92);
+    box-shadow: 
+        0 16px 44px -8px rgba(18, 38, 28, 0.07),
+        0 3px 10px -2px rgba(18, 38, 28, 0.03),
+        inset 0 1.5px 2px 0 rgba(255, 255, 255, 1),
+        inset 0 -1px 1px 0 rgba(0, 0, 0, 0.02);
+}
+
+.glass-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.86) 0%, rgba(255, 255, 255, 0.74) 100%);
+    backdrop-filter: blur(26px) saturate(180%);
+    -webkit-backdrop-filter: blur(26px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.90);
+    box-shadow: 
+        0 14px 40px -6px rgba(18, 38, 28, 0.07),
+        0 2px 8px -1px rgba(18, 38, 28, 0.03),
+        inset 0 1.5px 2px 0 rgba(255, 255, 255, 1),
+        inset 0 -1px 1px 0 rgba(0, 0, 0, 0.02);
+}
+
+.glass-card-hover {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-card-hover:hover {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 255, 255, 0.88) 100%);
+    transform: translateY(-4px);
+    border-color: #FFFFFF;
+    box-shadow: 
+        0 26px 54px -10px rgba(18, 38, 28, 0.12),
+        0 6px 16px -2px rgba(18, 38, 28, 0.04),
+        inset 0 1.5px 2px 0 #FFFFFF,
+        0 0 0 1px rgba(30, 122, 76, 0.20);
+}
+
+/* --------------------------------------------------------------------------
+   4. FROSTED INPUT & DARK REFRACTIONS
+   -------------------------------------------------------------------------- */
 .glass-input {
     background: rgba(255, 255, 255, 0.82);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1.5px solid rgba(213, 224, 217, 0.75);
-    box-shadow: inset 0 1px 2px rgba(22, 37, 29, 0.02);
+    backdrop-filter: blur(18px) saturate(170%);
+    -webkit-backdrop-filter: blur(18px) saturate(170%);
+    border: 1px solid rgba(213, 224, 217, 0.80);
+    border-radius: 14px;
+    box-shadow: 
+        inset 0 1px 2px 0 rgba(18, 38, 28, 0.03),
+        0 2px 6px 0 rgba(18, 38, 28, 0.02);
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .glass-input:focus {
-    background: #FFFFFF;
-    border-color: #1E7A4C;
-    box-shadow: 0 0 0 3px rgba(30, 122, 76, 0.12), 0 1px 3px rgba(22, 37, 29, 0.04);
+    background: rgba(255, 255, 255, 0.98);
+    border-color: #B4E634;
+    box-shadow: 
+        0 0 0 3px rgba(215, 245, 124, 0.40),
+        0 4px 12px 0 rgba(18, 38, 28, 0.06);
+    outline: none;
 }
 
 .glass-dark {
-    background: rgba(20, 87, 58, 0.90);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    box-shadow: 0 24px 48px -12px rgba(15, 59, 36, 0.45), 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: rgba(16, 45, 30, 0.88);
+    backdrop-filter: blur(28px) saturate(190%);
+    -webkit-backdrop-filter: blur(28px) saturate(190%);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 
+        0 24px 50px -12px rgba(12, 35, 23, 0.50),
+        0 4px 14px rgba(0, 0, 0, 0.15),
+        inset 0 1px 1px rgba(255, 255, 255, 0.35);
 }
+
+/* Leaflet custom pin container overrides to prevent unwanted background/borders and allow horizontal pills */
+.food-pin,
+.food-pin-claimed,
+.camp-pin,
+.custom-picker-pin,
+.search-destination-pin {
+    background: transparent !important;
+    border: none !important;
+    overflow: visible !important;
+}
+
+/* Global accessible focus ring & reduced-motion support (WCAG 2.2 AA) */
+:focus-visible {
+    outline: 2px solid #16251D;
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Global native dialog centering & responsive backdrop styling */
+dialog[open] {
+    margin: auto !important;
+    position: fixed !important;
+    inset: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    max-height: calc(100vh - 2.5rem) !important;
+    max-width: min(calc(100vw - 2rem), 30rem) !important;
+    overflow-y: auto !important;
+}
+
+dialog::backdrop {
+    background: rgba(15, 23, 42, 0.60);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+

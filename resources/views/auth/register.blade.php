@@ -1,11 +1,11 @@
-<x-layouts.app title="Daftar Akun — LokaWaste">
+<x-layouts.app :title="'Daftar Akun — ' . site_setting('site_name', 'LokaWaste')">
 
 <div class="min-h-[calc(100vh-12rem)] flex items-center justify-center px-4 py-12">
-    <div class="max-w-xl w-full bg-white rounded-3xl border border-[#D5E0D9] shadow-card p-6 sm:p-8 space-y-6">
+    <div class="max-w-xl w-full glass-frosted rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl relative">
 
         <div class="text-center">
-            <div class="w-12 h-12 mx-auto rounded-2xl bg-[#1E7A4C] flex items-center justify-center text-white font-display font-bold text-2xl mb-3 shadow-sm">
-                L
+            <div class="inline-flex items-center justify-center gap-2 mb-3">
+                <x-brand-logo size="lg" :interactive="true" />
             </div>
             <h1 class="font-display font-bold text-2xl text-[#16251D]">Daftar Akun Baru</h1>
             <p class="text-xs text-[#4E6157] mt-1">Satu jenis akun untuk membagikan dan mengambil makanan berlebih.</p>
@@ -50,16 +50,16 @@
             </div>
 
             <!-- Wilayah Indonesia Section (EMSIFA API) -->
-            <div class="p-4 bg-[#F2F7F4] border border-[#D5E0D9] rounded-2xl space-y-3">
+            <div class="p-4 glass-dock rounded-2xl space-y-3">
                 <div class="flex items-center justify-between border-b border-[#D5E0D9] pb-2">
                     <label class="font-bold text-xs text-[#16251D] flex items-center gap-1.5">
-                        <svg class="w-4 h-4 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 text-[#16251D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                         </svg>
                         Wilayah Domisili (Seluruh Indonesia)
                     </label>
-                    <span x-show="loading" class="text-[11px] font-bold text-[#1E7A4C] animate-pulse">
+                    <span x-show="loading" class="text-[11px] font-bold text-[#16251D] animate-pulse">
                         Memuat data wilayah...
                     </span>
                 </div>
@@ -104,9 +104,9 @@
                 </div>
 
                 <template x-if="selectedDistrictName">
-                    <div class="text-[11px] text-[#1E7A4C] bg-white border border-[#D5E0D9] p-2.5 rounded-xl flex items-center gap-1.5 font-medium">
-                        <svg class="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                    <div class="text-[11px] text-[#16251D] bg-[#D7F57C]/25 border border-[#C8EE63] p-2.5 rounded-xl flex items-center gap-1.5 font-bold">
+                        <svg class="w-4 h-4 shrink-0 text-[#16251D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
                         </svg>
                         <span>Domisili: <strong x-text="`Kec. ${selectedDistrictName}, ${selectedRegencyName}, ${selectedProvinceName}`"></strong></span>
                     </div>
@@ -125,7 +125,7 @@
 
         <div class="text-center pt-2 text-xs text-[#4E6157]">
             Sudah memiliki akun?
-            <a href="{{ route('login') }}" class="font-bold text-[#1E7A4C] hover:underline">
+            <a href="{{ route('login') }}" class="font-bold text-[#16251D] hover:underline">
                 Masuk di sini
             </a>
         </div>

@@ -12,6 +12,11 @@ export default function dashboardAnalytics(initialData = {}) {
         showCustomInputs: false,
         rawListings: initialData.listings || [],
         rawClaims: initialData.claims || [],
+        esgRates: {
+            co2: Number(initialData.esgRates?.co2 ?? 0.85),
+            water: Number(initialData.esgRates?.water ?? 320),
+            value: Number(initialData.esgRates?.value ?? 15000),
+        },
         
         // Computed dynamic metrics
         metrics: {

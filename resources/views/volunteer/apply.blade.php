@@ -4,7 +4,7 @@
 
     <!-- Top Navigation -->
     <div class="mb-6">
-        <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-1.5 text-xs font-bold text-[#4E6157] hover:text-[#1E7A4C] mb-2 transition">
+        <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-1.5 text-xs font-bold text-[#4E6157] hover:text-[#16251D] mb-2 transition">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
@@ -18,18 +18,18 @@
 
     <!-- Active Areas Alert (If already has areas) -->
     @if($myAreas->isNotEmpty())
-        <div class="mb-6 p-4 rounded-2xl bg-emerald-50 border border-[#1E7A4C]/30 flex items-start gap-3 text-xs">
-            <div class="w-8 h-8 rounded-xl bg-emerald-100 text-[#1E7A4C] flex items-center justify-center shrink-0">
+        <div class="mb-6 p-4 rounded-2xl bg-[#D7F57C]/20 border border-[#C8EE63] flex items-start gap-3 text-xs">
+            <div class="w-8 h-8 rounded-xl bg-[#D7F57C] text-[#16251D] flex items-center justify-center shrink-0 border border-[#C8EE63]">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
             </div>
             <div class="flex-1">
-                <h3 class="font-bold text-[#14573A]">Anda Sudah Terdaftar di Wilayah Tertentu</h3>
+                <h3 class="font-bold text-[#16251D]">Anda Sudah Terdaftar di Wilayah Tertentu</h3>
                 <p class="text-[#4E6157] mt-0.5">
                     Saat ini Anda memiliki {{ $myAreas->count() }} kecamatan dalam pengawasan. Anda dapat mengajukan kecamatan atau kabupaten baru melalui formulir ini.
                 </p>
-                <a href="{{ route('volunteer.areas') }}" class="text-[#1E7A4C] font-bold hover:underline inline-flex items-center gap-1 mt-1.5">
+                <a href="{{ route('volunteer.areas') }}" class="text-[#16251D] font-bold hover:underline inline-flex items-center gap-1 mt-1.5">
                     <span>Lihat Wilayah Aktif Saya</span>
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                 </a>
@@ -63,7 +63,7 @@
         <div class="space-y-4">
             <div class="flex items-center justify-between border-b border-gray-100 pb-3">
                 <div class="flex items-center gap-2.5">
-                    <span class="w-7 h-7 rounded-full bg-[#1E7A4C] text-white text-xs font-bold flex items-center justify-center shrink-0">1</span>
+                    <span class="w-7 h-7 rounded-full bg-[#D7F57C] text-[#16251D] text-xs font-black flex items-center justify-center shrink-0 border border-[#C8EE63]">1</span>
                     <div>
                         <h2 class="font-display font-bold text-base text-[#16251D]">Wilayah Tanggung Jawab Relawan</h2>
                         <p class="text-xs text-[#4E6157]">Pilih provinsi, kabupaten/kota, dan kecamatan yang siap Anda ampu (EMSIFA Seluruh Indonesia)</p>
@@ -152,7 +152,7 @@
                         <!-- Scrollable Checkbox Grid -->
                         <div class="border border-[#D5E0D9] rounded-2xl p-3 max-h-56 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 gap-2 bg-[#FBFDFB]">
                             <template x-for="d in filteredDistricts" :key="d.id">
-                                <label class="flex items-center gap-2.5 text-xs text-[#16251D] hover:bg-emerald-50/60 p-2 rounded-xl cursor-pointer border border-transparent hover:border-emerald-200/60 transition">
+                                <label class="flex items-center gap-2.5 text-xs text-[#16251D] hover:bg-[#D7F57C]/20 p-2 rounded-xl cursor-pointer border border-transparent hover:border-[#C8EE63]/60 transition">
                                     <input type="checkbox"
                                            name="district_ids[]"
                                            :value="d.id"
@@ -177,7 +177,7 @@
         <!-- STEP 2: LOGISTIK & KESIAPAN OPERASIONAL RELAWAN -->
         <div class="space-y-4 pt-4 border-t border-[#D5E0D9]">
             <div class="flex items-center gap-2.5 border-b border-gray-100 pb-3">
-                <span class="w-7 h-7 rounded-full bg-[#1E7A4C] text-white text-xs font-bold flex items-center justify-center shrink-0">2</span>
+                <span class="w-7 h-7 rounded-full bg-[#D7F57C] text-[#16251D] text-xs font-black flex items-center justify-center shrink-0 border border-[#C8EE63]">2</span>
                 <div>
                     <h2 class="font-display font-bold text-base text-[#16251D]">Logistik & Kesiapan Operasional</h2>
                     <p class="text-xs text-[#4E6157]">Informasi moda transportasi dan waktu siaga untuk penjemputan makanan</p>
@@ -195,7 +195,7 @@
                            value="{{ old('phone', $user->phone) }}"
                            placeholder="081234567890"
                            class="input-field text-sm pl-10" required>
-                    <svg class="w-4 h-4 text-emerald-600 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 text-[#16251D] absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
                     </svg>
                 </div>
@@ -208,7 +208,7 @@
                     Moda Transportasi Utama Anda <span class="text-red-500">*</span>
                 </label>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    <label class="p-3 rounded-2xl border border-gray-200 hover:border-[#1E7A4C] flex items-start gap-3 cursor-pointer bg-white transition has-checked:border-[#1E7A4C] has-checked:bg-emerald-50/50">
+                    <label class="p-3 rounded-2xl border border-gray-200 hover:border-[#A8DC2E] flex items-start gap-3 cursor-pointer bg-white transition has-checked:border-[#C8EE63] has-checked:bg-[#D7F57C]/25">
                         <input type="radio" name="transportation" value="Sepeda Motor (Box/Tas Kurir)" class="mt-0.5 text-[#1E7A4C] focus:ring-[#1E7A4C]" checked>
                         <div class="text-xs">
                             <strong class="text-[#16251D] block font-semibold">Sepeda Motor</strong>
@@ -216,7 +216,7 @@
                         </div>
                     </label>
 
-                    <label class="p-3 rounded-2xl border border-gray-200 hover:border-[#1E7A4C] flex items-start gap-3 cursor-pointer bg-white transition has-checked:border-[#1E7A4C] has-checked:bg-emerald-50/50">
+                    <label class="p-3 rounded-2xl border border-gray-200 hover:border-[#A8DC2E] flex items-start gap-3 cursor-pointer bg-white transition has-checked:border-[#C8EE63] has-checked:bg-[#D7F57C]/25">
                         <input type="radio" name="transportation" value="Mobil Pribadi / Minibus" class="mt-0.5 text-[#1E7A4C] focus:ring-[#1E7A4C]">
                         <div class="text-xs">
                             <strong class="text-[#16251D] block font-semibold">Mobil Pribadi / Minibus</strong>
@@ -224,7 +224,7 @@
                         </div>
                     </label>
 
-                    <label class="p-3 rounded-2xl border border-gray-200 hover:border-[#1E7A4C] flex items-start gap-3 cursor-pointer bg-white transition has-checked:border-[#1E7A4C] has-checked:bg-emerald-50/50">
+                    <label class="p-3 rounded-2xl border border-gray-200 hover:border-[#A8DC2E] flex items-start gap-3 cursor-pointer bg-white transition has-checked:border-[#C8EE63] has-checked:bg-[#D7F57C]/25">
                         <input type="radio" name="transportation" value="Sepeda / Jalan Kaki" class="mt-0.5 text-[#1E7A4C] focus:ring-[#1E7A4C]">
                         <div class="text-xs">
                             <strong class="text-[#16251D] block font-semibold">Sepeda Ontel / Jalan Kaki</strong>
@@ -232,7 +232,7 @@
                         </div>
                     </label>
 
-                    <label class="p-3 rounded-2xl border border-gray-200 hover:border-[#1E7A4C] flex items-start gap-3 cursor-pointer bg-white transition has-checked:border-[#1E7A4C] has-checked:bg-emerald-50/50">
+                    <label class="p-3 rounded-2xl border border-gray-200 hover:border-[#A8DC2E] flex items-start gap-3 cursor-pointer bg-white transition has-checked:border-[#C8EE63] has-checked:bg-[#D7F57C]/25">
                         <input type="radio" name="transportation" value="Tanpa Kendaraan (Koordinasi Titik Temu)" class="mt-0.5 text-[#1E7A4C] focus:ring-[#1E7A4C]">
                         <div class="text-xs">
                             <strong class="text-[#16251D] block font-semibold">Tanpa Kendaraan Langsung</strong>
@@ -248,7 +248,7 @@
                     Ketersediaan Waktu Siaga <span class="text-red-500">*</span>
                 </label>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    <label class="p-3 rounded-2xl border border-gray-200 hover:border-[#1E7A4C] flex items-start gap-3 cursor-pointer bg-white transition has-checked:border-[#1E7A4C] has-checked:bg-emerald-50/50">
+                    <label class="p-3 rounded-2xl border border-gray-200 hover:border-[#A8DC2E] flex items-start gap-3 cursor-pointer bg-white transition has-checked:border-[#C8EE63] has-checked:bg-[#D7F57C]/25">
                         <input type="radio" name="availability" value="Fleksibel (Kapan Saja)" class="mt-0.5 text-[#1E7A4C] focus:ring-[#1E7A4C]" checked>
                         <div class="text-xs">
                             <strong class="text-[#16251D] block font-semibold">Fleksibel / Kapan Saja</strong>
@@ -256,7 +256,7 @@
                         </div>
                     </label>
 
-                    <label class="p-3 rounded-2xl border border-gray-200 hover:border-[#1E7A4C] flex items-start gap-3 cursor-pointer bg-white transition has-checked:border-[#1E7A4C] has-checked:bg-emerald-50/50">
+                    <label class="p-3 rounded-2xl border border-gray-200 hover:border-[#A8DC2E] flex items-start gap-3 cursor-pointer bg-white transition has-checked:border-[#C8EE63] has-checked:bg-[#D7F57C]/25">
                         <input type="radio" name="availability" value="Hari Kerja (Senin - Jumat)" class="mt-0.5 text-[#1E7A4C] focus:ring-[#1E7A4C]">
                         <div class="text-xs">
                             <strong class="text-[#16251D] block font-semibold">Hari Kerja Saja</strong>
@@ -264,7 +264,7 @@
                         </div>
                     </label>
 
-                    <label class="p-3 rounded-2xl border border-gray-200 hover:border-[#1E7A4C] flex items-start gap-3 cursor-pointer bg-white transition has-checked:border-[#1E7A4C] has-checked:bg-emerald-50/50">
+                    <label class="p-3 rounded-2xl border border-gray-200 hover:border-[#A8DC2E] flex items-start gap-3 cursor-pointer bg-white transition has-checked:border-[#C8EE63] has-checked:bg-[#D7F57C]/25">
                         <input type="radio" name="availability" value="Akhir Pekan (Sabtu - Minggu)" class="mt-0.5 text-[#1E7A4C] focus:ring-[#1E7A4C]">
                         <div class="text-xs">
                             <strong class="text-[#16251D] block font-semibold">Akhir Pekan Saja</strong>
@@ -272,7 +272,7 @@
                         </div>
                     </label>
 
-                    <label class="p-3 rounded-2xl border border-gray-200 hover:border-[#1E7A4C] flex items-start gap-3 cursor-pointer bg-white transition has-checked:border-[#1E7A4C] has-checked:bg-emerald-50/50">
+                    <label class="p-3 rounded-2xl border border-gray-200 hover:border-[#A8DC2E] flex items-start gap-3 cursor-pointer bg-white transition has-checked:border-[#C8EE63] has-checked:bg-[#D7F57C]/25">
                         <input type="radio" name="availability" value="Jam Malam (Penutupan Resto)" class="mt-0.5 text-[#1E7A4C] focus:ring-[#1E7A4C]">
                         <div class="text-xs">
                             <strong class="text-[#16251D] block font-semibold">Jam Malam</strong>
@@ -286,7 +286,7 @@
         <!-- STEP 3: SASARAN PENERIMA MANFAAT & PENGALAMAN -->
         <div class="space-y-4 pt-4 border-t border-[#D5E0D9]">
             <div class="flex items-center gap-2.5 border-b border-gray-100 pb-3">
-                <span class="w-7 h-7 rounded-full bg-[#1E7A4C] text-white text-xs font-bold flex items-center justify-center shrink-0">3</span>
+                <span class="w-7 h-7 rounded-full bg-[#D7F57C] text-[#16251D] text-xs font-black flex items-center justify-center shrink-0 border border-[#C8EE63]">3</span>
                 <div>
                     <h2 class="font-display font-bold text-base text-[#16251D]">Sasaran Penyaluran Pangan & Pengalaman</h2>
                     <p class="text-xs text-[#4E6157]">Lembaga atau kelompok sasaran yang biasa/berencana Anda bantu</p>
@@ -342,7 +342,7 @@
         <!-- STEP 4: MOTIVASI & PAKTA KEAMANAN PANGAN -->
         <div class="space-y-4 pt-4 border-t border-[#D5E0D9]">
             <div class="flex items-center gap-2.5 border-b border-gray-100 pb-3">
-                <span class="w-7 h-7 rounded-full bg-[#1E7A4C] text-white text-xs font-bold flex items-center justify-center shrink-0">4</span>
+                <span class="w-7 h-7 rounded-full bg-[#D7F57C] text-[#16251D] text-xs font-black flex items-center justify-center shrink-0 border border-[#C8EE63]">4</span>
                 <div>
                     <h2 class="font-display font-bold text-base text-[#16251D]">Motivasi & Pakta Komitmen SOP</h2>
                     <p class="text-xs text-[#4E6157]">Komitmen etika dan jaminan keselamatan pangan untuk masyarakat</p>
@@ -378,7 +378,7 @@
                     <li>Bertindak santun dan menjaga nama baik komunitas saat berinteraksi dengan donor maupun penerima.</li>
                 </ul>
 
-                <label class="flex items-start gap-2.5 pt-2 border-t border-emerald-200/60 cursor-pointer">
+                <label class="flex items-start gap-2.5 pt-2 border-t border-[#C8EE63]/60 cursor-pointer">
                     <input type="checkbox"
                            name="has_food_safety_commitment"
                            value="1"

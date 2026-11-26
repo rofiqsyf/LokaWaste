@@ -1,13 +1,13 @@
-<x-layouts.app title="Galang Makanan — LokaWaste">
+<x-layouts.app :title="site_setting('campaigns_hero_title', 'Galang Makanan') . ' — ' . site_setting('site_name', 'LokaWaste')">
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
 
     <!-- Header Section -->
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-            <h1 class="font-display font-bold text-3xl text-[#16251D]">Galang Makanan Komunitas</h1>
+            <h1 class="font-display font-bold text-3xl text-[#16251D]">{{ site_setting('campaigns_hero_title', 'Galang Makanan Komunitas') }}</h1>
             <p class="text-sm text-[#4E6157] mt-1 max-w-xl">
-                Bantu panti asuhan, pondok pesantren, dan warga rentan mendapatkan suplai makanan layak melalui relawan terverifikasi di setiap kecamatan.
+                {{ site_setting('campaigns_hero_subtitle', 'Bantu panti asuhan, pondok pesantren, dan warga rentan mendapatkan suplai makanan layak melalui relawan terverifikasi di setiap kecamatan.') }}
             </p>
         </div>
 
@@ -26,14 +26,14 @@
 
     <!-- Campaigns Grid -->
     @if($campaigns->isEmpty())
-        <div class="bg-white rounded-3xl p-12 text-center border border-[#D5E0D9]">
+        <div class="glass-card rounded-3xl p-12 text-center shadow-card">
             <p class="text-sm text-[#4E6157]">Belum ada galang makanan aktif saat ini.</p>
             <a href="{{ route('volunteer.apply') }}" class="btn-primary text-xs mt-3 inline-flex">Daftar Jadi Relawan untuk Memulai</a>
         </div>
     @else
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach($campaigns as $camp)
-                <div class="bg-white rounded-3xl border border-[#D5E0D9] shadow-card overflow-hidden flex flex-col hover:border-[#2A6F97] transition">
+                <div class="glass-card glass-card-hover rounded-3xl overflow-hidden flex flex-col">
                     <!-- Cover or Placeholder -->
                     <div class="h-44 bg-gray-100 flex items-center justify-center overflow-hidden relative">
                         @if($camp->cover_path)
@@ -64,12 +64,12 @@
                         <div class="space-y-2">
                             <!-- Progress Bar -->
                             <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
-                                <div class="bg-[#1E7A4C] h-2 rounded-full transition-all duration-500"
+                                <div class="bg-[#D7F57C] h-2 rounded-full border border-[#C8EE63] transition-all duration-500"
                                      style="width: {{ $camp->progressPercent() }}%"></div>
                             </div>
                             <div class="flex items-center justify-between text-xs text-[#4E6157]">
                                 <span><strong class="text-[#16251D]">{{ $camp->collected_portions }}</strong> dari {{ $camp->target_portions }} porsi</span>
-                                <span class="font-bold text-[#1E7A4C]">{{ $camp->progressPercent() }}%</span>
+                                <span class="font-bold text-[#16251D]">{{ $camp->progressPercent() }}%</span>
                             </div>
 
                             <a href="{{ route('campaigns.show', $camp->slug) }}" class="btn-primary w-full text-xs py-2.5 text-center mt-3">

@@ -5,7 +5,7 @@
     <!-- Header & Breadcrumb -->
     <div class="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#D5E0D9]/80 pb-6">
         <div>
-            <a href="{{ route('home') }}" class="inline-flex items-center gap-1.5 text-xs font-bold text-[#4E6157] hover:text-[#1E7A4C] mb-2 group transition">
+            <a href="{{ route('home') }}" class="inline-flex items-center gap-1.5 text-xs font-bold text-[#4E6157] hover:text-[#16251D] mb-2 group transition">
                 <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                 </svg>
@@ -16,8 +16,8 @@
         </div>
 
         <div class="flex items-center gap-2 self-start sm:self-auto flex-wrap">
-            <div class="px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-[#14573A] flex items-center gap-1.5 shadow-2xs text-xs font-bold">
-                <svg class="w-3.5 h-3.5 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="px-3 py-1.5 rounded-full bg-[#D7F57C]/40 border border-[#C8EE63] text-[#16251D] flex items-center gap-1.5 shadow-2xs text-xs font-bold">
+                <svg class="w-3.5 h-3.5 text-[#16251D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
                 </svg>
                 <span>100% Bebas Biaya</span>
@@ -58,10 +58,10 @@
             <div class="lg:col-span-7 space-y-6">
 
                 <!-- CARD 1: Identitas Makanan -->
-                <div class="bg-white rounded-3xl border border-[#D5E0D9] shadow-card p-5 sm:p-7 space-y-5">
+                <div class="glass-card rounded-3xl shadow-card p-5 sm:p-7 space-y-5">
                     <div class="flex items-center justify-between border-b border-gray-100 pb-3">
                         <div class="flex items-center gap-2">
-                            <span class="w-6 h-6 rounded-full bg-[#1E7A4C] text-white text-xs font-bold flex items-center justify-center shrink-0">1</span>
+                            <span class="w-6 h-6 rounded-full bg-[#D7F57C] text-[#16251D] text-xs font-black flex items-center justify-center shrink-0 border border-[#C8EE63]">1</span>
                             <h2 class="font-display font-bold text-base text-[#16251D]">Identitas Makanan</h2>
                         </div>
                         <span class="text-[11px] font-semibold text-[#4E6157]">Langkah 1 dari 3</span>
@@ -87,21 +87,21 @@
                                         </button>
                                     </div>
                                     <div class="absolute bottom-2 left-2 px-2.5 py-1 rounded-lg bg-black/70 backdrop-blur-xs text-[10px] font-semibold text-white flex items-center gap-1.5">
-                                        <svg class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                        <svg class="w-3 h-3 text-[#D7F57C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                                         <span>Metadata GPS otomatis dibersihkan</span>
                                     </div>
                                 </div>
                             </template>
 
                             <template x-if="!photoPreview">
-                                <label for="photo-input" class="cursor-pointer border-2 border-dashed border-[#D5E0D9] hover:border-[#1E7A4C] rounded-2xl p-5 sm:p-6 transition-all duration-200 bg-gray-50/60 hover:bg-emerald-50/20 flex flex-col items-center justify-center text-center group">
-                                    <div class="w-12 h-12 rounded-2xl bg-white border border-[#D5E0D9] shadow-2xs text-[#4E6157] group-hover:text-[#1E7A4C] group-hover:border-[#1E7A4C]/50 flex items-center justify-center transition mb-2.5">
+                                <label for="photo-input" class="cursor-pointer border-2 border-dashed border-[#D5E0D9] hover:border-[#A8DC2E] rounded-2xl p-5 sm:p-6 transition-all duration-200 bg-gray-50/60 hover:bg-[#D7F57C]/15 flex flex-col items-center justify-center text-center group">
+                                    <div class="w-12 h-12 rounded-2xl bg-white border border-[#D5E0D9] shadow-2xs text-[#4E6157] group-hover:text-[#16251D] group-hover:border-[#A8DC2E] flex items-center justify-center transition mb-2.5">
                                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
                                         </svg>
                                     </div>
-                                    <span class="text-xs font-bold text-[#16251D] group-hover:text-[#1E7A4C] transition">Ketuk untuk unggah foto makanan</span>
+                                    <span class="text-xs font-bold text-[#16251D] group-hover:text-[#16251D] transition">Ketuk untuk unggah foto makanan</span>
                                     <span class="text-[11px] text-[#4E6157] mt-0.5">Format JPG, PNG, atau WebP (Maks. 2 MB)</span>
                                     <div class="mt-2.5 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white border border-gray-200 text-[10px] font-semibold text-[#4E6157]">
                                         <svg class="w-3 h-3 text-[#2A6F97]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
@@ -133,11 +133,11 @@
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                             <!-- Cooked (Siap Santap) -->
                             <div @click="foodType = 'cooked'"
-                                 :class="foodType === 'cooked' ? 'border-[#1E7A4C] bg-emerald-50/70 ring-2 ring-[#1E7A4C]/20 text-[#14573A]' : 'border-gray-200 bg-white hover:bg-gray-50 text-[#4E6157]'"
+                                 :class="foodType === 'cooked' ? 'border-[#A8DC2E] bg-[#D7F57C]/30 ring-2 ring-[#A8DC2E]/30 text-[#16251D] font-bold shadow-xs' : 'border-gray-200 bg-white hover:bg-[#D7F57C]/10 hover:border-gray-300 text-[#4E6157]'"
                                  class="p-3 rounded-2xl border cursor-pointer transition-all duration-200 flex sm:flex-col items-center sm:text-center gap-2.5 group">
                                 <div class="w-8 h-8 rounded-xl bg-white border border-[#D5E0D9] flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
                                     <!-- Spoon & Fork (Sendok & Garpu Makanan Masak) -->
-                                    <svg class="w-4.5 h-4.5 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-4.5 h-4.5 text-[#16251D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 2v5a2 2 0 002 2 2 2 0 002-2V2m-2 7v13M6 2v3m4-3v3M16 2a3 3 0 00-3 3v2a3 3 0 006 0V5a3 3 0 00-3-3zm0 7v13"/>
                                     </svg>
                                 </div>
@@ -149,7 +149,7 @@
 
                             <!-- Packaged (Kemasan Pangan) -->
                             <div @click="foodType = 'packaged'"
-                                 :class="foodType === 'packaged' ? 'border-[#1E7A4C] bg-emerald-50/70 ring-2 ring-[#1E7A4C]/20 text-[#14573A]' : 'border-gray-200 bg-white hover:bg-gray-50 text-[#4E6157]'"
+                                 :class="foodType === 'packaged' ? 'border-[#A8DC2E] bg-[#D7F57C]/30 ring-2 ring-[#A8DC2E]/30 text-[#16251D] font-bold shadow-xs' : 'border-gray-200 bg-white hover:bg-[#D7F57C]/10 hover:border-gray-300 text-[#4E6157]'"
                                  class="p-3 rounded-2xl border cursor-pointer transition-all duration-200 flex sm:flex-col items-center sm:text-center gap-2.5 group">
                                 <div class="w-8 h-8 rounded-xl bg-white border border-[#D5E0D9] flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
                                     <!-- Canned Food / Hermetic Food Package (Kaleng & Kemasan Pangan) -->
@@ -167,11 +167,11 @@
 
                             <!-- Raw (Bahan Mentah / Hasil Tani & Sayuran) -->
                             <div @click="foodType = 'raw'"
-                                 :class="foodType === 'raw' ? 'border-[#1E7A4C] bg-emerald-50/70 ring-2 ring-[#1E7A4C]/20 text-[#14573A]' : 'border-gray-200 bg-white hover:bg-gray-50 text-[#4E6157]'"
+                                 :class="foodType === 'raw' ? 'border-[#A8DC2E] bg-[#D7F57C]/30 ring-2 ring-[#A8DC2E]/30 text-[#16251D] font-bold shadow-xs' : 'border-gray-200 bg-white hover:bg-[#D7F57C]/10 hover:border-gray-300 text-[#4E6157]'"
                                  class="p-3 rounded-2xl border cursor-pointer transition-all duration-200 flex sm:flex-col items-center sm:text-center gap-2.5 group">
                                 <div class="w-8 h-8 rounded-xl bg-white border border-[#D5E0D9] flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
                                     <!-- Fresh Carrot / Vegetables (Wortel & Sayuran Segar) -->
-                                    <svg class="w-4.5 h-4.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-4.5 h-4.5 text-[#16251D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.27 21.7s9.87-3.5 12.73-6.36a4.5 4.5 0 0 0-6.36-6.37C5.77 11.84 2.27 21.7 2.27 21.7z"/>
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 9l6-6M17 3l4 4M13 7l4 4"/>
                                     </svg>
@@ -198,10 +198,10 @@
                 </div>
 
                 <!-- CARD 2: Kuantitas & Masa Layak Konsumsi -->
-                <div class="bg-white rounded-3xl border border-[#D5E0D9] shadow-card p-5 sm:p-7 space-y-6">
+                <div class="glass-card rounded-3xl shadow-card p-5 sm:p-7 space-y-6">
                     <div class="flex items-center justify-between border-b border-gray-100 pb-3">
                         <div class="flex items-center gap-2">
-                            <span class="w-6 h-6 rounded-full bg-[#1E7A4C] text-white text-xs font-bold flex items-center justify-center shrink-0">2</span>
+                            <span class="w-6 h-6 rounded-full bg-[#D7F57C] text-[#16251D] text-xs font-black flex items-center justify-center shrink-0 border border-[#C8EE63]">2</span>
                             <h2 class="font-display font-bold text-base text-[#16251D]">Kuantitas & Masa Layak</h2>
                         </div>
                         <span class="text-[11px] font-semibold text-[#4E6157]">Langkah 2 dari 3</span>
@@ -211,7 +211,7 @@
                     <div>
                         <label class="font-bold text-xs text-[#16251D] flex items-center justify-between mb-2">
                             <span>Jumlah Porsi Tersedia <span class="text-red-500">*</span></span>
-                            <span class="text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200" x-text="`Cukup untuk ~${portions} orang`"></span>
+                            <span class="text-[11px] font-semibold text-[#16251D] bg-[#D7F57C]/40 px-2.5 py-0.5 rounded-full border border-[#C8EE63] font-bold" x-text="`Cukup untuk ~${portions} orang`"></span>
                         </label>
                         
                         <div class="flex flex-col sm:flex-row sm:items-center gap-3">
@@ -219,7 +219,7 @@
                             <div class="inline-flex items-center bg-gray-50 p-1.5 rounded-2xl border border-gray-200 shadow-2xs">
                                 <button type="button"
                                         @click="portions = Math.max(1, portions - 1)"
-                                        class="w-12 h-12 rounded-xl bg-white hover:bg-gray-100 active:scale-95 text-[#16251D] hover:text-[#1E7A4C] font-bold text-xl flex items-center justify-center transition shadow-2xs"
+                                        class="w-12 h-12 rounded-xl bg-white hover:bg-[#D7F57C]/30 active:scale-95 text-[#16251D] hover:text-[#16251D] font-bold text-xl flex items-center justify-center transition shadow-2xs"
                                         title="Kurangi porsi">
                                     -
                                 </button>
@@ -235,7 +235,7 @@
                                 </div>
                                 <button type="button"
                                         @click="portions = portions + 1"
-                                        class="w-12 h-12 rounded-xl bg-white hover:bg-gray-100 active:scale-95 text-[#16251D] hover:text-[#1E7A4C] font-bold text-xl flex items-center justify-center transition shadow-2xs"
+                                        class="w-12 h-12 rounded-xl bg-white hover:bg-[#D7F57C]/30 active:scale-95 text-[#16251D] hover:text-[#16251D] font-bold text-xl flex items-center justify-center transition shadow-2xs"
                                         title="Tambah porsi">
                                     +
                                 </button>
@@ -246,7 +246,7 @@
                                 <template x-for="p in [5, 10, 20, 50]" :key="p">
                                     <button type="button"
                                             @click="portions = p; if (customMaxPortions > portions) customMaxPortions = portions;"
-                                            :class="portions === p ? 'bg-[#1E7A4C] text-white font-bold border-transparent shadow-xs' : 'bg-gray-100 hover:bg-gray-200 text-[#4E6157] border-gray-200'"
+                                            :class="portions === p ? 'bg-[#D7F57C] text-[#16251D] font-bold border-[#C8EE63] shadow-xs' : 'bg-gray-100 hover:bg-[#D7F57C]/20 text-[#4E6157] border-gray-200'"
                                             class="px-3 py-2 rounded-xl text-xs font-semibold border transition active:scale-95"
                                             x-text="`${p} porsi`">
                                     </button>
@@ -259,7 +259,7 @@
                     <div class="pt-4 border-t border-gray-100">
                         <label class="font-bold text-xs text-[#16251D] flex items-center justify-between mb-2">
                             <span>Batas Ajuan Porsi per Pengambil</span>
-                            <span class="text-[11px] font-semibold text-[#1E7A4C] bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200"
+                            <span class="text-[11px] font-semibold text-[#16251D] bg-[#D7F57C]/40 px-2.5 py-0.5 rounded-full border border-[#C8EE63] font-bold"
                                   x-text="hasPortionLimit ? `Maks. ${customMaxPortions} porsi / akun` : 'Bebas (Tanpa Batas)'"></span>
                         </label>
 
@@ -269,16 +269,16 @@
                                     @click="hasPortionLimit = false"
                                     :class="!hasPortionLimit ? 'bg-white text-[#16251D] font-bold shadow-xs' : 'text-[#4E6157] hover:text-[#16251D] font-medium'"
                                     class="py-2 px-3 rounded-xl text-xs transition flex items-center justify-center gap-1.5 cursor-pointer">
-                                <svg class="w-3.5 h-3.5" :class="!hasPortionLimit ? 'text-[#1E7A4C]' : 'text-[#4E6157]'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-3.5 h-3.5" :class="!hasPortionLimit ? 'text-[#16251D]' : 'text-[#4E6157]'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
                                 </svg>
                                 <span>Bebas (Tanpa Batas)</span>
                             </button>
                             <button type="button"
                                     @click="hasPortionLimit = true; if (!customMaxPortions || customMaxPortions > portions) customMaxPortions = Math.min(2, portions);"
-                                    :class="hasPortionLimit ? 'bg-[#1E7A4C] text-white font-bold shadow-xs' : 'text-[#4E6157] hover:text-[#16251D] font-medium'"
+                                    :class="hasPortionLimit ? 'bg-[#D7F57C] text-[#16251D] font-bold shadow-xs border border-[#C8EE63]' : 'text-[#4E6157] hover:text-[#16251D] font-medium'"
                                     class="py-2 px-3 rounded-xl text-xs transition flex items-center justify-center gap-1.5 cursor-pointer">
-                                <svg class="w-3.5 h-3.5" :class="hasPortionLimit ? 'text-white' : 'text-[#1E7A4C]'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-3.5 h-3.5" :class="hasPortionLimit ? 'text-[#16251D]' : 'text-[#4E6157]'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                                 </svg>
                                 <span>Batasi per Pengambil</span>
@@ -286,7 +286,7 @@
                         </div>
 
                         <!-- Limit Details (Visible when hasPortionLimit is true) -->
-                        <div x-show="hasPortionLimit" x-transition class="mt-3 p-3.5 bg-emerald-50/60 rounded-2xl border border-emerald-200/80 space-y-3">
+                        <div x-show="hasPortionLimit" x-transition class="mt-3 p-3.5 bg-[#D7F57C]/20 rounded-2xl border border-[#C8EE63]/70 space-y-3">
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                 <div>
                                     <span class="text-xs font-bold text-[#16251D] block">Maksimal Porsi per Permintaan:</span>
@@ -314,14 +314,14 @@
                                 </div>
                             </div>
 
-                            <p class="text-[11px] text-[#4E6157] leading-relaxed pt-2 border-t border-emerald-200/60">
-                                Dengan batas <strong class="text-[#16251D]" x-text="`${customMaxPortions} porsi/orang`"></strong>, total <strong class="text-[#16251D]" x-text="`${portions} porsi`"></strong> ini akan menjangkau minimal <strong class="text-[#1E7A4C]" x-text="`~${Math.ceil(portions / Math.max(1, customMaxPortions))} orang`"></strong> penerima berbeda.
+                            <p class="text-[11px] text-[#4E6157] leading-relaxed pt-2 border-t border-[#C8EE63]/60">
+                                Dengan batas <strong class="text-[#16251D]" x-text="`${customMaxPortions} porsi/orang`"></strong>, total <strong class="text-[#16251D]" x-text="`${portions} porsi`"></strong> ini akan menjangkau minimal <strong class="text-[#16251D]" x-text="`~${Math.ceil(portions / Math.max(1, customMaxPortions))} orang`"></strong> penerima berbeda.
                             </p>
                         </div>
 
                         <!-- Explanatory text for Unlimited -->
                         <div x-show="!hasPortionLimit" x-transition class="mt-2 text-[11px] text-[#4E6157] flex items-center gap-1.5">
-                            <svg class="w-3.5 h-3.5 text-[#1E7A4C] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                            <svg class="w-3.5 h-3.5 text-[#16251D] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                             <span>Pemohon bebas meminta jumlah porsi berapa saja sesuai sisa stok tersedia (hingga <span class="font-bold text-[#16251D]" x-text="`${portions} porsi`"></span>).</span>
                         </div>
 
@@ -332,7 +332,7 @@
                     <div class="pt-4 border-t border-gray-100 space-y-3">
                         <label class="font-bold text-xs text-[#16251D] flex items-center justify-between">
                             <span>Batas Waktu Pengambilan <span class="text-red-500">*</span></span>
-                            <span class="text-[11px] font-semibold text-[#1E7A4C]">Jam / Pukul Pengambilan</span>
+                            <span class="text-[11px] font-semibold text-[#16251D]">Jam / Pukul Pengambilan</span>
                         </label>
 
                         <!-- Custom Clock Time Input Field -->
@@ -344,7 +344,7 @@
                                 <input type="time"
                                        x-model="clockTime"
                                        @change="onClockTimeChange()"
-                                       class="w-full pl-10 pr-4 py-2.5 bg-gray-50 hover:bg-white focus:bg-white rounded-xl border border-gray-200 focus:border-[#1E7A4C] focus:ring-2 focus:ring-[#1E7A4C]/20 font-bold text-sm text-[#16251D] transition cursor-pointer">
+                                       class="w-full pl-10 pr-4 py-2.5 bg-gray-50 hover:bg-white focus:bg-white rounded-xl border border-gray-200 focus:border-[#A8DC2E] focus:ring-2 focus:ring-[#D7F57C]/40 font-bold text-sm text-[#16251D] transition cursor-pointer">
                             </div>
                             <span class="text-xs font-bold text-[#4E6157] px-3 py-2 rounded-xl bg-gray-100 shrink-0" x-text="clockIsTomorrow ? 'Besok Hari' : 'Hari Ini'"></span>
                         </div>
@@ -367,10 +367,10 @@
                 </div>
 
                 <!-- CARD 3: Jaminan Keamanan Pangan & Halal -->
-                <div class="bg-white rounded-3xl border border-[#D5E0D9] shadow-card p-5 sm:p-7 space-y-4">
+                <div class="glass-card rounded-3xl shadow-card p-5 sm:p-7 space-y-4">
                     <div class="flex items-center justify-between border-b border-gray-100 pb-3">
                         <div class="flex items-center gap-2">
-                            <span class="w-6 h-6 rounded-full bg-[#1E7A4C] text-white text-xs font-bold flex items-center justify-center shrink-0">3</span>
+                            <span class="w-6 h-6 rounded-full bg-[#D7F57C] text-[#16251D] text-xs font-black flex items-center justify-center shrink-0 border border-[#C8EE63]">3</span>
                             <h2 class="font-display font-bold text-base text-[#16251D]">Keamanan & Sertifikasi</h2>
                         </div>
                         <span class="text-[11px] font-semibold text-[#4E6157]">Langkah 3 dari 3</span>
@@ -378,12 +378,12 @@
 
                     <!-- Halal Card Toggle -->
                     <label class="p-3.5 rounded-2xl border cursor-pointer transition-all duration-200 flex items-start gap-3"
-                           :class="halal ? 'border-emerald-300 bg-emerald-50/50' : 'border-gray-200 hover:bg-gray-50'">
-                        <input type="checkbox" name="halal_claim" value="1" x-model="halal" class="mt-1 w-4 h-4 rounded text-[#1E7A4C] focus:ring-[#1E7A4C] border-gray-300">
+                           :class="halal ? 'border-[#C8EE63] bg-[#D7F57C]/25 ring-2 ring-[#C8EE63]/40' : 'border-gray-200 hover:bg-gray-50'">
+                        <input type="checkbox" name="halal_claim" value="1" x-model="halal" class="mt-1 w-4 h-4 rounded text-[#16251D] accent-[#16251D] focus:ring-[#A8DC2E] border-gray-300">
                         <div class="min-w-0 flex-1">
                             <div class="flex items-center gap-2">
                                 <span class="font-bold text-xs text-[#16251D]">Saya menyatakan makanan ini Halal</span>
-                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">Halal</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#D7F57C] text-[#16251D] border border-[#C8EE63]">Halal</span>
                             </div>
                             <p class="text-[11px] text-[#4E6157] mt-0.5">Bahan dan proses pengolahan bebas dari unsur non-halal sesuai syariat Islam.</p>
                         </div>
@@ -391,12 +391,12 @@
 
                     <!-- Vegetarian Card Toggle -->
                     <label class="p-3.5 rounded-2xl border cursor-pointer transition-all duration-200 flex items-start gap-3"
-                           :class="vegetarian ? 'border-emerald-300 bg-emerald-50/50' : 'border-gray-200 hover:bg-gray-50'">
-                        <input type="checkbox" name="is_vegetarian" value="1" x-model="vegetarian" class="mt-1 w-4 h-4 rounded text-[#1E7A4C] focus:ring-[#1E7A4C] border-gray-300">
+                           :class="vegetarian ? 'border-[#C8EE63] bg-[#D7F57C]/25 ring-2 ring-[#C8EE63]/40' : 'border-gray-200 hover:bg-gray-50'">
+                        <input type="checkbox" name="is_vegetarian" value="1" x-model="vegetarian" class="mt-1 w-4 h-4 rounded text-[#16251D] accent-[#16251D] focus:ring-[#A8DC2E] border-gray-300">
                         <div class="min-w-0 flex-1">
                             <div class="flex items-center gap-2">
                                 <span class="font-bold text-xs text-[#16251D]">Makanan Vegetarian</span>
-                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">Vegetarian</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#D7F57C] text-[#16251D] border border-[#C8EE63]">Vegetarian</span>
                             </div>
                             <p class="text-[11px] text-[#4E6157] mt-0.5">Bebas dari daging mamalia, unggas, ikan, dan produk laut.</p>
                         </div>
@@ -404,7 +404,7 @@
                 </div>
 
                 <!-- CARD 4: Opsi Lanjutan (Alergen, Galang, Batas Klaim) -->
-                <div x-data="{ open: false }" class="bg-white rounded-3xl border border-[#D5E0D9] shadow-card overflow-hidden">
+                <div x-data="{ open: false }" class="glass-card rounded-3xl shadow-card overflow-hidden">
                     <button type="button"
                             @click="open = !open"
                             class="p-5 sm:p-6 w-full flex items-center justify-between text-left hover:bg-gray-50/70 transition">
@@ -419,7 +419,7 @@
                                 <p class="text-[11px] text-[#4E6157]">Informasi alergen, petunjuk simpan, galang makanan panti, & batas klaim</p>
                             </div>
                         </div>
-                        <span class="text-xs font-bold text-[#1E7A4C] flex items-center gap-1">
+                        <span class="text-xs font-bold text-[#16251D] flex items-center gap-1">
                             <span x-text="open ? 'Sembunyikan' : 'Buka Opsi'"></span>
                             <svg :class="open ? 'rotate-180' : ''" class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -475,9 +475,9 @@
                         </div>
 
                         @if($user->is_verified)
-                            <div class="p-3.5 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs">
-                                <label class="inline-flex items-center gap-2.5 font-bold text-emerald-900 cursor-pointer">
-                                    <input type="checkbox" name="show_exact_location" value="1" class="rounded text-[#1E7A4C] focus:ring-[#1E7A4C]">
+                            <div class="p-3.5 bg-[#D7F57C]/25 rounded-2xl border border-[#C8EE63] text-xs">
+                                <label class="inline-flex items-center gap-2.5 font-bold text-[#16251D] cursor-pointer">
+                                    <input type="checkbox" name="show_exact_location" value="1" class="rounded text-[#16251D] focus:ring-[#A8DC2E]">
                                     <span>Tampilkan titik presisi langsung di peta publik (Hak Istimewa Usaha/Mitra Terverifikasi)</span>
                                 </label>
                             </div>
@@ -491,10 +491,10 @@
             <div class="lg:col-span-5 space-y-6 lg:sticky lg:top-24">
 
                 <!-- CARD: Titik Penjemputan & Peta Spasial -->
-                <div class="bg-white rounded-3xl border border-[#D5E0D9] shadow-card p-5 sm:p-6 space-y-4">
+                <div class="glass-card rounded-3xl shadow-card p-5 sm:p-6 space-y-4">
                     <div class="flex items-center justify-between border-b border-gray-100 pb-3">
                         <div class="flex items-center gap-2">
-                            <div class="w-7 h-7 rounded-xl bg-emerald-100 text-[#1E7A4C] flex items-center justify-center shrink-0">
+                            <div class="w-7 h-7 rounded-xl bg-[#D7F57C] text-[#16251D] border border-[#C8EE63] flex items-center justify-center shrink-0">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -513,7 +513,7 @@
                             </button>
                             <button type="button"
                                     @click="detectLocation()"
-                                    class="text-[11px] font-bold text-[#16251D] hover:text-[#1E7A4C] bg-white hover:bg-emerald-50 border border-gray-200 hover:border-emerald-300 px-2.5 py-1 rounded-lg transition flex items-center gap-1.5 shadow-2xs active:scale-95 group"
+                                    class="text-[11px] font-bold text-[#16251D] bg-white hover:bg-[#D7F57C]/40 border border-gray-200 hover:border-[#C8EE63] px-2.5 py-1 rounded-lg transition flex items-center gap-1.5 shadow-2xs active:scale-95 group"
                                     title="Pusatkan ke GPS Saya (Google Maps Style)">
                                 <svg class="w-3.5 h-3.5 group-hover:scale-110 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                     <circle cx="12" cy="12" r="7" stroke-width="2" />
@@ -527,7 +527,7 @@
 
                     <!-- Smart Google Maps Search Bar with Autocomplete Dropdown -->
                     <div class="relative">
-                        <div class="relative flex items-center bg-white rounded-2xl border border-[#D5E0D9] shadow-xs focus-within:border-[#1E7A4C] focus-within:ring-2 focus-within:ring-[#1E7A4C]/20 p-1 transition-all">
+                        <div class="relative flex items-center bg-white rounded-2xl border border-[#D5E0D9] shadow-xs focus-within:border-[#A8DC2E] focus-within:ring-2 focus-within:ring-[#D7F57C]/40 p-1 transition-all">
                             <div class="relative flex-1 min-w-0">
                                 <input type="text"
                                        x-model="searchQuery"
@@ -550,7 +550,7 @@
                             <!-- Cari Button -->
                             <button type="button"
                                     @click="selectFirstOrSearch()"
-                                    class="h-8.5 px-3 rounded-xl bg-[#1E7A4C] hover:bg-[#14573A] text-white font-bold text-xs flex items-center justify-center gap-1 transition shadow-2xs active:scale-95 shrink-0 cursor-pointer">
+                                    class="h-8.5 px-3 rounded-xl bg-[#D7F57C] hover:bg-[#C8EE63] active:bg-[#B4E634] text-[#16251D] font-bold text-xs flex items-center justify-center gap-1 transition shadow-2xs active:scale-95 shrink-0 cursor-pointer border border-[#C8EE63]">
                                 <span>Cari</span>
                             </button>
                         </div>
@@ -568,17 +568,17 @@
                             
                             <div class="px-3 py-1.5 flex items-center justify-between border-b border-gray-100 mb-1">
                                 <div class="flex items-center gap-1.5">
-                                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                    <span class="w-2 h-2 rounded-full bg-[#A8DC2E] animate-pulse"></span>
                                     <span class="text-[10px] font-bold text-[#16251D] tracking-wide uppercase">Hasil Pencarian Tempat</span>
                                 </div>
-                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-[#14573A] border border-emerald-100" x-text="`${suggestions.length} opsi`"></span>
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#D7F57C]/40 text-[#16251D] border border-[#C8EE63]" x-text="`${suggestions.length} opsi`"></span>
                             </div>
 
                             <template x-for="(s, idx) in suggestions" :key="s.id || idx">
                                 <div @click="selectSuggestion(s)"
-                                     class="p-2.5 rounded-xl hover:bg-emerald-50/80 cursor-pointer transition flex items-center justify-between gap-2.5 border border-transparent hover:border-emerald-200/60 active:scale-[0.99] group">
+                                     class="p-2.5 rounded-xl hover:bg-[#D7F57C]/20 cursor-pointer transition flex items-center justify-between gap-2.5 border border-transparent hover:border-[#C8EE63]/60 active:scale-[0.99] group">
                                     <div class="flex items-center gap-2.5 min-w-0 flex-1">
-                                        <div class="w-8 h-8 rounded-xl bg-emerald-100 text-[#1E7A4C] group-hover:bg-[#1E7A4C] group-hover:text-white flex items-center justify-center shrink-0 transition-colors shadow-2xs">
+                                        <div class="w-8 h-8 rounded-xl bg-[#D7F57C] text-[#16251D] group-hover:bg-[#C8EE63] group-hover:text-[#16251D] flex items-center justify-center shrink-0 transition-colors shadow-2xs border border-[#C8EE63]">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -587,16 +587,16 @@
 
                                         <div class="min-w-0 flex-1">
                                             <div class="flex items-center gap-1.5 flex-wrap">
-                                                <span class="font-bold text-xs text-[#16251D] group-hover:text-[#1E7A4C] truncate transition-colors" x-text="s.title"></span>
-                                                <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-gray-100 text-[#4E6157] group-hover:bg-emerald-100 group-hover:text-[#14573A] transition-colors shrink-0" x-text="s.type_label || 'Wilayah'"></span>
+                                                <span class="font-bold text-xs text-[#16251D] group-hover:text-[#16251D] truncate transition-colors" x-text="s.title"></span>
+                                                <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-gray-100 text-[#4E6157] group-hover:bg-[#D7F57C] group-hover:text-[#16251D] transition-colors shrink-0" x-text="s.type_label || 'Wilayah'"></span>
                                                 <template x-if="getDistanceKm(s.lat, s.lng)">
-                                                    <span class="text-[10px] font-semibold text-[#1E7A4C] bg-emerald-50 px-1.5 py-0.2 rounded shrink-0" x-text="`~${getDistanceKm(s.lat, s.lng)} km`"></span>
+                                                    <span class="text-[10px] font-semibold text-[#16251D] bg-[#D7F57C]/40 px-1.5 py-0.2 rounded shrink-0 border border-[#C8EE63]/60" x-text="`~${getDistanceKm(s.lat, s.lng)} km`"></span>
                                                 </template>
                                             </div>
                                             <p class="text-[11px] text-[#4E6157] group-hover:text-[#16251D] truncate transition-colors mt-0.5" x-text="s.subtitle || s.display_name"></p>
                                         </div>
                                     </div>
-                                    <span class="text-[11px] font-bold text-[#1E7A4C] bg-white group-hover:bg-emerald-100 px-2.5 py-1 rounded-lg border border-emerald-200/80 shrink-0 transition">
+                                    <span class="text-[11px] font-bold text-[#16251D] bg-white group-hover:bg-[#D7F57C] px-2.5 py-1 rounded-lg border border-[#C8EE63] shrink-0 transition shadow-2xs">
                                         Pilih Titik &rarr;
                                     </span>
                                 </div>
@@ -628,9 +628,9 @@
 
                     <!-- Reverse Geocode Suggestion Pill -->
                     <template x-if="detectedAddress">
-                        <div class="p-2.5 bg-emerald-50/80 rounded-2xl border border-emerald-200/80 flex items-center justify-between gap-2 text-xs">
-                            <div class="truncate text-emerald-950 flex items-center gap-1.5 min-w-0">
-                                <svg class="w-3.5 h-3.5 text-emerald-700 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="p-2.5 bg-[#D7F57C]/25 rounded-2xl border border-[#C8EE63] flex items-center justify-between gap-2 text-xs">
+                            <div class="truncate text-[#16251D] flex items-center gap-1.5 min-w-0">
+                                <svg class="w-3.5 h-3.5 text-[#16251D] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                                 </svg>
                                 <span class="truncate"><strong class="font-bold">Titik:</strong> <span x-text="detectedAddress"></span></span>
@@ -642,9 +642,9 @@
                     </template>
 
                     <!-- Wilayah Kecamatan (Sinkron Otomatis dari Peta Spasial) -->
-                    <div class="p-3 bg-emerald-50/70 rounded-2xl border border-emerald-200/80 flex items-center justify-between gap-3 text-xs">
+                    <div class="p-3 bg-[#D7F57C]/25 rounded-2xl border border-[#C8EE63] flex items-center justify-between gap-3 text-xs">
                         <div class="flex items-center gap-2 min-w-0">
-                            <div class="w-7 h-7 rounded-xl bg-emerald-100 text-[#1E7A4C] flex items-center justify-center shrink-0">
+                            <div class="w-7 h-7 rounded-xl bg-[#D7F57C] text-[#16251D] border border-[#C8EE63] flex items-center justify-center shrink-0">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -655,8 +655,8 @@
                                 <span class="font-extrabold text-[#16251D] truncate block text-xs" x-text="selectedDistrictName"></span>
                             </div>
                         </div>
-                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white text-[#1E7A4C] border border-emerald-200 text-[10px] font-bold shrink-0 shadow-2xs">
-                            <svg class="w-3 h-3 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white text-[#16251D] border border-[#C8EE63] text-[10px] font-bold shrink-0 shadow-2xs">
+                            <svg class="w-3 h-3 text-[#16251D]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                             Otomatis Sinkron
                         </span>
                     </div>
@@ -679,20 +679,20 @@
                     <div class="space-y-1.5 pt-1">
                         <span class="text-[11px] font-bold text-[#4E6157] block">Rekomendasi Titik Temu Aman (Demi Privasi Rumah):</span>
                         <div class="flex items-center gap-1.5 flex-wrap">
-                            <button type="button" @click="appendSafeZone('Pos Satpam / Gerbang')" class="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 hover:bg-emerald-50 hover:text-[#1E7A4C] text-[11px] font-semibold rounded-lg border border-[#D5E0D9] transition active:scale-95">
-                                <svg class="w-3 h-3 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                            <button type="button" @click="appendSafeZone('Pos Satpam / Gerbang')" class="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 hover:bg-[#D7F57C]/40 hover:text-[#16251D] hover:border-[#C8EE63] text-[11px] font-semibold rounded-lg border border-[#D5E0D9] transition active:scale-95">
+                                <svg class="w-3 h-3 text-[#16251D]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                                 <span>Pos Satpam</span>
                             </button>
-                            <button type="button" @click="appendSafeZone('Minimarket 24 Jam')" class="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 hover:bg-emerald-50 hover:text-[#1E7A4C] text-[11px] font-semibold rounded-lg border border-[#D5E0D9] transition active:scale-95">
-                                <svg class="w-3 h-3 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                            <button type="button" @click="appendSafeZone('Minimarket 24 Jam')" class="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 hover:bg-[#D7F57C]/40 hover:text-[#16251D] hover:border-[#C8EE63] text-[11px] font-semibold rounded-lg border border-[#D5E0D9] transition active:scale-95">
+                                <svg class="w-3 h-3 text-[#16251D]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                                 <span>Minimarket 24 Jam</span>
                             </button>
-                            <button type="button" @click="appendSafeZone('Halaman Masjid')" class="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 hover:bg-emerald-50 hover:text-[#1E7A4C] text-[11px] font-semibold rounded-lg border border-[#D5E0D9] transition active:scale-95">
-                                <svg class="w-3 h-3 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/></svg>
+                            <button type="button" @click="appendSafeZone('Halaman Masjid')" class="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 hover:bg-[#D7F57C]/40 hover:text-[#16251D] hover:border-[#C8EE63] text-[11px] font-semibold rounded-lg border border-[#D5E0D9] transition active:scale-95">
+                                <svg class="w-3 h-3 text-[#16251D]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/></svg>
                                 <span>Halaman Masjid</span>
                             </button>
-                            <button type="button" @click="appendSafeZone('Area SPBU')" class="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 hover:bg-emerald-50 hover:text-[#1E7A4C] text-[11px] font-semibold rounded-lg border border-[#D5E0D9] transition active:scale-95">
-                                <svg class="w-3 h-3 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 22h12M4 4h10a1 1 0 011 1v17H4V5a1 1 0 011-1zM7 8h4M15 9h2a2 2 0 012 2v6a2 2 0 002 2h0a2 2 0 002-2V9a2 2 0 00-2-2h-1M19 5l-2 2"/></svg>
+                            <button type="button" @click="appendSafeZone('Area SPBU')" class="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 hover:bg-[#D7F57C]/40 hover:text-[#16251D] hover:border-[#C8EE63] text-[11px] font-semibold rounded-lg border border-[#D5E0D9] transition active:scale-95">
+                                <svg class="w-3 h-3 text-[#16251D]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 22h12M4 4h10a1 1 0 011 1v17H4V5a1 1 0 011-1zM7 8h4M15 9h2a2 2 0 012 2v6a2 2 0 002 2h0a2 2 0 002-2V9a2 2 0 00-2-2h-1M19 5l-2 2"/></svg>
                                 <span>Area SPBU</span>
                             </button>
                         </div>
@@ -712,11 +712,11 @@
                 </div>
 
                 <!-- CARD: Pratinjau Listing Makanan (Live Feed Preview — Gaya Too Good To Go & Olio) -->
-                <div class="bg-white rounded-3xl border border-[#D5E0D9] shadow-card overflow-hidden space-y-0">
+                <div class="glass-card rounded-3xl shadow-card overflow-hidden space-y-0">
                     <!-- Preview Card Header -->
                     <div class="px-5 py-3.5 border-b border-gray-100 bg-gray-50/70 flex items-center justify-between">
                         <div class="flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                            <span class="w-2 h-2 rounded-full bg-[#A8DC2E]"></span>
                             <span class="font-display font-bold text-xs text-[#16251D] uppercase tracking-wider">Pratinjau Listing</span>
                         </div>
                         <span class="text-[11px] text-[#4E6157]">Tampilan di feed tetangga</span>
@@ -730,8 +730,8 @@
                                 <img :src="photoPreview" class="w-full h-full object-cover">
                             </template>
                             <template x-if="!photoPreview">
-                                <div class="w-full h-full bg-gradient-to-br from-emerald-50/80 via-white to-gray-50 flex flex-col items-center justify-center p-4 text-center">
-                                    <div class="w-12 h-12 rounded-2xl bg-white border border-emerald-100 shadow-2xs text-[#1E7A4C] flex items-center justify-center mb-2">
+                                <div class="w-full h-full bg-gradient-to-br from-[#D7F57C]/25 via-white to-gray-50 flex flex-col items-center justify-center p-4 text-center">
+                                    <div class="w-12 h-12 rounded-2xl bg-white border border-[#C8EE63] shadow-2xs text-[#16251D] flex items-center justify-center mb-2">
                                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3v3m-4-3v3m8-3v3M4 11h16a8 8 0 01-16 0z"/>
                                         </svg>
@@ -743,7 +743,7 @@
 
                             <!-- Floating Top Pills on Image -->
                             <div class="absolute top-2.5 inset-x-2.5 flex items-center justify-between gap-1 pointer-events-none">
-                                <span class="px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-md shadow-2xs text-[11px] font-bold text-[#14573A] border border-emerald-200/80"
+                                <span class="px-2.5 py-1 rounded-full bg-[#D7F57C] text-[#16251D] border border-[#C8EE63] shadow-2xs text-[11px] font-bold"
                                       x-text="`${portions} Porsi Tersedia`"></span>
 
                                 <span class="px-2.5 py-1 rounded-full bg-[#16251D]/90 backdrop-blur-md shadow-2xs text-[11px] font-bold text-white flex items-center gap-1">
@@ -759,12 +759,12 @@
                         <div>
                             <div class="flex items-center gap-1.5 flex-wrap mb-1.5">
                                 <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-gray-100 text-[#4E6157]" x-text="categoryName"></span>
-                                <span class="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-emerald-50 text-[#14573A] border border-emerald-200/60" x-text="foodTypeLabel"></span>
+                                <span class="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-[#D7F57C]/40 text-[#16251D] border border-[#C8EE63]/60" x-text="foodTypeLabel"></span>
                                 <template x-if="halal">
-                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 border border-emerald-300/80">Halal</span>
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-[#D7F57C]/40 text-[#16251D] border border-[#C8EE63]/80">Halal</span>
                                 </template>
                                 <template x-if="vegetarian">
-                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-teal-50 text-teal-800 border border-teal-200">Vegetarian</span>
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-[#D7F57C]/40 text-[#16251D] border border-[#C8EE63]/80">Vegetarian</span>
                                 </template>
                             </div>
 
@@ -797,7 +797,7 @@
                             </div>
 
                             <div class="flex items-start gap-2.5 pt-2 border-t border-gray-200/60">
-                                <svg class="w-4 h-4 text-[#1E7A4C] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 text-[#16251D] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                                 </svg>
                                 <div class="min-w-0 flex-1">
@@ -807,7 +807,7 @@
                             </div>
 
                             <div class="flex items-start gap-2.5 pt-2 border-t border-gray-200/60">
-                                <svg class="w-4 h-4 text-[#1E7A4C] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 text-[#16251D] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                                 </svg>
@@ -822,8 +822,8 @@
                         <!-- Primary Action Button -->
                         <div class="pt-2">
                             <button type="submit"
-                                    class="w-full py-3.5 px-5 rounded-2xl bg-[#1E7A4C] hover:bg-[#14573A] active:scale-[0.98] text-white font-extrabold text-sm sm:text-base flex items-center justify-center gap-2 shadow-xs hover:shadow-md transition-all duration-150 cursor-pointer group">
-                                <svg class="w-5 h-5 text-emerald-200 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    class="w-full py-3.5 px-5 rounded-2xl bg-[#D7F57C] hover:bg-[#C8EE63] active:bg-[#B4E634] active:scale-[0.98] text-[#16251D] font-black text-sm sm:text-base flex items-center justify-center gap-2 border border-[#C8EE63] shadow-xs hover:shadow-md transition-all duration-150 cursor-pointer group">
+                                <svg class="w-5 h-5 text-[#16251D] group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
                                 </svg>
                                 <span>Bagikan Makanan Sekarang</span>
@@ -831,8 +831,8 @@
                         </div>
 
                         <!-- Human Safety Reassurance -->
-                        <div class="p-3 bg-emerald-50/60 rounded-2xl border border-emerald-100/80 text-[11px] text-[#14573A] flex items-start gap-2">
-                            <svg class="w-4 h-4 text-[#1E7A4C] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="p-3 bg-[#D7F57C]/25 rounded-2xl border border-[#C8EE63]/70 text-[11px] text-[#16251D] flex items-start gap-2">
+                            <svg class="w-4 h-4 text-[#16251D] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                             </svg>
                             <div class="leading-relaxed">

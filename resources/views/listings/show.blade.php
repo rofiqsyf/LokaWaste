@@ -4,7 +4,7 @@
 
     <!-- Top Navigation / Breadcrumb -->
     <div class="flex items-center justify-between">
-        <a href="{{ route('home') }}" class="inline-flex items-center gap-1.5 text-xs font-bold text-[#4E6157] hover:text-[#1E7A4C]">
+        <a href="{{ route('home') }}" class="inline-flex items-center gap-1.5 text-xs font-bold text-[#4E6157] hover:text-[#16251D]">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
@@ -20,7 +20,7 @@
     </div>
 
     <!-- MAIN CARD -->
-    <div class="bg-white rounded-3xl border border-[#D5E0D9] shadow-card overflow-hidden">
+    <div class="glass-frosted rounded-3xl shadow-card overflow-hidden">
         <!-- Photo Section -->
         <div class="relative h-64 sm:h-80 bg-gray-100 flex items-center justify-center overflow-hidden">
             @if($listing->photo_path)
@@ -39,11 +39,11 @@
             @endif
 
             <!-- Floating Time Ring on Image corner -->
-            <div class="absolute top-4 right-4 bg-white/95 backdrop-blur-md p-2 rounded-2xl shadow-card flex items-center gap-2">
+            <div class="absolute top-4 right-4 glass-clear p-2.5 rounded-2xl shadow-card flex items-center gap-3">
                 <x-time-ring :listing="$listing" />
                 <div class="text-right pr-1">
-                    <span class="text-[10px] text-[#4E6157] font-semibold uppercase block">Batas Ambil</span>
-                    <span class="font-display font-bold text-sm text-[#16251D]">
+                    <span class="text-[10px] text-[#4E6157] font-bold uppercase tracking-wider block">Batas Ambil</span>
+                    <span class="font-display font-black text-sm text-[#16251D] tracking-tight">
                         {{ $listing->expires_at->setTimezone($listing->timezone())->format('H:i') }} {{ $listing->tzLabel() }}
                     </span>
                 </div>
@@ -61,12 +61,12 @@
                             {{ $listing->category->name }}
                         </span>
                         @if($listing->halal_claim)
-                            <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800">
+                            <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-[#D7F57C]/40 text-[#16251D] border border-[#C8EE63]/80">
                                 Pernyataan Halal Pemberi
                             </span>
                         @endif
                         @if($listing->is_vegetarian)
-                            <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-green-100 text-green-800">
+                            <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-[#D7F57C]/40 text-[#16251D] border border-[#C8EE63]/80">
                                 Vegetarian
                             </span>
                         @endif
@@ -80,7 +80,7 @@
                     </p>
                 </div>
 
-                <div class="sm:text-right shrink-0 bg-[#F2F6F3] p-4 rounded-2xl border border-[#D5E0D9]">
+                <div class="sm:text-right shrink-0 glass-clear p-4 rounded-2xl">
                     <span class="text-xs text-[#4E6157] block">Sisa Makanan</span>
                     <span class="font-display font-bold text-2xl text-[#1E7A4C]">{{ $listing->portions_left }}</span>
                     <span class="text-xs text-[#4E6157]">/ {{ $listing->portions_total }} porsi</span>
@@ -117,7 +117,7 @@
             </div>
 
             <!-- Food Safety Information (FR-36, SDD 3.8) -->
-            <div class="p-5 rounded-2xl bg-[#F2F6F3] border border-[#D5E0D9] space-y-3">
+            <div class="p-5 rounded-2xl glass-dock space-y-3">
                 <h3 class="font-display font-bold text-sm text-[#16251D] flex items-center gap-2">
                     <svg class="w-4 h-4 text-[#1E7A4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
@@ -175,12 +175,14 @@
 
                 @if($canSeeExact)
                     <!-- EXACT LOCATION UNLOCKED (Owner or Approved Claimer) -->
-                    <div class="p-4 rounded-2xl bg-emerald-50 border border-[#1E7A4C]/30 space-y-2">
-                        <div class="flex items-center gap-2 text-xs font-bold text-[#14573A]">
-                            <svg class="w-4 h-4 text-[#1E7A4C]" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 2a8 8 0 100 16 8 8 0 000-16zm3.707 9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                            Titik Tepat & Alamat Dibuka
+                    <div class="p-4 rounded-2xl bg-[#D7F57C]/20 border border-[#C8EE63]/80 space-y-2">
+                        <div class="flex items-center gap-2 text-xs font-bold text-[#16251D]">
+                            <div class="w-5 h-5 rounded-full bg-[#D7F57C] text-[#16251D] border border-[#C8EE63] flex items-center justify-center shrink-0 shadow-2xs">
+                                <svg class="w-3.5 h-3.5 text-[#16251D]" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
+                                </svg>
+                            </div>
+                            <span>Titik Tepat & Alamat Dibuka</span>
                         </div>
                         <p class="text-sm font-bold text-[#16251D]">{{ $listing->pickup_address }}</p>
                         @if($listing->user->phone)
@@ -215,8 +217,8 @@
                     </a>
 
                     <a href="{{ route('home', ['focus' => $listing->id, 'lat' => $listing->public_latitude, 'lng' => $listing->public_longitude]) }}"
-                       class="btn-secondary text-xs py-2 px-3.5 flex items-center justify-center gap-1.5 shadow-xs hover:border-[#1E7A4C] hover:text-[#1E7A4C]">
-                        <svg class="w-3.5 h-3.5 text-[#1E7A4C] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       class="btn-secondary text-xs py-2 px-3.5 flex items-center justify-center gap-1.5 shadow-xs hover:border-[#C8EE63] hover:text-[#16251D]">
+                        <svg class="w-3.5 h-3.5 text-[#16251D] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
                         </svg>
                         <span>Buka di Peta Interaktif</span>
@@ -293,7 +295,7 @@
                                                         <div class="flex items-center gap-2">
                                                             <button type="button"
                                                                     @click="startScanning({{ $claim->id }})"
-                                                                    class="btn-primary text-xs px-2.5 py-1.5 flex items-center gap-1 bg-emerald-700 hover:bg-emerald-800 shadow-xs cursor-pointer">
+                                                                    class="btn-primary text-xs px-2.5 py-1.5 flex items-center gap-1 shadow-xs cursor-pointer">
                                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
                                                                 <span>Scan QR</span>
                                                             </button>
@@ -338,23 +340,23 @@
 
                                 @if($userActiveClaim->status === 'approved')
                                     <!-- Smart QR Code & Pickup Code Handover Box -->
-                                    <div class="p-4 bg-emerald-50/70 rounded-2xl border-2 border-[#1E7A4C] flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
-                                        <div class="w-28 h-28 shrink-0 bg-white p-1.5 rounded-2xl border border-emerald-200/80 shadow-2xs flex items-center justify-center cursor-pointer group hover:scale-105 transition-transform"
+                                    <div class="p-4 bg-[#D7F57C]/25 rounded-2xl border-2 border-[#C8EE63] flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+                                        <div class="w-28 h-28 shrink-0 bg-white p-1.5 rounded-2xl border border-[#C8EE63] shadow-2xs flex items-center justify-center cursor-pointer group hover:scale-105 transition-transform"
                                              @click="openQrEnlarged({{ $userActiveClaim->id }}, '{{ $userActiveClaim->pickup_code }}', '{{ addslashes($listing->title) }}', {{ $userActiveClaim->portions_approved ?? $userActiveClaim->portions_requested }})"
                                              title="Ketuk untuk perbesar QR Code">
                                             <div data-lokawaste-qr="LOKAWASTE:CLAIM:{{ $userActiveClaim->id }}:{{ $userActiveClaim->pickup_code }}" data-locabite-qr="LOCABITE:CLAIM:{{ $userActiveClaim->id }}:{{ $userActiveClaim->pickup_code }}" class="w-full h-full flex items-center justify-center">
-                                                <div class="w-5 h-5 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
+                                                <div class="w-5 h-5 border-2 border-[#16251D] border-t-transparent rounded-full animate-spin"></div>
                                             </div>
                                         </div>
                                         <div class="flex-1 min-w-0 space-y-1.5">
                                             <span class="text-[11px] font-bold text-[#14573A] block">Tunjukkan QR atau Kode kepada Pemberi:</span>
                                             <div class="flex items-center justify-center sm:justify-start gap-2">
-                                                <span class="font-mono font-black text-2xl tracking-widest text-[#14573A] bg-white px-3 py-1 rounded-xl border border-emerald-200">
+                                                <span class="font-mono font-black text-2xl tracking-widest text-[#16251D] bg-white px-3 py-1 rounded-xl border border-[#C8EE63]">
                                                     {{ $userActiveClaim->pickup_code }}
                                                 </span>
                                                 <button type="button"
                                                         @click="copyCode('{{ $userActiveClaim->pickup_code }}')"
-                                                        class="p-2 rounded-xl bg-white border border-emerald-200 text-[#1E7A4C] hover:bg-emerald-100 transition-colors shadow-2xs cursor-pointer"
+                                                        class="p-2 rounded-xl bg-white border border-[#C8EE63] text-[#16251D] hover:bg-[#D7F57C]/40 transition-colors shadow-2xs cursor-pointer"
                                                         title="Salin Kode">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                                                 </button>
@@ -382,7 +384,7 @@
                             <!-- CLAIM FORM -->
                             <form method="POST" action="{{ route('claims.store', $listing->id) }}" class="space-y-4">
                                 @csrf
-                                <div class="p-5 rounded-2xl bg-white border border-[#1E7A4C]/30 shadow-xs space-y-3">
+                                <div class="p-5 rounded-2xl glass-card border border-[#C8EE63]/80 shadow-xs space-y-3">
                                     <h3 class="font-display font-bold text-base text-[#16251D]">Ajukan Pengambilan Makanan</h3>
 
                                     <div class="flex items-center gap-4">
@@ -439,15 +441,15 @@
 
                 @else
                     <!-- GUEST PROMPT -->
-                    <div class="p-5 rounded-2xl bg-[#F2F6F3] text-center space-y-3">
+                    <div class="p-5 rounded-2xl glass-dock text-center space-y-3">
                         <p class="text-sm font-semibold text-[#16251D]">Ingin mengambil makanan ini?</p>
                         <div class="flex items-center justify-center gap-2.5">
-                            <a href="{{ route('login') }}" class="h-9 px-4 rounded-full text-xs font-bold text-[#16251D] hover:text-[#1E7A4C] bg-white hover:bg-emerald-50/80 border border-[#D5E0D9] hover:border-[#1E7A4C]/50 shadow-2xs hover:shadow-xs active:scale-95 transition-all inline-flex items-center gap-1.5">
+                            <a href="{{ route('login') }}" class="h-9 px-4 rounded-full text-xs font-bold text-[#16251D] bg-white hover:bg-[#D7F57C]/30 border border-[#D5E0D9] hover:border-[#C8EE63] shadow-2xs hover:shadow-xs active:scale-95 transition-all inline-flex items-center gap-1.5">
                                 <svg class="w-3.5 h-3.5 text-[#4E6157]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
                                 <span>Masuk</span>
                             </a>
-                            <a href="{{ route('register') }}" class="h-9 px-5 rounded-full text-xs font-bold text-white bg-[#1E7A4C] hover:bg-[#14573A] shadow-xs hover:shadow-md hover:shadow-[#1E7A4C]/25 active:scale-95 transition-all inline-flex items-center gap-1.5">
-                                <svg class="w-3.5 h-3.5 text-emerald-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+                            <a href="{{ route('register') }}" class="h-9 px-5 rounded-full text-xs font-bold text-[#16251D] bg-[#D7F57C] hover:bg-[#C8EE63] active:bg-[#B4E634] shadow-xs hover:shadow-md active:scale-95 transition-all inline-flex items-center gap-1.5 border border-white/60">
+                                <svg class="w-3.5 h-3.5 text-[#16251D]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
                                 <span>Daftar Akun Gratis</span>
                             </a>
                         </div>
@@ -477,12 +479,12 @@
          style="display: none;">
         
         <div @click.away="closeScanner()"
-             class="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-gray-100 overflow-hidden flex flex-col max-h-[90vh]">
+             class="glass-frosted w-full max-w-md rounded-3xl shadow-2xl border border-white/80 overflow-hidden flex flex-col max-h-[90vh]">
             
             <!-- Header -->
             <div class="p-4 sm:p-5 border-b border-gray-100 flex items-center justify-between bg-gray-50/70">
                 <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-xl bg-emerald-100 text-[#1E7A4C] flex items-center justify-center">
+                    <div class="w-8 h-8 rounded-xl bg-[#D7F57C] text-[#16251D] border border-[#C8EE63] flex items-center justify-center">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
                     </div>
                     <div>
@@ -499,30 +501,30 @@
             <!-- Scanner Viewport Body -->
             <div class="p-4 sm:p-5 space-y-4 overflow-y-auto">
                 <!-- Camera Box -->
-                <div class="relative w-full aspect-square bg-gray-900 rounded-2xl overflow-hidden border-2 border-emerald-500/40 shadow-inner flex items-center justify-center">
+                <div class="relative w-full aspect-square bg-gray-900 rounded-2xl overflow-hidden border-2 border-[#A8DC2E]/60 shadow-inner flex items-center justify-center">
                     <div id="qr-camera-stream" class="w-full h-full"></div>
 
                     <!-- Scanning Reticle Overlay -->
                     <div class="absolute inset-0 pointer-events-none flex items-center justify-center">
-                        <div class="w-52 h-52 border-2 border-emerald-400 rounded-2xl relative shadow-[0_0_0_9999px_rgba(0,0,0,0.35)]">
-                            <div class="absolute -top-1 -left-1 w-5 h-5 border-t-4 border-l-4 border-emerald-400 rounded-tl-lg"></div>
-                            <div class="absolute -top-1 -right-1 w-5 h-5 border-t-4 border-r-4 border-emerald-400 rounded-tr-lg"></div>
-                            <div class="absolute -bottom-1 -left-1 w-5 h-5 border-b-4 border-l-4 border-emerald-400 rounded-bl-lg"></div>
-                            <div class="absolute -bottom-1 -right-1 w-5 h-5 border-b-4 border-r-4 border-emerald-400 rounded-br-lg"></div>
-                            <div class="w-full h-0.5 bg-emerald-400/80 shadow-[0_0_8px_#34d399] absolute top-1/2 -translate-y-1/2 animate-pulse"></div>
+                        <div class="w-52 h-52 border-2 border-[#D7F57C] rounded-2xl relative shadow-[0_0_0_9999px_rgba(0,0,0,0.35)]">
+                            <div class="absolute -top-1 -left-1 w-5 h-5 border-t-4 border-l-4 border-[#D7F57C] rounded-tl-lg"></div>
+                            <div class="absolute -top-1 -right-1 w-5 h-5 border-t-4 border-r-4 border-[#D7F57C] rounded-tr-lg"></div>
+                            <div class="absolute -bottom-1 -left-1 w-5 h-5 border-b-4 border-l-4 border-[#D7F57C] rounded-bl-lg"></div>
+                            <div class="absolute -bottom-1 -right-1 w-5 h-5 border-b-4 border-r-4 border-[#D7F57C] rounded-br-lg"></div>
+                            <div class="w-full h-0.5 bg-[#D7F57C] shadow-[0_0_8px_#D7F57C] absolute top-1/2 -translate-y-1/2 animate-pulse"></div>
                         </div>
                     </div>
 
                     <!-- Loading / Processing indicator -->
                     <div x-show="scanningLoading" class="absolute inset-0 bg-black/75 flex flex-col items-center justify-center text-white space-y-2 z-10">
-                        <div class="w-8 h-8 border-3 border-emerald-400 border-t-transparent rounded-full animate-spin"></div>
+                        <div class="w-8 h-8 border-3 border-[#D7F57C] border-t-transparent rounded-full animate-spin"></div>
                         <span class="text-xs font-bold">Memverifikasi Serah Terima...</span>
                     </div>
                 </div>
 
                 <!-- Success Message Banner -->
-                <div x-show="scanSuccessMessage" class="p-3.5 bg-emerald-50 border border-emerald-300 rounded-xl text-emerald-900 text-xs font-bold flex items-center gap-2">
-                    <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                <div x-show="scanSuccessMessage" class="p-3.5 bg-[#D7F57C]/30 border border-[#C8EE63] rounded-xl text-[#16251D] text-xs font-bold flex items-center gap-2">
+                    <svg class="w-5 h-5 text-[#16251D] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                     <span x-text="scanSuccessMessage"></span>
                 </div>
 
@@ -569,10 +571,10 @@
          style="display: none;">
         
         <div @click.away="closeQrEnlarged()"
-             class="bg-white w-full max-w-sm rounded-3xl shadow-2xl border border-gray-100 p-6 text-center space-y-4">
+             class="glass-frosted w-full max-w-sm rounded-3xl shadow-2xl border border-white/80 p-6 text-center space-y-4">
             
             <div class="flex items-center justify-between">
-                <span class="text-xs font-bold uppercase tracking-wider text-[#1E7A4C] bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                <span class="text-xs font-bold uppercase tracking-wider text-[#16251D] bg-[#D7F57C]/40 px-2.5 py-0.5 rounded-full border border-[#C8EE63] font-bold">
                     QR Serah Terima
                 </span>
                 <button type="button" @click="closeQrEnlarged()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-black flex items-center justify-center transition cursor-pointer">
@@ -610,16 +612,29 @@
 </div>
 
 <!-- REPORT MODAL DIALOG -->
-<dialog id="report-modal" class="rounded-3xl p-6 max-w-md w-full backdrop:bg-black/40 border border-[#D5E0D9] shadow-sheet">
+<dialog id="report-modal"
+        onclick="if (event.target === this) this.close()"
+        class="glass-frosted rounded-3xl p-6 sm:p-7 w-[calc(100%-2rem)] max-w-md fixed inset-0 m-auto backdrop:bg-black/60 backdrop:backdrop-blur-sm border border-white/80 shadow-2xl max-h-[90vh] overflow-y-auto">
     <form method="POST" action="{{ route('reports.store') }}" class="space-y-4">
         @csrf
         <input type="hidden" name="listing_id" value="{{ $listing->id }}">
-        <h3 class="font-display font-bold text-lg text-[#16251D]">Laporkan Masalah</h3>
-        <p class="text-xs text-[#4E6157]">Laporan Anda membantu menjaga keselamatan dan kepercayaan komunitas pangan LokaWaste.</p>
+        
+        <div class="flex items-start justify-between gap-3 pb-1 border-b border-gray-100">
+            <div>
+                <h3 class="font-display font-bold text-lg text-[#16251D]">Laporkan Masalah</h3>
+                <p class="text-xs text-[#4E6157] mt-0.5">Laporan Anda membantu menjaga keselamatan dan kepercayaan komunitas pangan LokaWaste.</p>
+            </div>
+            <button type="button"
+                    onclick="document.getElementById('report-modal').close()"
+                    class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-[#4E6157] hover:text-[#16251D] flex items-center justify-center shrink-0 transition active:scale-95 cursor-pointer"
+                    title="Tutup">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
 
         <div>
-            <label class="text-xs font-semibold text-[#16251D] block mb-1">Alasan Laporan</label>
-            <select name="reason" class="input-field text-xs" required>
+            <label class="text-xs font-bold text-[#16251D] block mb-1">Alasan Laporan</label>
+            <select name="reason" class="input-field text-xs font-semibold" required>
                 <option value="expired_food">Makanan sudah kedaluwarsa / tidak layak</option>
                 <option value="fake_listing">Listing fiktif / tidak ada di tempat</option>
                 <option value="unsafe_food">Makanan berbau / tidak higienis</option>
@@ -629,15 +644,15 @@
         </div>
 
         <div>
-            <label class="text-xs font-semibold text-[#16251D] block mb-1">Keterangan Tambahan</label>
+            <label class="text-xs font-bold text-[#16251D] block mb-1">Keterangan Tambahan</label>
             <textarea name="detail" rows="3" class="input-field text-xs" placeholder="Jelaskan secara singkat apa yang Anda temukan..."></textarea>
         </div>
 
         <div class="flex items-center justify-end gap-2 pt-2">
-            <button type="button" onclick="document.getElementById('report-modal').close()" class="px-4 py-2 text-xs font-semibold text-[#4E6157] hover:bg-gray-100 rounded-xl">
+            <button type="button" onclick="document.getElementById('report-modal').close()" class="px-4 py-2 text-xs font-bold text-[#4E6157] hover:bg-gray-100 rounded-xl transition cursor-pointer">
                 Batal
             </button>
-            <button type="submit" class="btn-danger text-xs px-4 py-2">
+            <button type="submit" class="btn-danger text-xs px-5 py-2.5 rounded-xl font-bold cursor-pointer transition active:scale-95 shadow-xs">
                 Kirim Laporan
             </button>
         </div>

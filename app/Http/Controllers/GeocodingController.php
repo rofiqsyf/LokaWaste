@@ -28,7 +28,7 @@ class GeocodingController extends Controller
 
             // 1. Fetch from Nominatim OpenStreetMap with custom User-Agent
             try {
-                $response = Http::withoutVerifying()
+                $response = Http::when(app()->environment('local', 'testing'), fn($h) => $h->withoutVerifying())
                     ->timeout(6)
                     ->withHeaders([
                         'User-Agent' => 'LokaWaste/1.0 (contact@lokawaste.test)',
@@ -123,7 +123,7 @@ class GeocodingController extends Controller
 
         $result = Cache::remember($cacheKey, 86400 * 14, function () use ($lat, $lng) {
             try {
-                $response = Http::withoutVerifying()
+                $response = Http::when(app()->environment('local', 'testing'), fn($h) => $h->withoutVerifying())
                     ->timeout(6)
                     ->withHeaders([
                         'User-Agent' => 'LokaWaste/1.0 (contact@lokawaste.test)',
@@ -170,8 +170,20 @@ class GeocodingController extends Controller
             ];
         });
 
-        // Match closest district from database for automatic district synchronization
-        $districts = District::with('regency')->get();
+        // Match closest district from database using bounding box first to avoid full-table scans
+        $districts = District::with('regency')
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->whereBetween('latitude', [$lat - 0.5, $lat + 0.5])
+            ->whereBetween('longitude', [$lng - 0.5, $lng + 0.5])
+            ->get();
+
+        if ($districts->isEmpty()) {
+            $districts = District::with('regency')
+                ->whereNotNull('latitude')
+                ->whereNotNull('longitude')
+                ->get();
+        }
         $matchedDistrict = null;
         $minDist = PHP_FLOAT_MAX;
 

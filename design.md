@@ -74,16 +74,20 @@ Pengguna dapat mengunduh kartu digital pencapaian dampak lingkungan yang siap di
 ## 2. Fondasi Token Desain (Matematika & Sistem Warna)
 
 ### 2.1 Palet Warna Semantik & Rasio Kontras Terukur
-Palet warna tidak dipilih secara dekoratif acak, melainkan berakar pada elemen pangan segar Indonesia dan diuji terhadap standar **WCAG 2.2 AAA** (ambang batas $\ge 7.0:1$ untuk teks normal, $\ge 4.5:1$ untuk teks besar/grafis).
+Palet warna tidak dipilih secara dekoratif acak, melainkan berakar pada elemen pangan segar Indonesia dan diuji terhadap standar **WCAG 2.2 AAA** (ambang batas $\ge 7.0:1$ untuk teks normal, $\ge 4.5:1$ untuk teks besar/grafis). Warna utama (Main Color) mengadopsi **Lime Green / Hijau Pupus (`#D7F57C`)** khas logo LokaWaste yang segar, ramah, dan modern dengan teks kontras tinggi **Arang Hijau (`#16251D`)**.
 
 ```
 [ Embun #F2F6F3 ]  <-- Latar Belakang Tenang & Bersih
       │
-      ├── [ Arang Hijau #16251D ]  <-- Tipografi Utama (Kontras 14.62:1)
+      ├── [ Arang Hijau #16251D ]  <-- Tipografi Utama & Teks Tombol Primer (Kontras 14.62:1)
       ├── [ Daun Kering #4E6157 ]  <-- Tipografi Sekunder & Metadata (Kontras 6.07:1)
       │
-      ├── [ Hijau Daun #1E7A4C ]   <-- Aksi Utama & Status Aman (Kontras 5.33:1)
-      │     └── [ Hijau Hutan #14573A ]  <-- Hover & Active State (Kontras 8.56:1)
+      ├── [ Lime Green #D7F57C ]   <-- WARNA UTAMA / BRAND PRIMARY (Logo, Tombol Primer, Badge Aktif)
+      │     ├── [ Lime Segar #C8EE63 ]   <-- Hover State Tombol Primer
+      │     └── [ Lime Matang #A8DC2E ]  <-- Pressed / Active State
+      │
+      ├── [ Hijau Daun #1E7A4C ]   <-- Aksen Alam Sekunder, Link Sukses, Status Aman
+      │     └── [ Hijau Hutan #14573A ]  <-- Hover State Aksen
       │
       ├── [ Kunyit Tua #B45309 ]   <-- Peringatan Waktu 1-3 Jam (Kontras 5.02:1)
       │     └── [ Kunyit Muda #FBEFC9 ]  <-- Latar Lencana Peringatan
@@ -100,10 +104,12 @@ Palet warna tidak dipilih secara dekoratif acak, melainkan berakar pada elemen p
 | `--color-bg` | Embun | `#F2F6F3` | `oklch(96.8% 0.008 152)` | — | Latar belakang kanvas aplikasi |
 | `--color-surface` | Putih Nasi | `#FFFFFF` | `oklch(100% 0 0)` | — | Kartu listing, modal dialog, panel melayang |
 | `--color-surface-subtle` | Beras Sosoh | `#F8FAF9` | `oklch(98.2% 0.004 150)` | — | Latar alternatif tabel & input non-aktif |
-| `--color-ink` | Arang Hijau | `#16251D` | `oklch(22.5% 0.024 165)` | **14.62:1** (Lolos AAA) | Tipografi judul, label penting, teks kontras tinggi |
+| `--color-ink` | Arang Hijau | `#16251D` | `oklch(22.5% 0.024 165)` | **14.62:1** (Lolos AAA) | Tipografi judul, label penting, teks di atas tombol Lime |
 | `--color-ink-soft` | Daun Kering | `#4E6157` | `oklch(46.2% 0.026 160)` | **6.07:1** (Lolos AAA teks besar, AA teks normal) | Subjudul, deskripsi pendukung, metadata waktu |
-| `--color-primary` | Hijau Daun | `#1E7A4C` | `oklch(52.1% 0.125 152)` | **5.33:1** (Lolos AA) | Tombol CTA primer, indikator ketersediaan |
-| `--color-primary-dark` | Hijau Hutan | `#14573A` | `oklch(40.2% 0.105 155)` | **8.56:1** (Lolos AAA) | State hover/pressed tombol primer, teks link aktif |
+| `--color-primary` | Lime Green (Warna Utama Logo) | `#D7F57C` | `oklch(92.4% 0.120 128)` | **12.8:1** terhadap `#16251D` (Lolos AAA) | **Warna Utama:** Tombol CTA primer, badge aktif nav dock, logo squircle |
+| `--color-primary-hover` | Lime Segar | `#C8EE63` | `oklch(88.5% 0.140 125)` | **11.5:1** terhadap `#16251D` (Lolos AAA) | State hover tombol CTA primer |
+| `--color-primary-dark` | Lime Matang | `#A8DC2E` | `oklch(80.2% 0.165 122)` | **9.2:1** terhadap `#16251D` (Lolos AAA) | State pressed/active tombol CTA primer |
+| `--color-nature` | Hijau Daun (Aksen Sekunder) | `#1E7A4C` | `oklch(52.1% 0.125 152)` | **5.33:1** (Lolos AA) | Aksen alam sekunder, link sukses, indikator ketersediaan |
 | `--color-time-ok` | Hijau Segar | `#23865A` | `oklch(56.4% 0.135 150)` | **4.54:1** (Grafis AAA) | Time-ring: sisa waktu $> 3\text{ jam}$ |
 | `--color-time-warn` | Kunyit Tua | `#B45309` | `oklch(53.2% 0.155 65)` | **5.02:1** (Lolos AA) | Time-ring: sisa waktu $1 - 3\text{ jam}$, lencana peringatan |
 | `--color-warn-soft` | Kunyit Muda | `#FBEFC9` | `oklch(94.2% 0.052 85)` | — | Latar belakang lencana status verifikasi tertunda |
@@ -227,7 +233,7 @@ Setiap layar dan komponen harus memiliki rancangan untuk **8 kemungkinan status 
 |---|---|---|---|---|---|---|---|---|
 | **Peta Utama & Eksplorasi** | Tampil titik domisili default (Semarang) | Skeleton shimmering kartu di bottom sheet, pin peta memuat bertahap | Pin listing aktif dengan time ring menyusut dinamis | Ilustrasi piring bersih: "Belum ada makanan dalam 3km. Perluas ke 10km" + Tombol CTA Bagikan | Data lama tampil dengan watermark "Menampilkan data 2 menit lalu" | Banner kuning mengambang: "Koneksi terputus. Mode baca aktif" | Peta tetap dapat digeser, namun request dibatasi | Toast merah: "Gagal memuat koordinat. Ketuk untuk muat ulang" |
 | **Pencarian Autocomplete** | Placeholder: "Cari jalan, kecamatan, atau kota..." | Spinner mikro di sisi kanan input | Dropdown 4-6 saran lokasi berikon pin & teks daerah lengkap | "Lokasi tidak ditemukan. Coba nama kecamatan terdekat" | Fallback ke pencarian database lokal jika Nominatim lambat | Dropdown menampilkan cache pencarian terakhir | Jeda 500ms setelah 10 request berturut-turut | Input kembali ke teks sebelumnya tanpa menghapus kueri |
-| **Tombol Ajukan Klaim** | Tombol hijau "Ajukan Klaim Sekarang" | Teks berubah "Memproses Permohonan..." + spinner SVG (Disabled) | Modal konfirmasi porsi tampil dengan hitung mundur | Porsi habis: tombol berubah menjadi disabled "Porsi Habis" | Tombol hanya mengizinkan sisa kuota yang belum terambil | Tombol dikunci: "Butuh koneksi untuk mengajukan klaim" | "Anda telah mencapai batas 3 klaim aktif" (Disabled) | Banner merah: "Klaim gagal diajukan. Alasan: [Alasan Server]" |
+| **Tombol Ajukan Klaim** | Tombol lime green "Ajukan Klaim Sekarang" (`bg-[#D7F57C] text-[#16251D] font-bold`) | Teks berubah "Memproses Permohonan..." + spinner SVG (Disabled) | Modal konfirmasi porsi tampil dengan hitung mundur | Porsi habis: tombol berubah menjadi disabled "Porsi Habis" | Tombol hanya mengizinkan sisa kuota yang belum terambil | Tombol dikunci: "Butuh koneksi untuk mengajukan klaim" | "Anda telah mencapai batas 3 klaim aktif" (Disabled) | Banner merah: "Klaim gagal diajukan. Alasan: [Alasan Server]" |
 | **Verifikasi Kode Pickup** | Input 6 kotak digit non-ambigu | Teks verifikasi berputar | Kode cocok: animasi centang sukses hijau seketika | Kolom kosong menunggu input donatur | Percobaan 1-4 salah: peringatan "Kode salah. Sisa N percobaan" | Mode verifikasi offline dengan kunci kriptografi QR lokal | 5x salah: "Terkunci 15 menit demi keamanan" | Toast error server jika database tidak terhubung |
 | **Formulir Pendaftaran Akun** | Form kosong dengan cascading dropdown EMSIFA siap | Spinner halus saat memuat kabupaten/kecamatan | Pilihan wilayah terisi rapi dalam Title Case | Kecamatan kosong jika kabupaten belum dipilih | Pilihan kecamatan menggunakan cache lokal jika API EMSIFA down | Banner info offline; form disimpan di LocalStorage | Proteksi spam pendaftaran dari IP yang sama | Validasi field spesifik berwarna merah dengan arahan perbaikan |
 
@@ -403,7 +409,7 @@ Gunakan daftar audit berikut sebelum setiap rilis fitur:
    - Jarak & Kecamatan: Misal `Kec. Tembalang • 1.2 km`.
    - Diet & Syariah Chips: Lencana `Halal` dan `Vegetarian` berukuran micro-pill.
 3. **Action Footer (Hand-off ke Peta):**
-   - **Primary Action ("Ambil di Peta"):** Tombol hijau kontras tinggi (`bg-[#1E7A4C] hover:bg-[#14573A] text-white`) dengan ikon pin navigasi SVG. Mengarahkan langsung ke URL `/?focus={id}&lat={lat}&lng={lng}`.
+   - **Primary Action ("Ambil di Peta"):** Tombol lime green kontras tinggi (`bg-[#D7F57C] hover:bg-[#C8EE63] text-[#16251D] font-bold`) dengan ikon pin navigasi SVG. Mengarahkan langsung ke URL `/?focus={id}&lat={lat}&lng={lng}`.
    - **Secondary Action ("Detail Makanan"):** Tautan outline halus (`text-[#4E6157] hover:text-[#16251D]`) untuk membuka halaman spesifikasi keamanan pangan (`/listings/{id}`).
 
 ---

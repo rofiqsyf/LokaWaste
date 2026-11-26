@@ -27,7 +27,8 @@ class ClaimService
             abort_if($listing->user_id === $user->id, 403, 'Ini listing Anda.');
             abort_unless($listing->isClaimableBy($user), 422, 'Listing tidak dapat diklaim saat ini.');
             abort_if($portions < 1 || $portions > min($listing->max_portions_per_claim, $listing->portions_left), 422, 'Jumlah porsi melebihi batas.');
-            abort_if(Claim::active()->where('user_id', $user->id)->count() >= 3, 422, 'Maksimal 3 klaim aktif.');
+            $maxActiveClaims = max((int) site_setting('max_active_claims_per_user', 3), 1);
+            abort_if(Claim::active()->where('user_id', $user->id)->count() >= $maxActiveClaims, 422, "Maksimal {$maxActiveClaims} klaim aktif.");
 
             if ($campaignId) {
                 $campaign = FoodCampaign::with('district.regency')->findOrFail($campaignId);

@@ -14,6 +14,12 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         $tab = $request->input('tab', 'ringkasan');
+        if ($tab === 'dibagikan') {
+            $tab = 'bagikan';
+        }
+        if (!in_array($tab, ['ringkasan', 'bagikan', 'ambil', 'galang'])) {
+            $tab = 'ringkasan';
+        }
 
         // Stats & Impact Engine (design.md 1.F & 5.3)
         $portionsShared = (int) $user->listings()->sum('portions_total');

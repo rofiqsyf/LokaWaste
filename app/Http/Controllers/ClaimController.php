@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Claim;
 use App\Models\FoodListing;
 use App\Models\Review;
+use App\Notifications\LokaNotification;
 use App\Services\ClaimService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -32,6 +33,17 @@ class ClaimController extends Controller
                 $validated['campaign_id'] ?? null
             );
 
+            // Notify listing owner
+            $listing->user->notify(new LokaNotification(
+                title: 'Pengajuan Klaim: ' . $listing->title,
+                message: "{$user->name} mengajukan klaim {$claim->portions_requested} porsi untuk makanan berlebih Anda.",
+                category: 'claim',
+                icon: 'shopping-bag',
+                actionUrl: route('dashboard', ['tab' => 'bagikan']),
+                actionLabel: 'Tinjau di Dashboard',
+                meta: ['claim_id' => $claim->id, 'listing_id' => $listing->id]
+            ));
+
             return redirect()->route('listings.show', $listing->id)
                 ->with('success', 'Klaim berhasil diajukan! Tunggu persetujuan dari pemberi makanan.');
         } catch (\Symfony\Component\HttpKernel\Exception\HttpException $e) {
@@ -48,6 +60,20 @@ class ClaimController extends Controller
 
         try {
             $this->claimService->approve($claim, $portions);
+            $claim->refresh();
+            $approvedPortions = (int) ($claim->portions_approved ?? $portions);
+
+            // Notify claimer
+            $claim->user->notify(new LokaNotification(
+                title: 'Klaim Disetujui: ' . $listing->title,
+                message: "Pemberi makanan telah menyetujui klaim {$approvedPortions} porsi. Alamat penjemputan presisi dan rute kini dapat Anda akses.",
+                category: 'claim',
+                icon: 'check-circle',
+                actionUrl: route('listings.show', $claim->listing_id),
+                actionLabel: 'Buka Alamat & Navigasi',
+                meta: ['claim_id' => $claim->id, 'listing_id' => $claim->listing_id]
+            ));
+
             return back()->with('success', 'Klaim disetujui! Pengambil telah diberi tahu beserta kode ambil.');
         } catch (\Throwable $e) {
             return back()->with('error', $e->getMessage());
@@ -61,6 +87,17 @@ class ClaimController extends Controller
 
         try {
             $this->claimService->reject($claim, $request->input('reason'));
+
+            // Notify claimer
+            $claim->user->notify(new LokaNotification(
+                title: 'Klaim Tidak Disetujui: ' . $listing->title,
+                message: "Mohon maaf, klaim untuk {$listing->title} belum dapat disetujui oleh pemberi makanan." . ($request->input('reason') ? " Alasan: {$request->input('reason')}" : ''),
+                category: 'claim',
+                icon: 'bell',
+                actionUrl: route('catalog.index'),
+                actionLabel: 'Jelajah Makanan Lain'
+            ));
+
             return back()->with('info', 'Klaim telah ditolak.');
         } catch (\Throwable $e) {
             return back()->with('error', $e->getMessage());
@@ -73,13 +110,36 @@ class ClaimController extends Controller
         abort_unless($user->id === $claim->user_id || $user->id === $claim->listing->user_id, 403, 'Akses ditolak.');
 
         try {
+            $listing = $claim->listing;
             if ($claim->status === 'approved') {
                 $this->claimService->cancelApproved($claim, $user, $request->input('reason'));
-                return back()->with('info', 'Klaim disetujui dibatalkan. Porsi telah dikembalikan ke listing.');
+                $msg = 'Klaim disetujui dibatalkan. Porsi telah dikembalikan ke listing.';
             } else {
                 $this->claimService->cancelPending($claim, $user, $request->input('reason'));
-                return back()->with('info', 'Klaim berhasil dibatalkan.');
+                $msg = 'Klaim berhasil dibatalkan.';
             }
+
+            if ($user->id === $listing->user_id) {
+                $claim->user->notify(new LokaNotification(
+                    title: 'Klaim Dibatalkan Pemberi: ' . $listing->title,
+                    message: "Pemberi makanan membatalkan klaim pada {$listing->title}. Anda dapat mencari surplus pangan lainnya di peta.",
+                    category: 'claim',
+                    icon: 'bell',
+                    actionUrl: route('catalog.index'),
+                    actionLabel: 'Jelajah Katalog'
+                ));
+            } else {
+                $listing->user->notify(new LokaNotification(
+                    title: 'Klaim Dibatalkan Pemohon: ' . $listing->title,
+                    message: "{$user->name} membatalkan pengajuan klaim pada {$listing->title}. Porsi telah tersedia kembali.",
+                    category: 'claim',
+                    icon: 'bell',
+                    actionUrl: route('dashboard', ['tab' => 'bagikan']),
+                    actionLabel: 'Lihat Dashboard'
+                ));
+            }
+
+            return back()->with('info', $msg);
         } catch (\Throwable $e) {
             return back()->with('error', $e->getMessage());
         }
@@ -96,6 +156,8 @@ class ClaimController extends Controller
             $success = $this->claimService->verifyPickup($claim, $code);
 
             if ($success) {
+                $this->notifyPickupSuccess($claim->refresh());
+
                 return back()->with('success', 'Verifikasi berhasil! Makanan telah resmi diserahterimakan.');
             } else {
                 $remaining = max(0, 5 - $claim->refresh()->pickup_attempts);
@@ -161,6 +223,7 @@ class ClaimController extends Controller
             $success = $this->claimService->verifyPickup($claim, $code);
 
             if ($success) {
+                $this->notifyPickupSuccess($claim->refresh());
                 $msg = "Verifikasi Berhasil! {$claim->portions_approved} porsi \"{$claim->listing->title}\" telah resmi diserahkan kepada {$claim->user->name}.";
                 if ($request->wantsJson()) {
                     return response()->json([
@@ -232,5 +295,32 @@ class ClaimController extends Controller
         );
 
         return back()->with('success', 'Terima kasih atas ulasan Anda!');
+    }
+
+    /**
+     * Notify both claimer and listing owner upon successful pickup verification.
+     */
+    protected function notifyPickupSuccess(Claim $claim): void
+    {
+        $listing = $claim->listing;
+
+        $claim->user->notify(new LokaNotification(
+            title: 'Penyelamatan Pangan Berhasil!',
+            message: "Terima kasih! Anda telah berhasil mengambil {$claim->portions_approved} porsi {$listing->title}. Jangan lupa bagikan ulasan Anda.",
+            category: 'claim',
+            icon: 'sparkles',
+            actionUrl: route('listings.show', $claim->listing_id),
+            actionLabel: 'Lihat Listing',
+            meta: ['claim_id' => $claim->id]
+        ));
+
+        $listing->user->notify(new LokaNotification(
+            title: 'Pangan Berhasil Diserahkan: ' . $listing->title,
+            message: "{$claim->portions_approved} porsi {$listing->title} telah diserahkan kepada {$claim->user->name}. Terima kasih telah menyelamatkan pangan!",
+            category: 'listing',
+            icon: 'check-circle',
+            actionUrl: route('dashboard', ['tab' => 'bagikan']),
+            actionLabel: 'Buka Dashboard'
+        ));
     }
 }

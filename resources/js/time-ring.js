@@ -42,6 +42,14 @@ export default (expiresAt, serverNow, totalMinutes, tzLabel) => ({
         return 'var(--color-time-ok)';
     },
 
+    get hours() {
+        return Math.floor(Math.max(0, Math.round(Number(this.minutes) || 0)) / 60);
+    },
+
+    get mins() {
+        return Math.max(0, Math.round(Number(this.minutes) || 0)) % 60;
+    },
+
     get short() {
         if (this.expired) return 'Habis';
         const mins = Math.max(0, Math.round(Number(this.minutes) || 0));

@@ -17,6 +17,13 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
+    protected $attributes = [
+        'role' => 'user',
+        'is_verified' => false,
+        'is_active' => true,
+        'no_show_count' => 0,
+    ];
+
     /**
      * The attributes that are mass assignable.
      * Note: 'role', 'is_verified', 'is_active', 'no_show_count', 'claim_restricted_until' are intentionally NOT fillable!
