@@ -1,4 +1,4 @@
-<x-layouts.app title="Kelola Galang Makanan Saya — LokaWaste">
+<x-layouts.app :title="'Kelola Galang Makanan Saya — ' . site_setting('site_name', 'LokaWaste')">
 
 <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
 

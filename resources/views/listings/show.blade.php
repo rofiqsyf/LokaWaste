@@ -1,4 +1,4 @@
-<x-layouts.app :title="$listing->title . ' — LokaWaste'">
+<x-layouts.app :title="$listing->title . ' — ' . site_setting('site_name', 'LokaWaste')">
 
 <div x-data="qrHandover()" class="max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-6">
 
@@ -622,7 +622,7 @@
         <div class="flex items-start justify-between gap-3 pb-1 border-b border-gray-100">
             <div>
                 <h3 class="font-display font-bold text-lg text-[#16251D]">Laporkan Masalah</h3>
-                <p class="text-xs text-[#4E6157] mt-0.5">Laporan Anda membantu menjaga keselamatan dan kepercayaan komunitas pangan LokaWaste.</p>
+                <p class="text-xs text-[#4E6157] mt-0.5">Laporan Anda membantu menjaga keselamatan dan kepercayaan komunitas pangan {{ site_setting('site_name', 'LokaWaste') }}.</p>
             </div>
             <button type="button"
                     onclick="document.getElementById('report-modal').close()"

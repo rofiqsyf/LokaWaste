@@ -1,4 +1,4 @@
-<x-layouts.app title="LokaWaste — Peta Makanan Berlebih & Penyelamat Pangan">
+<x-layouts.app :title="site_setting('home_title', 'LokaWaste — Peta Makanan Berlebih & Penyelamat Pangan')">
 
 <div x-data="homeMap()" x-init="init()" @keydown.window.prevent.cmd.k="$refs.mapSearchInput?.focus()" @keydown.window.prevent.ctrl.k="$refs.mapSearchInput?.focus()" class="relative flex-1 min-h-0 flex flex-col lg:flex-row h-full w-full max-w-full overflow-hidden">
 
@@ -22,7 +22,7 @@
         <!-- Desktop Sidebar Header -->
         <div class="hidden lg:flex items-center justify-between px-5 py-3.5 border-b border-gray-100/80 bg-white/40 backdrop-blur-md">
             <div>
-                <h1 class="font-display font-bold text-base text-[#16251D]" x-text="layer === 'food' ? 'Penyelamat Makanan' : 'Galang Makanan'"></h1>
+                <h1 class="font-display font-bold text-base text-[#16251D]" x-text="layer === 'food' ? @js(site_setting('home_sidebar_title', 'Penyelamat Makanan')) : 'Galang Makanan'"></h1>
                 <p class="text-xs text-[#4E6157] truncate max-w-[200px]" x-text="`Pusat: ${currentLocationLabel}`"></p>
             </div>
             <div class="flex items-center">
@@ -281,7 +281,7 @@
                            @input.debounce.300ms="fetchSuggestions()"
                            @focus="if (suggestions.length > 0) showSuggestions = true"
                            @keydown.enter.prevent="selectFirstOrSearch()"
-                           placeholder="Cari jalan, kelurahan, atau kecamatan (misal: Tembalang)..."
+                           :placeholder="@js(site_setting('home_search_placeholder', 'Cari jalan, kelurahan, atau kecamatan (misal: Tembalang)...'))"
                            class="w-full h-8.5 pl-8 pr-7 text-xs sm:text-sm rounded-full border border-transparent text-[#16251D] placeholder:text-[#4E6157]/60 focus:outline-none bg-white/40 focus:bg-white/80 transition-all">
                     <svg class="w-4 h-4 text-[#4E6157] absolute left-2.5 top-2.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
@@ -1458,7 +1458,7 @@ document.addEventListener('alpine:init', () => {
         focusId: @json($focusId ? (int)$focusId : null),
         markersById: {},
         currentLocationLabel: 'Pusat Area',
-        radius: 5,
+        radius: {{ $defaultRadiusKm ?? (int) site_setting('default_map_radius_km', 5) }},
         layer: 'food', // 'food' or 'campaigns'
         halalOnly: false,
         urgentOnly: false,
@@ -2538,7 +2538,7 @@ document.addEventListener('alpine:init', () => {
             if (!item) return;
             const shareUrl = `${window.location.origin}/?focus=${item.id}&lat=${item.lat}&lng=${item.lng}`;
             const shareData = {
-                title: `${item.title} — LokaWaste`,
+                title: `${item.title} — ${@js(site_setting('site_name', 'LokaWaste'))}`,
                 text: `Ambil makanan berlebih "${item.title}" (${item.portions_left} porsi) di ${item.pickup_address}. Mari selamatkan pangan!`,
                 url: shareUrl
             };

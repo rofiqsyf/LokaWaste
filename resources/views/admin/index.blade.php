@@ -1,4 +1,4 @@
-<x-layouts.app title="Panel Admin — LokaWaste">
+<x-layouts.app :title="'Panel Admin — ' . site_setting('site_name', 'LokaWaste')">
 
 <div class="min-h-[calc(100vh-4rem)] bg-[#F8FAF8] py-8 sm:py-10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
@@ -12,7 +12,7 @@
                     <span class="text-[#16251D] font-bold">Ringkasan Sistem</span>
                 </div>
                 <h1 class="font-display font-extrabold text-2xl sm:text-3xl text-[#16251D]">
-                    Panel Administrasi LokaWaste
+                    Panel Administrasi {{ site_setting('site_name', 'LokaWaste') }}
                 </h1>
                 <p class="text-xs sm:text-sm text-[#4E6157] mt-1">
                     Kelola persetujuan relawan, moderasi galang makanan, pengguna, dan laporan komunitas.

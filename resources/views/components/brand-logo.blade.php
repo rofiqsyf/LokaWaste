@@ -10,6 +10,8 @@
         default => 'w-10 h-10',
     };
     $uid = 'lw-logo-' . uniqid();
+    $customLogo = \App\Models\SiteSetting::logoUrl();
+    $siteName = site_setting('site_name', 'LokaWaste');
 @endphp
 
 <div {{ $attributes->merge(['class' => "relative inline-flex items-center justify-center shrink-0 {$sizeClasses} lokawaste-logo-wrap " . ($interactive ? 'group/logo' : '')]) }}>
@@ -18,6 +20,9 @@
 
     <!-- Glassmorphic Squircle Framing so Green + Dark Ink Pin Pops on Any Surface -->
     <div class="relative w-full h-full rounded-2xl bg-white/95 border border-[#D5E0D9]/90 shadow-xs flex items-center justify-center p-1 transition-all duration-300 group-hover/logo:shadow-md group-hover/logo:border-[#A8DC2E] group-hover/logo:scale-105 group-active/logo:scale-95 overflow-visible">
+        @if ($customLogo)
+            <img src="{{ $customLogo }}" alt="{{ $siteName }}" class="w-full h-full object-contain rounded-xl transition-transform duration-300 group-hover/logo:scale-105">
+        @else
         <svg viewBox="0 0 100 108" class="w-full h-full overflow-visible lokawaste-logo-svg" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <defs>
                 <linearGradient id="{{ $uid }}-lime" x1="18" y1="10" x2="82" y2="80" gradientUnits="userSpaceOnUse">
@@ -60,5 +65,6 @@
                       fill="url(#{{ $uid }}-ink)"/>
             </g>
         </svg>
+        @endif
     </div>
 </div>

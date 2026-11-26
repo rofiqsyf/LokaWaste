@@ -1,4 +1,4 @@
-<x-layouts.app title="Buat Galang Makanan — LokaWaste">
+<x-layouts.app :title="'Buat Galang Makanan — ' . site_setting('site_name', 'LokaWaste')">
 
 <div class="max-w-3xl mx-auto px-4 sm:px-6 py-8" x-data="createCampaignForm()">
 

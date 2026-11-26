@@ -1,4 +1,4 @@
-<x-layouts.app title="Dashboard — LokaWaste">
+<x-layouts.app :title="'Dashboard — ' . site_setting('site_name', 'LokaWaste')">
 
 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6" x-data="{ tab: '{{ $tab }}', ...qrHandover() }">
 
@@ -256,7 +256,7 @@
                         <span class="text-xs font-semibold text-[#4E6157]">Emisi CO₂e Tercegah</span>
                     </div>
                     <div class="font-display font-bold text-2xl text-[#16251D]"><span x-text="metrics.co2Avoided"></span> <span class="text-xs font-normal text-[#4E6157]">kg CO₂e</span></div>
-                    <p class="text-[11px] text-[#4E6157] mt-1">Estimasi 0.85 kg emisi per porsi makanan terbuang.</p>
+                    <p class="text-[11px] text-[#4E6157] mt-1">Estimasi {{ site_setting('esg_co2_per_portion', '0.85') }} kg emisi per porsi makanan terbuang.</p>
                 </div>
 
                 <div class="glass-pill p-4 rounded-2xl">
@@ -265,7 +265,7 @@
                         <span class="text-xs font-semibold text-[#4E6157]">Air Bersih Terhemat</span>
                     </div>
                     <div class="font-display font-bold text-2xl text-[#2A6F97]"><span x-text="metrics.waterSaved.toLocaleString('id-ID')"></span> <span class="text-xs font-normal text-[#4E6157]">Liter</span></div>
-                    <p class="text-[11px] text-[#4E6157] mt-1">Estimasi 320L jejak air pada rantai pasok pangan.</p>
+                    <p class="text-[11px] text-[#4E6157] mt-1">Estimasi {{ site_setting('esg_water_per_portion', '320') }}L jejak air pada rantai pasok pangan.</p>
                 </div>
 
                 <div class="glass-pill p-4 rounded-2xl">

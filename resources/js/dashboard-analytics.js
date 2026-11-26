@@ -119,9 +119,9 @@ export default function dashboardAnalytics(initialData = {}) {
                 .reduce((sum, c) => sum + (Number(c.portions) || 0), 0);
 
             const totalPortions = portionsShared + portionsTaken;
-            const co2Avoided = Number((totalPortions * 0.85).toFixed(1));
-            const waterSaved = Math.round(totalPortions * 320);
-            const economicValue = totalPortions * 15000;
+            const co2Avoided = Number((totalPortions * this.esgRates.co2).toFixed(1));
+            const waterSaved = Math.round(totalPortions * this.esgRates.water);
+            const economicValue = Math.round(totalPortions * this.esgRates.value);
 
             const totalClaimRequests = claims.length;
             const completedClaims = claims.filter(c => c.status === 'picked_up').length;

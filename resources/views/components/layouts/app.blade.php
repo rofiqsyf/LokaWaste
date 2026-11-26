@@ -4,8 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? 'LokaWaste — Cegah Food Waste, Salurkan Makanan Berlebih' }}</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 108'%3E%3Crect width='100' height='108' rx='24' fill='%23FFFFFF'/%3E%3Cpath d='M29 68 C15 52,16 27,31 16 C44 6,62 7,72 19 C60 14,44 17,33 29 C25 38,24 53,29 68 Z' fill='%23A8DC2E'/%3E%3Cpath d='M32 46 C33 31,45 20,62 19 C66 19,69 20,70 21 C62 28,57 38,46 42 C39 45,35 46,32 46 Z' fill='%23A8DC2E'/%3E%3Cpath d='M64 25 C79 31,85 48,78 64 C72 77,56 82,42 78 L39 72 C53 74,67 69,71 58 C76 46,71 33,62 27 Z' fill='%23A8DC2E'/%3E%3Cpath d='M50 98 L30 68 C29 64,33 58,39 55 C44 53,49 52,54 49 C56 48,58 50,56 52 C53 55,48 56,47 57 C52 57,59 53,64 49 C66 47,68 49,66 52 C61 59,53 64,43 65 C39 66,38 69,40 72 C44 77,56 79,68 72 L50 98 Z' fill='%2316251D'/%3E%3Cpath d='M66 34 C61 39,55 43,47 47 C45 48,46 51,49 50 C52 49,54 48,55 48 C52 51,50 53,52 54 C54 55,58 52,62 49 C65 47,68 45,71 43 C70 39,68 36,66 34 Z' fill='%2316251D'/%3E%3C/svg%3E">
+    @php
+        $siteName = site_setting('site_name', 'LokaWaste');
+        $siteTagline = site_setting('site_tagline', 'Penyelamat Pangan');
+        $siteDescription = site_setting('site_description', 'Platform penyelamatan pangan berlebih hiper-lokal.');
+        $customFavicon = \App\Models\SiteSetting::faviconUrl() ?? \App\Models\SiteSetting::logoUrl();
+    @endphp
+    <meta name="description" content="{{ $siteDescription }}">
+    <title>{{ $title ?? site_setting('home_title', "{$siteName} — {$siteTagline}") }}</title>
+    @if ($customFavicon)
+        <link rel="icon" href="{{ $customFavicon }}">
+    @else
+        <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 108'%3E%3Crect width='100' height='108' rx='24' fill='%23FFFFFF'/%3E%3Cpath d='M29 68 C15 52,16 27,31 16 C44 6,62 7,72 19 C60 14,44 17,33 29 C25 38,24 53,29 68 Z' fill='%23A8DC2E'/%3E%3Cpath d='M32 46 C33 31,45 20,62 19 C66 19,69 20,70 21 C62 28,57 38,46 42 C39 45,35 46,32 46 Z' fill='%23A8DC2E'/%3E%3Cpath d='M64 25 C79 31,85 48,78 64 C72 77,56 82,42 78 L39 72 C53 74,67 69,71 58 C76 46,71 33,62 27 Z' fill='%23A8DC2E'/%3E%3Cpath d='M50 98 L30 68 C29 64,33 58,39 55 C44 53,49 52,54 49 C56 48,58 50,56 52 C53 55,48 56,47 57 C52 57,59 53,64 49 C66 47,68 49,66 52 C61 59,53 64,43 65 C39 66,38 69,40 72 C44 77,56 79,68 72 L50 98 Z' fill='%2316251D'/%3E%3Cpath d='M66 34 C61 39,55 43,47 47 C45 48,46 51,49 50 C52 49,54 48,55 48 C52 51,50 53,52 54 C54 55,58 52,62 49 C65 47,68 45,71 43 C70 39,68 36,66 34 Z' fill='%2316251D'/%3E%3C/svg%3E">
+    @endif
 
     <!-- Google Fonts for Bricolage Grotesque & Atkinson Hyperlegible -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -36,8 +47,8 @@
                     <a href="{{ route('home') }}" class="flex items-center gap-2.5 group">
                         <x-brand-logo size="md" :interactive="true" />
                         <div class="flex flex-col">
-                            <span class="font-display font-extrabold text-xl tracking-tight text-[#16251D] group-hover:text-[#1E7A4C] transition-colors leading-none lowercase">lokawaste</span>
-                            <span class="text-[9px] uppercase tracking-wider text-[#4E6157] font-bold mt-0.5 hidden sm:inline">Penyelamat Pangan</span>
+                            <span class="font-display font-extrabold text-xl tracking-tight text-[#16251D] group-hover:text-[#1E7A4C] transition-colors leading-none lowercase">{{ $siteName }}</span>
+                            <span class="text-[9px] uppercase tracking-wider text-[#4E6157] font-bold mt-0.5 hidden sm:inline">{{ $siteTagline }}</span>
                         </div>
                     </a>
                 </div>
@@ -266,10 +277,53 @@
         </div>
     @endif
 
+    <!-- Global Dynamic Announcement Banner (Admin Configurable) -->
+    @if (site_setting('announcement_enabled') === '1' && filled(site_setting('announcement_text')))
+        @php $announcementUrl = site_setting('announcement_url'); @endphp
+        <div class="bg-[#16251D] text-white border-b border-white/10 px-4 py-2 text-xs font-medium z-30">
+            <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-2 text-center">
+                <span class="w-2 h-2 rounded-full bg-[#D7F57C] animate-pulse shrink-0"></span>
+                <span>{{ site_setting('announcement_text') }}</span>
+                @if (filled($announcementUrl))
+                    <a href="{{ $announcementUrl }}" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#D7F57C] text-[#16251D] font-bold text-[11px] hover:bg-[#C8EE63] transition">
+                        Selengkapnya →
+                    </a>
+                @endif
+            </div>
+        </div>
+    @endif
+
     <!-- Main Content -->
     <main id="main-content" class="flex-1 min-h-0 w-full max-w-full flex flex-col {{ request()->routeIs('home') ? 'overflow-hidden' : 'overflow-x-clip' }}">
         {{ $slot }}
     </main>
+
+    @if (!request()->routeIs('home'))
+        <footer class="hidden md:block mt-auto border-t border-[#D5E0D9]/60 bg-white/50 backdrop-blur-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-between gap-3 text-xs text-[#4E6157]">
+                <div class="flex items-center gap-2">
+                    <span class="font-display font-bold text-[#16251D]">{{ $siteName }}</span>
+                    <span>—</span>
+                    <span>{{ $siteTagline }}</span>
+                </div>
+                <div class="flex flex-wrap items-center gap-4">
+                    @if (filled(site_setting('contact_email')))
+                        <a href="mailto:{{ site_setting('contact_email') }}" class="hover:text-[#16251D] transition">
+                            {{ site_setting('contact_email') }}
+                        </a>
+                    @endif
+                    @if (filled(site_setting('contact_whatsapp')))
+                        @php $waClean = preg_replace('/[^0-9]/', '', (string) site_setting('contact_whatsapp')); @endphp
+                        @if ($waClean)
+                            <a href="https://wa.me/{{ $waClean }}" target="_blank" rel="noopener noreferrer" class="hover:text-[#1E7A4C] font-semibold transition">
+                                WhatsApp Bantuan
+                            </a>
+                        @endif
+                    @endif
+                </div>
+            </div>
+        </footer>
+    @endif
 
     <!-- Mobile Floating Bottom Navigation Bar (Glassmorphic Floating Dock) -->
     <nav class="md:hidden fixed bottom-3 inset-x-3 glass-dock rounded-3xl z-40 flex items-center justify-around h-16 px-2 shadow-2xl border border-white/90">

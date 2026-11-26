@@ -21,14 +21,18 @@ class DashboardController extends Controller
             $tab = 'ringkasan';
         }
 
-        // Stats & Impact Engine (design.md 1.F & 5.3)
+        // Stats & Impact Engine (configurable via Admin Settings)
         $portionsShared = (int) $user->listings()->sum('portions_total');
         $portionsTaken = (int) $user->claims()->where('status', 'picked_up')->sum('portions_approved');
         $totalPortions = $portionsShared + $portionsTaken;
 
-        $co2Avoided = round($totalPortions * 0.85, 1);
-        $waterSaved = round($totalPortions * 320);
-        $economicValue = $totalPortions * 15000;
+        $co2Rate = (float) site_setting('esg_co2_per_portion', 0.85);
+        $waterRate = (float) site_setting('esg_water_per_portion', 320);
+        $valueRate = (float) site_setting('esg_value_per_portion', 15000);
+
+        $co2Avoided = round($totalPortions * $co2Rate, 1);
+        $waterSaved = round($totalPortions * $waterRate);
+        $economicValue = round($totalPortions * $valueRate);
 
         // Level Penyelamat Pangan
         $impactLevel = 'Penyelamat Pangan Pemula';
@@ -92,6 +96,11 @@ class DashboardController extends Controller
                 'created_at' => $c->created_at->toIso8601String(),
                 'picked_up_at' => $c->picked_up_at?->toIso8601String(),
             ])->values(),
+            'esgRates' => [
+                'co2' => $co2Rate,
+                'water' => $waterRate,
+                'value' => $valueRate,
+            ],
         ];
 
         return view('dashboard.index', compact(
